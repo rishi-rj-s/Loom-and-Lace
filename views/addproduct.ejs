@@ -1,0 +1,165 @@
+<%-include('include/header2')-%>
+
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3  mt-5 bg-gradient-dark" id="sidenav-main">
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+    <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
+      <span class="ms-1 font-weight-bold text-white">Admin</span>
+    </a>
+  </div>
+  <hr class="horizontal light mt-0 mb-2">
+  <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/admin/manage">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">dashboard</i>
+          </div>
+          <span class="nav-link-text ms-1">Dashboard</span>
+        </a>
+      </li> 
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/admin/categories">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">assignment</i>
+          </div>
+          <span class="nav-link-text ms-1">Category</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white active bg-gradient-primary" href="/products">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">table_view</i>
+          </div>
+          <span class="nav-link-text ms-1">Products</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white " href="#">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">receipt_long</i>
+          </div>
+          <span class="nav-link-text ms-1">Orders</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/admin/users">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">person</i>
+          </div>
+          <span class="nav-link-text ms-1">Users</span>
+        </a>
+      </li>
+      <li class="nav-item mt-3">
+        <hr class="dark horizontal my-0">
+      </li>
+      <hr class="light horizontal my-0">
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/logout">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">login</i>
+          </div>
+          <span class="nav-link-text ms-1">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
+  <!-- List of users -->
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#" class="text-black">Admin</a></li>
+          <li class="breadcrumb-item"><a href="/products" class="text-black">Products</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Add Products</li>
+      </ol>
+  </nav>
+  <div class="container-fluid py-4">
+    <div class="productside">
+      <div class="row">
+        <div class="col-6"><h2 class="me-3 text-decoration-underline">Add Products</h2></div>
+        <!-- <div class="col-6"> <a href="/admin/addproduct" class="bg-dark btn border-shadow shadow update">
+          <span class="text-white">Add Products <b>+</b></span>
+      </a></div> -->
+      </div>
+      
+      <div class="row">
+        <div class="col-12 col-lg-6  card mb-10 rounded bg-black">
+        <form action="/api/createproduct" method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+              <label for="p_name" class="form-label">Product Name:</label>
+              <input type="text" class="form-control" id="p_name" name="p_name" required>
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category:</label>
+            <select class="form-control" id="category" name="category" required>
+                <option value="">Select Category</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category.category %>"><%= category.category %></option>
+                <% }); %>
+            </select>
+        </div>
+          <div class="mb-3">
+              <label for="brand" class="form-label">Brand:</label>
+              <input type="text" class="form-control" id="brand" name="brand" required>
+          </div>
+          <div class="mb-3">
+              <label for="color" class="form-label">Color:</label>
+              <input type="text" class="form-control" id="color" name="color" required>
+          </div>
+          <div class="mb-3">
+              <label for="size" class="form-label">Size (S,M,L,XL,XXL):</label>
+              <input type="text" class="form-control" id="size" name="size" required>
+          </div>
+          <div class="mb-3">
+              <label for="price" class="form-label">Price (₹):</label>
+              <input type="number" class="form-control" id="price" min="0" name="price" required>
+          </div>
+          <div class="mb-3">
+              <label for="discount" class="form-label">Discount:</label>
+              <input type="number" class="form-control" id="discount" min="0" name="discount" required>
+          </div>
+          <div class="mb-3">
+              <label for="stock" class="form-label">Stock:</label>
+              <input type="number" class="form-control" id="stock" min="0" name="stock" required>
+          </div>
+          <!-- <div class="mb-3">
+              <label for="image" class="form-label">Image:</label>
+              <input type="file" class="form-control"  id="image" name="image" required>
+          </div> -->
+          <div class="mb-3">
+              <label for="images" class="form-label">Images:</label>  
+              <input type="file" class="form-control" id="images" name="images" multiple required>
+          </div>
+          <div class="mb-3">
+              <label for="stat" class="form-label">Description:</label>
+              <textarea class="form-control" id="stat" name="stat"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+      </div>
+    
+     
+    </div>
+  </div>
+</main>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const numberInputs = document.querySelectorAll('input[type="number"]');
+
+    // Add an event listener for input change for all number inputs
+    numberInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            // Remove leading "-" if present
+            if (this.value.startsWith('-')) {
+                this.value = this.value.slice(1);
+            }
+        });
+    });
+});
+</script>
+<%-include('include/UIdark')-%>
+
+
+<%-include('include/footer2')-%>

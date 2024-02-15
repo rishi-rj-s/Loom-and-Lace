@@ -1,0 +1,98 @@
+<%-include('include/header')-%>
+
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow border-1 sticky-top pt-4" style="background-color: rgb(171, 171, 171);">
+        <div class="container-fluid">
+          <a class="navbar-brand fw-bolderS" href="#">LOOM & LACE</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-5 me-auto mb-2 mb-lg-0">
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" aria-current="page" href="#">Shop</a>
+              </li>
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" aria-current="page" href="#">Men</a>
+              </li>
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" href="#">Women</a>
+              </li>
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" href="#">Kids</a>
+              </li>
+            </ul>
+            <form class="d-flex align-self-center me-5">
+              <input class="form-control me-2" type="search" size="50" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav mx-5 mb-2 mb-lg-0">
+              <% if (!userToken) { %>
+                <!-- Show the content only if the token is present -->
+                <li class="nav-item">
+                    <a class="nav-link text-decoration-none" href="/loginpage"><i class="fa-solid fa-user-plus"></i></a>
+                </li>
+            <% } %>
+            <% if (userToken) { %>
+                  <li class="nav-item">
+                    <a class="nav-link text-bg-success" href="#"><i class="fa-solid fa-heart"></i></a>
+                  </li>
+             <% } %>
+             <% if (userToken) { %>
+                  <li class="nav-item">
+                    <a class="nav-link text-bg-success" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                  </li>
+           <% } %>
+           <% if (userToken) { %>
+                    <li class="nav-item">
+                      <a class="nav-link text-bg-success" href="#"><i class="fa-solid fa-user"></i></a>
+                    </li>
+             <% } %>
+                </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- carousel part for banner -->
+      <div class="container-fluid">
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <!-- <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button> -->
+        </div>
+        <div class="carousel-inner mt-5">
+        <div class="carousel-item justify-content-between active">
+            <img src="/img/banner-3.jpg" class="d-block w-100" alt="...">
+          </div>
+          <!-- <div class="carousel-item">
+            <img src="/img/hero-2.jpg" class="d-block w-100" alt="...">
+          </div> -->
+          <div class="carousel-item">
+            <img src="img/banner4.jpg" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+
+<!-- carousel part for banner -->
+<!-- features -->
+<%-include('include/features')-%>
+
+<!-- Products Display -->
+
+<%-include('include/productsegment')-%>
+</div>
+</section>
+<!-- footer -->
+<%-include('include/userFooter')-%>
+
+<%-include('include/footer')-%>

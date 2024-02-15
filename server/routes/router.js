@@ -1,0 +1,67 @@
+const express= require('express')
+const jwt = require('jsonwebtoken');
+const route=express.Router()
+const multer= require('multer');
+const path =require('path');
+
+const services=require('../services/render')
+const products=require('../services/products')
+const shop=require('../services/shop')
+const controller = require('../controller/controller');
+const productcontroller = require('../controller/productcontroller');
+const categorycontroller = require('../controller/categorycontroller');
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const fileExtension = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + fileExtension);
+  }
+});
+
+const upload = multer({ storage: storage });
+//home config side
+route.get('/home',services.home);
+//user side
+route.get('/loginpage',services.loginpage);
+route.post('/login',services.login);
+route.post('/verify-otp',services.verify);
+route.get('/signup',services.signup);
+
+// user home side
+route.get('/prodetail',shop.prodetail);
+
+//admin side
+route.get('/admin',services.admin)
+route.post('/adminlogin',services.adminlogin)
+route.get('/admin/manage',services.manage)
+route.get('/logout',services.logout)
+route.get('/admin/users',services.users)
+route.get('/block-user',services.block)
+
+//products side
+route.get('/products',products.product)
+route.get('/admin/addproduct',products.addproduct)
+route.get('/update-product',products.update)
+route.get('/admin/addcategory',products.addcategory)
+route.get('/update-product',products.update)
+
+//api realted to db
+route.post('/api/signup',controller.signup);
+route.post('/api/users',controller.create);
+route.get('/api/users',controller.find);
+
+//products api
+route.get('/api/products',productcontroller.find);
+route.post('/api/createproduct',upload.array('images',4 ),productcontroller.createproduct);
+route.post('/api/admin/editproduct/:id',upload.array('images',4 ),productcontroller.update);
+route.delete('/api/admin/products/:id',productcontroller.delete);
+
+//category api
+route.post('/api/createcategory',categorycontroller.catcreate);
+route.get('/admin/categories',categorycontroller.getCategories);
+route.get('/update-category',categorycontroller.getupdateCategory);
+route.post('/api/admin/editcategory/:id',upload.array('images',4 ),categorycontroller.postupdateCategory);
+route.delete('/api/admin/categories/:id',categorycontroller.delete);
+
+module.exports =route

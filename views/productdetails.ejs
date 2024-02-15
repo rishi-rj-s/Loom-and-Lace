@@ -1,0 +1,167 @@
+<%-include('include/header')-%>
+
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow border-1 sticky-top pt-4" style="background-color: rgb(171, 171, 171);">
+        <div class="container-fluid">
+          <a class="navbar-brand fw-bolderS" href="#">LOOM & LACE</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-5 me-auto mb-2 mb-lg-0">
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" aria-current="page" href="#">Shop</a>
+              </li>
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" aria-current="page" href="#">Men</a>
+              </li>
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" href="#">Women</a>
+              </li>
+              <li class="nav-item ms-5">
+                <a class="nav-text text-decoration-none" href="#">Kids</a>
+              </li>
+            </ul>
+            <form class="d-flex align-self-center me-5">
+              <input class="form-control me-2" type="search" size="50" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </form>
+            <ul class="navbar-nav mx-5 mb-2 mb-lg-0">
+              <% if (!userToken) { %>
+                <!-- Show the content only if the token is present -->
+                <li class="nav-item">
+                    <a class="nav-link text-decoration-none" href="/loginpage"><i class="fa-solid fa-user-plus"></i></a>
+                </li>
+            <% } %>
+            <% if (userToken) { %>
+                  <li class="nav-item">
+                    <a class="nav-link text-bg-success" href="#"><i class="fa-solid fa-heart"></i></a>
+                  </li>
+             <% } %>
+             <% if (userToken) { %>
+                  <li class="nav-item">
+                    <a class="nav-link text-bg-success" href="#"><i class="fa-solid fa-cart-shopping"></i></a>
+                  </li>
+           <% } %>
+           <% if (userToken) { %>
+                    <li class="nav-item">
+                      <a class="nav-link text-bg-success" href="#"><i class="fa-solid fa-user"></i></a>
+                    </li>
+             <% } %>
+                </ul>
+          </div>
+        </div>
+      </nav>
+
+<!-- productdetailed -->
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+            <!-- <div class="border rounded">
+                <a href="#">
+                  <% if (product.images && product.images.length > 0) { %>
+                    <img src="<%= product.images[0] %>" alt="" class=" m-4 pro_image w-75">
+                    <% }%>
+                  </a>
+            </div> -->
+            <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false" data-bs-interval="false">
+              <div class="carousel-inner m-4">
+                <div class="carousel-item active" id="imagecontainer">
+                    <% if (product.images && product.images.length > 0) { %>
+                          <div id="lens"></div>
+                            <img src="<%= product.images[0] %>" alt="" class="pro_image w-75" id="feat" height="75vh">
+                    <% } %>
+                </div>
+                
+                <% if (product.images && product.images.length > 1) { %>
+                    <% for(i=1;i<product.images.length;i++) { %>
+                        <div class="carousel-item">
+                                <img src="<%= product.images[i] %>" class=" m-4 pro_image w-75" id="feat" alt="..." height="75vh">
+                        </div>
+                    <% }%>
+                <% }%>
+            </div>
+            
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <h4 class="fw-bold mb-3 mt-4"><%= product.brand %></h4>
+            <h5 class="mb-3"><%= product.product_name %></h5>
+            <div class="d-flex mb-4">
+              <i class="fa fa-star text-warning"></i>
+              <i class="fa fa-star text-warning"></i>
+              <i class="fa fa-star text-warning"></i>
+              <i class="fa fa-star text-warning"></i>
+              <i class="fa fa-star"></i>
+          </div>
+          <hr>
+            <h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5>
+            
+            <p class="mb-4"><b>Size : </b><%= product.size %> </p>
+            <p class="mb-4"><b>Colour : </b><%= product.color %> </p>
+            <p class="mb-4 text-primary"><b>Stock : <%= product.stock %></b> </p>
+            <p class="mb-4"><%= product.description %></p>
+            <div class="input-group quantity mb-5 row" style="width: 200px;">
+                <div class="input-group-btn col">
+                    <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+                <input type="text" class="col form-controlq form-control-sm text-center border-0" value="1">
+                <div class="input-group-btn col">
+                    <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa-regular fa-heart me-2 text-danger"></i> Wishlist</a>
+          </div>
+
+ <!-- description and reviews -->
+  <%-include('include/descriptionreview')-%>
+</div>
+<!-- related items -->
+<hr>
+<h2 class="ms-5">Related Items</h2>
+<div class="row product__filter">
+<%-include('include/related')-%>
+
+</div>
+
+
+
+<!-- footer -->
+
+<%-include('include/userFooter')-%>
+
+<script>
+ let currentQuantity = 1;
+
+// When the minus button is clicked
+document.querySelector('.btn-minus').addEventListener('click', () => {
+    if (currentQuantity > 0) {
+        currentQuantity -= 1;
+    }
+    // Update the input field value
+    document.querySelector('.form-controlq').value = currentQuantity;
+});
+
+// When the plus button is clicked
+document.querySelector('.btn-plus').addEventListener('click', () => {
+    currentQuantity += 1;
+    // Update the input field value
+    document.querySelector('.form-controlq').value = currentQuantity;
+});
+
+</script>
+<script src="/js/imgzoom.js"></script>
+<%-include('include/footer')-%>

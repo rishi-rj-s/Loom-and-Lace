@@ -1,0 +1,60 @@
+<%-include('include/header')-%>
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(97, 69, 20);">
+        <div class="container-fluid">
+          <a class="navbar-brand fw-bolder" href="#">LOOM & LACE</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          </div>
+      </nav>
+  <!-- admin login -->
+  <div class="message bg-black">
+    <div class="alert alert-danger" id="pass">Invalid Password or Username</div>
+</div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card justify-content-center">
+                    <div class="card-header text-center fw-bolder text-light" style="background-color: rgb(97, 69, 20);">Admin Login</div>
+                    <div class="card-body"  style="background-color: rgb(97, 69, 20);">
+
+                        <form action="/adminlogin" method="post">
+                            <div class="row gy-3 bg-dark overflow-hidden">
+                                <div class="col-12">
+                                  <div class="form-floating mb-3">
+                                    <input type="email" class="form-control border-0 border-bottom rounded-0" name="email" id="email" placeholder="Email" required>
+                                    <label for="email" class="form-label">Email</label>
+                                  </div>
+                                </div>
+                                <div class="col-12">
+                                  <div class="form-floating mb-3">
+                                    <input type="password" class="form-control border-0 border-bottom rounded-0" name="password" id="password" value="" placeholder="Password" required>
+                                    <label for="password" class="form-label">Password</label>
+                                  </div>
+                                </div>
+                                <div class="col-12">
+                                  <div class="d-grid">
+                                    <button class="btn btn-primary btn-lg mb-5" type="submit">Log in</button>
+                                  </div>
+                                </div>
+                              </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+      // Check if there is a logout parameter in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const password1 = urlParams.get('pass');
+  
+      // Display the logout message if the logout parameter is present
+      if (password1 === 'wrong') {
+          // Show the message div
+          document.getElementById('pass').style.display = 'block';
+      }
+  </script>
+
+    <%-include('include/header')-%>
