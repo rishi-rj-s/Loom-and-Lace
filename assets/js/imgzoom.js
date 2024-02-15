@@ -48,7 +48,6 @@ function imageZoom(imgID){
 		//4
 		lens.style.backgroundPosition = "-" + (pos.x * ratio) + 'px -' +  (pos.y * ratio) + 'px'
 	}
-
 	function getCursor(){
 
         let e = window.event
