@@ -130,13 +130,16 @@
               <input type="file" class="form-control"  id="image" name="image" required>
           </div> -->
           <div class="mb-3">
-              <label for="images" class="form-label">Images:</label><br>
-              <label for="images" class="text-dark">Current Images:</label> 
-              <% product.images.forEach(image=>{%>
-                <img src="<%=image%>" alt="image" class="w-15">
-                 <%}) ;%>
-              <input type="file" class="form-control" id="images" name="images" multiple required>
-          </div>
+            <label for="images" class="form-label">Images:</label><br>
+            <div id="imageContainer">
+                <% product.images.forEach(image => { %>
+                    <img src="<%= image %>" alt="image" class="w-15" id="imgView">
+                <% }); %>
+            </div>
+            <input type="file" class="form-control" id="images" name="images" onchange="viewImage(event)" multiple>
+        </div>
+              
+        
           <div class="mb-3">
               <label for="stat" class="form-label">Description:</label>
               <textarea class="form-control" id="stat" name="stat" ><%= product.description %></textarea>
@@ -151,6 +154,32 @@
   </div>
 </main>
 <script>
+function viewImage(event) {
+    const files = event.target.files;
+    const imageContainer = document.getElementById('imageContainer');
+
+    // Remove previously displayed images
+    imageContainer.innerHTML = '';
+
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'image';
+                img.classList.add('w-15');
+                imageContainer.appendChild(img);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    }
+}
+
+//-negative avoiding in input
   document.addEventListener('DOMContentLoaded', function() {
     const numberInputs = document.querySelectorAll('input[type="number"]');
 
@@ -164,6 +193,7 @@
         });
     });
 });
+
 </script>
 <%-include('include/UIdark')-%>
 

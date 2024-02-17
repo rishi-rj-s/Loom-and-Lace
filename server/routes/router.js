@@ -30,6 +30,9 @@ route.get('/signup',services.signup);
 
 // user home side
 route.get('/prodetail',shop.prodetail);
+route.get('/menrelated',shop.men);
+route.get('/womenrelated',shop.women);
+route.get('/kidsrelated',shop.kids);
 
 //admin side
 route.get('/admin',services.admin)

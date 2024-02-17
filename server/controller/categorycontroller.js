@@ -1,18 +1,25 @@
 const { query } = require('express');
 const Categorydb =require('../model/categorymodel');
 
-exports.catcreate= (req,res)=>{
+exports.catcreate=async (req,res)=>{
     //validate request
     if(!req.body){
      res.status(400).send({message: "Content cannot be empty"});
      return;
     }
- 
-    //new user
-    const category= new Categorydb({
+    // const catname=req.body.cat_name;
+
+    let category = await Categorydb.findOne({category: req.body.cat_name})
+    if(category){
+        res.render('addcategory', { message: 'Category already exists' });
+    }
+    //new category
+    else{
+    category= new Categorydb({
      category : req.body.cat_name,
      description: req.body.cat_stat,
     })
+
  
     //save user in db
     category 
@@ -26,6 +33,7 @@ exports.catcreate= (req,res)=>{
              message: err.message|| "some error occured while creating operation"
          })
       })
+    }
  }
 
  exports.getCategories = async (req, res) => {
@@ -75,7 +83,7 @@ exports.postupdateCategory = async (req, res) => {
         const categoryId = req.params.id;
         const updatedCategoryData = req.body;
         // Fetch the product by ID
-        const categories = await await Categorydb.findById(categoryId);
+        const categories =  await Categorydb.findById(categoryId);
 
         // Update product details
         categories.category = updatedCategoryData.cat_name;

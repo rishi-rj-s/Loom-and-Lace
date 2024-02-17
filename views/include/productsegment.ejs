@@ -11,7 +11,8 @@
     </div>
     <div class="row product__filter">
       <% products.forEach(product => { %>
-        <div class="pd_det col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals bg-white rounded shadow h-50 me-5">
+        <div class=" col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mb-5 p-2">
+        <div class="pd_det bg-white  mix new-arrivals rounded shadow h-150 p-3">
             <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
             <input type="hidden" id="product_id" name="id" value="<%= product.id %>">
             <div class="product__item bg-white h-75">
@@ -35,6 +36,7 @@
                   <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark"><h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5></a>
                 </div></a>
         </div>
+      </div>
         <% })%>
          </div>
       </div>

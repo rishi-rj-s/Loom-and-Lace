@@ -128,9 +128,10 @@
               <input type="file" class="form-control"  id="image" name="image" required>
           </div> -->
           <div class="mb-3">
-              <label for="images" class="form-label">Images:</label>  
-              <input type="file" class="form-control" id="images" name="images" multiple required>
-          </div>
+            <label for="images" class="form-label">Images:</label><br>
+            <div id="imageContainer"></div>
+            <input type="file" class="form-control" id="images" name="images" onchange="viewImage(event)" multiple required>
+        </div>
           <div class="mb-3">
               <label for="stat" class="form-label">Description:</label>
               <textarea class="form-control" id="stat" name="stat"></textarea>
@@ -145,6 +146,29 @@
   </div>
 </main>
 <script>
+  function viewImage(event) {
+    const files = event.target.files;
+    const imageContainer = document.getElementById('imageContainer');
+    
+    // Remove previously displayed images
+    imageContainer.innerHTML = '';
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'image';
+            img.classList.add('w-15');
+            imageContainer.appendChild(img);
+        }
+
+        reader.readAsDataURL(file);
+    }
+}
+//negative issue solved
   document.addEventListener('DOMContentLoaded', function() {
     const numberInputs = document.querySelectorAll('input[type="number"]');
 

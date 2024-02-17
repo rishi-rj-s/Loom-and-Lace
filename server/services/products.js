@@ -37,7 +37,7 @@ exports.addproduct=(req,res)=>{
 } 
 exports.addcategory=(req,res)=>{
     if(req.cookies.adminToken){
-       res.render('addcategory');
+       res.render('addcategory',{message: ""});
     }
   }
   exports.update = async (req, res) => {

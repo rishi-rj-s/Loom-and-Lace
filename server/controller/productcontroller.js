@@ -127,8 +127,8 @@ exports.update = async (req, res) => {
         product.discount = updatedProductData.discount;
         product.stock = updatedProductData.stock;
         product.description = updatedProductData.stat;
-        if (images) {
-            product.images = images.map(image => image.path);
+        if (images && images.length > 0) {
+        product.images = images.map(image => image.path);
         }
         // Recalculate total_price based on new price and discount
         product.total_price = calculateTotalPrice(updatedProductData.price, updatedProductData.discount);

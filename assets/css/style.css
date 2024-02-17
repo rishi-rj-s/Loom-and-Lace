@@ -7,7 +7,9 @@
 }
 body{
     background-color: rgb(221, 221, 221);
+	overflow-x: hidden;
 }
+
 .navbar-brand{
     font-family: 'PT Sans',sans-serif;
     font-weight: bolder;
@@ -208,19 +210,24 @@ body{
 #lens{
 	z-index: 2;
 	position: absolute;
-
-	height: 25vh;
-	width: 10vw;
-	border:2px solid rgba(38, 38, 38, 0.345);
+    
+	height: 0vh;
+	width: 0vw;
+	border:2px solid rgba(38, 38, 38, 0);
 	background-repeat: no-repeat;
 	cursor: none;
 
 }
+#lens:hover{
+	border:2px solid rgba(38, 38, 38, 0.685);
+	height: 18vh;
+	width: 8vw;
+}
+
 
 #feat{
 	max-width: 500px;
 	max-height: 600px;
-
 	cursor: pointer;
 	border: 2px solid rgba(0, 0, 0, 0);
 
