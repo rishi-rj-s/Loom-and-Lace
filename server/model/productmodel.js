@@ -5,7 +5,8 @@ var Productschema = new mongoose.Schema({
         type: String,
          required: true
          },
-         category: { type: mongoose.Schema.Types.ObjectId, ref: 'categorydb', required: true },
+    category: { 
+        type: mongoose.Schema.Types.ObjectId, ref: 'categorydb', required: true },
     brand: { 
         type: String },
     price: { 
@@ -22,12 +23,20 @@ var Productschema = new mongoose.Schema({
     stock: { 
         type: Number,
          required: true }, 
+    list: {
+            type: String,
+            default: 'listed' 
+        }, 
     // image: { 
     //     type: String }, 
     images: { 
         type: [String] },
     total_price: { 
-        type: Number }, 
+        type: Number },
+    catlist: {
+            type: String,
+            default: 'listed'
+        },  
 })
 
 const Productdb = mongoose.model('productdb',Productschema);

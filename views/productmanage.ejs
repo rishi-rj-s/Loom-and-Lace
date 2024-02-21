@@ -76,16 +76,18 @@
   <div class="container-fluid py-4">
     <div class="userside">
       <div class="row">
-        <div class="col-10"><h2 class="me-3 text-decoration-underline">All Products</h2></div>
-        <div class="col-2"> <a href="/admin/addproduct" class="bg-dark btn border-shadow shadow update">
+        <div class="col-8 me-5"><h2 class="me-3 text-decoration-underline">All Products</h2></div>
+        <div class="col-3"> <a href="/admin/addproduct" class="bg-dark btn border-shadow h-10 shadow update">
           <span class="text-white">Add Products <b>+</b></span>
       </a></div>
       </div>
-      
-      <form action="/" method="POST">
-        <table class="table" id="userTable">
-            <thead class="thead-dark">
-                <tr class="bg-dark text-light">
+
+     <form action="/" method="POST">
+        <div class="row">
+          <div class="col-12 w-100 overflow-scroll">
+        <table class="table mb-5" id="userTable">
+            <thead class="bg-black">
+                <tr class="bg-dark text-white">
                     <th>ID</th>
                     <th>Product name</th>
                     <th>Image</th>
@@ -94,18 +96,25 @@
                     <th>Discount</th>
                     <th>Stock</th>
                     <th>Total_price</th>
+                    <th>Listing</th>
                     <th>Action</th>
                 </tr>
               </thead>
               <tbody>
               <% for (var i = 0; i < products.length; i++) { %>
                     <tr class="mt-3">
-                        <td><%= i + 1 %></td>
-                        <td><%= products[i].product_name %></td>
+                        <td><%=i+1%></td>
                         <td>
+                          <div style="max-width: 180px; overflow: hidden; text-overflow: ellipsis;">
+                            <%= products[i].product_name %>
+                          </div>
+                        </td>
+                        <td>
+                          <div style="max-width: 100px; overflow: hidden; text-overflow: ellipsis;">
                           <% if (products[i].images && products[i].images.length > 0) { %>
-                              <img src="<%= products[i].images[0] %>" alt="<%= products[i].product_name %>" class="w-25 img-fluid mb-2">
+                              <img src="<%= products[i].images[0] %>" alt="<%= products[i].product_name %>" class="w-40 img-fluid mb-2">
                           <% } %>
+                        </div>
                       </td>
                         <td> <% categories.forEach(category => { %>
                           <% if(products[i].category==category._id) { %>
@@ -116,22 +125,34 @@
                         <td><%= products[i].discount %>%</td>
                         <td><%= products[i].stock %></td>
                         <td>₹<%= products[i].total_price %></td>
+                        <td>
+                          <% if (products[i].list === 'listed') { %>
+                            <span class="text-success"><%= products[i].list %></span>
+                        <% } else if (products[i].list === 'unlisted') { %>
+                            <span class="text-danger"><%= products[i].list %></span>
+                        <% } %>
+                      </td>
                         <td><a href="/update-product?id=<%= products[i]._id %>" class="btn border-shadow shadow update">
                           <span class="material-symbols-outlined">edit</span>
                       </a>
                       <a class="btn border-shadow shadow delete" data-id=<%= products[i]._id %>>
                         <span class="material-symbols-outlined">delete</span>
+                      </a>
+                      <a href="/list-product?id=<%= products[i]._id %>" class="btn border-shadow shadow visible">
+                        <span class="material-symbols-outlined">visibility</span>
                       </a></td>
                     </tr>
                     <% }%>
             </tbody>
         </table>
+      </div>
+      </div>
     </form>
-     
+     <br><br><br><br>
     </div>
   </div>
 </main>
-<%-include('include/UIdark')-%>
+<%-include('include/UIdark')-%> 
 <script>
   new DataTable('#userTable');
 if(window.location.pathname=="/products"){
@@ -155,4 +176,5 @@ if(window.location.pathname=="/products"){
 }
 </script>
 <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+
 <%-include('include/footer2')-%>

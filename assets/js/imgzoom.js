@@ -1,5 +1,5 @@
-document.getElementById('imagecontainer').addEventListener('mouseover', function(){
-    imageZoom('feat')
+document.getElementById('img-container').addEventListener('mouseover', function(){
+    imageZoom('featured')
     
 })
 
@@ -19,6 +19,8 @@ function imageZoom(imgID){
 
 	function moveLens(){
 		
+
+        //1
 		let pos = getCursor()
 		//console.log('pos:', pos)
 
@@ -69,4 +71,4 @@ function imageZoom(imgID){
 
 }
 
-imageZoom('feat')
+imageZoom('featured')

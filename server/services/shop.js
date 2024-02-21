@@ -1,47 +1,30 @@
 const axios= require('axios');
 const Userdb = require('../model/model');
-const connectDB = require('../database/connection');
 const jwt = require('jsonwebtoken');
 const Categorydb =require('../model/categorymodel');
 const Productdb =require('../model/productmodel');
 
 exports.prodetail=async(req,res)=>{
-        const productId = req.query.id; 
-        const product = await Productdb.findById(productId);
-        const categories=await Categorydb.find({});
-        const products=await Productdb.find({});
-        const relatedProducts= await Productdb.find({category: product.category,_id:{$ne: productId}}).limit(3);
-    if(req.cookies.userToken){
-        
-    res.render('productdetails',{userToken: req.cookies.userToken,product: product, categories: categories,products: products,relatedProducts: relatedProducts})
-    }
-    else if(req.cookies.adminToken){
-        res.redirect('/admin/manage');
-    }
-    else{
-        res.render('productdetails',{userToken: undefined,product: product, categories: categories,products: products,relatedProducts: relatedProducts}) 
-    }
-}
-exports.prodetail=async(req,res)=>{
     const productId = req.query.id; 
+    
     const product = await Productdb.findById(productId);
     const categories=await Categorydb.find({});
     const products=await Productdb.find({});
     const relatedProducts= await Productdb.find({category: product.category,_id:{$ne: productId}}).limit(3);
-if(req.cookies.userToken){
-    
-res.render('productdetails',{userToken: req.cookies.userToken,product: product, categories: categories,products: products,relatedProducts: relatedProducts})
-}
-else if(req.cookies.adminToken){
+    if(req.cookies.userToken){
+    const email= req.session.email;
+    const user = await Userdb.findOne({ email: email });
+    res.render('productdetails',{userToken: req.cookies.userToken,product: product, categories: categories,products: products,relatedProducts: relatedProducts,user: user})
+    }
+    else if(req.cookies.adminToken){
     res.redirect('/admin/manage');
-}
-else{
+    }
+    else{
     res.render('productdetails',{userToken: undefined,product: product, categories: categories,products: products,relatedProducts: relatedProducts}) 
-}
+    }
 }
 exports.men=async(req, res) => {
     try {
-        // Find category ID for "Men" category
         const menCategory = await Categorydb.findOne({ category: 'Men' });
 
         if (!menCategory) {
@@ -51,7 +34,9 @@ exports.men=async(req, res) => {
         // Find products with category ID matching "Men" category
         const menProducts = await Productdb.find({ category: menCategory._id });
         if(req.cookies.userToken){
-            res.render('eachcategory', { relatedProducts: menProducts,userToken: req.cookies.userToken,catname:'Men' }); 
+            const email= req.session.email;
+            const user = await Userdb.findOne({ email: email });
+            res.render('eachcategory', { relatedProducts: menProducts,userToken: req.cookies.userToken,catname:'Men' ,user: user}); 
         }
         else if(req.cookies.adminToken){
             res.redirect('/admin/manage');
@@ -65,9 +50,7 @@ exports.men=async(req, res) => {
 };
 exports.women=async(req, res) => {
     try {
-        // Find category ID for "Men" category
         const WomenCategory = await Categorydb.findOne({ category: 'Women' });
-
         if (!WomenCategory) {
             return res.status(404).send('Category not found');
         }
@@ -75,7 +58,9 @@ exports.women=async(req, res) => {
         // Find products with category ID matching "Men" category
         const WomenProducts = await Productdb.find({ category: WomenCategory._id });
         if(req.cookies.userToken){
-            res.render('eachcategory', { relatedProducts: WomenProducts,userToken: req.cookies.userToken,catname:'Women'  }); 
+            const email= req.session.email;
+            const user = await Userdb.findOne({ email: email });
+            res.render('eachcategory', { relatedProducts: WomenProducts,userToken: req.cookies.userToken,catname:'Women',user:user  }); 
         }
         else if(req.cookies.adminToken){
             res.redirect('/admin/manage');
@@ -105,7 +90,9 @@ exports.kids = async (req, res) => {
 
         // Render product showing page and pass products data
         if (req.cookies.userToken) {
-            res.render('eachcategory', { relatedProducts, userToken: req.cookies.userToken,catname:'Kid'  });
+            const email= req.session.email;
+            const user = await Userdb.findOne({ email: email });
+            res.render('eachcategory', { relatedProducts, userToken: req.cookies.userToken,catname:'Kid' ,user: user });
         } else if (req.cookies.adminToken) {
             res.redirect('/admin/manage');
         } else {
@@ -116,4 +103,40 @@ exports.kids = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
-
+exports.account=async (req,res)=>{
+    if (req.cookies.userToken) {
+    const user = await Userdb.findOne({ email: req.session.email });
+    if (!user) {
+        // Handle case where user is not found
+        console.error("User not found");
+        // Render an error page or redirect to a relevant route
+        return res.status(404).render('error', { message: 'User not found' });
+    }
+    res.render("profile",{userToken: req.cookies.userToken, user: user});
+}
+else if (req.cookies.adminToken) {
+    res.redirect('/admin/manage');
+}
+else{
+    res.redirect('/home');
+}
+};
+exports.useraddress=async (req,res)=>{
+    if (req.cookies.userToken) {
+    const user = await Userdb.findOne({ email: req.session.email });
+    if (!user) {
+        // Handle case where user is not found
+        console.error("User not found");
+        // Render an error page or redirect to a relevant route
+        return res.status(404).render('error', { message: 'User not found' });
+    }
+    res.render("address",{userToken: req.cookies.userToken, user: user});
+}
+else if (req.cookies.adminToken) {
+    res.redirect('/admin/manage');
+}
+else{
+    res.redirect('/home');
+}
+};
+ 

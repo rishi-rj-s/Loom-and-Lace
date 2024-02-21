@@ -60,3 +60,42 @@ exports.addcategory=(req,res)=>{
         }
     }
 };
+exports.list=async (req, res) => {
+    try {
+        const productId = req.query.id; 
+        const product = await Productdb.findById(productId);
+
+        if (!product) {
+            return res.status(404).send('User not found');
+        }
+
+        product.list = product.list === 'listed' ? 'unlisted' : 'listed';
+
+        await product.save();
+
+        res.redirect('/products'); 
+    } catch (error) {
+        console.error('Error blocking/unblocking user:', error);
+        res.status(500).send('Error occurred while updating user status');
+    }
+}
+exports.listcat=async (req, res) => {
+    try {
+        const categoryID = req.query.id; 
+        const category = await Categorydb.findById(categoryID);
+        if (!category) {
+            return res.status(404).send('User not found');
+        }
+
+        category.list = category.list === 'listed' ? 'unlisted' : 'listed';
+        
+        await category.save(); 
+
+        await Productdb.updateMany({ category: categoryID }, { catlist: category.list });
+
+        res.redirect('/admin/categories'); 
+    } catch (error) {
+        console.error('Error blocking/unblocking user:', error);
+        res.status(500).send('Error occurred while updating user status');
+    }
+}

@@ -40,7 +40,7 @@ exports.catcreate=async (req,res)=>{
     try {
         // Fetch all categories from the Categorydb collection
         const categories = await Categorydb.find();
-
+ 
         // Render the category EJS template and pass the categories data
         res.render('category', { categories });
     } catch (error) {

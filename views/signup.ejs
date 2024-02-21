@@ -1,17 +1,17 @@
 <%-include('include/header')-%>
 <!-- navbar -->
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(171, 171, 171);">
+<nav class="navbar navbar-expand-lg navbar-light sticky-top" style="background-color: rgb(171, 171, 171);">
     <div class="container-fluid">
       <a class="navbar-brand fw-bolder" href="#">LOOM & LACE</a>
     </div>
   </nav>
 
   <!-- SIgnup page -->
-  <div class="row mt-5">
+  <div class="row mt-2">
     <div class="col-12">
       <div class="mb-5">
         <h2 class="display-5 fw-bold text-center">Create Account</h2>
-        <p class="text-center m-0">Already have an account? <a href="/loginpage">Sign in</a></p>
+        <p class="text-center mb-2">Already have an account? <a href="/loginpage">Sign in</a></p>
       </div>
     </div>
   </div>
@@ -22,21 +22,23 @@
                   <div class="col-12 col-lg-10 col-xl-8">
                     <div class="row gy-5 justify-content-center">
                       <div class="col-12 col-lg-5">
+                        <div class="col-12">
+                          <a href="/auth/google" class="rounded border-black btn btn-light w-100"><img src="/img/google.svg" alt="" width="20px" class="me-2">Signup With Google</a></div><hr>
                           <div class="row gy-3 overflow-hidden">
                             <div class="col-12">
-                              <div class="form-floating mb-3">
+                              <div class="form-floating mb-2">
                                 <input type="text" class="form-control border border-bottom rounded-0" name="name" id="name" value="" placeholder="Username" required>
                                 <label for="name" class="form-label">Username</label>
                               </div>
                             </div>
                             <div class="col-12">
-                              <div class="form-floating mb-3">
+                              <div class="form-floating mb-2">
                                 <input type="email" class="form-control border border-bottom rounded-0" name="email" id="email" value="" placeholder="Email" required>
                                 <label for="email" class="form-label">Email</label>
                               </div>
                             </div>
                             <div class="col-12">
-                              <div class="form-floating mb-3">
+                              <div class="form-floating mb-2">
                                 <input type="password" class="form-control border border-bottom rounded-0" name="password" id="password" value="" placeholder="Password" required>
                                 <label for="password" class="form-label">Password</label>
                                 <div class="form-check mt-2">

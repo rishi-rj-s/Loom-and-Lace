@@ -1,5 +1,5 @@
 const { query } = require('express');
-var Userdb =require('../model/model');
+const Userdb =require('../model/model');
 const otpGenerator = require('otp-generator');
 const nodemailer = require('nodemailer');
 
@@ -27,7 +27,7 @@ function generateOTP() {
 }
 
 exports.signup= async (req,res)=>{
-   if(req.session.user){
+   if(req.cookies.userToken){
       res.redirect('/');
   }
   else if(req.cookies.adminToken){

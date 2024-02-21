@@ -6,22 +6,27 @@ const bcrypt = require('bcrypt');
 
 const Categorydb =require('../model/categorymodel');
 const Productdb =require('../model/productmodel');
+require('../middleware/auth');
+const passport = require('passport');
 
 exports.home=async(req,res)=>{
     try {
         // Fetch products and categories from the database
         const products = await Productdb.find();
         const categories = await Categorydb.find();
-
         if (req.cookies.adminToken) {
             // If token exists, redirect to the manage page
             res.redirect('/admin/manage');
-        } else if (req.cookies.userToken) {
+        } else
+         if (req.cookies.userToken) {
             try {
+                const email= req.session.email;
+                const user = await Userdb.findOne({ email: email });
                 // Define userToken with the token value
                 const userToken = req.cookies.userToken;
+
                 // Render the login page with user information
-                res.render('index', { userToken: userToken, products: products, categories: categories });
+                res.render('index', { userToken: userToken, products: products, categories: categories,user: user });
             } catch (error) {
                 // If token verification fails, redirect to the index page
                 console.error(error);
@@ -54,6 +59,7 @@ exports.login = async (req, res) => {
         const user = await Userdb.findOne({ email: req.body.email });
         const products=await Productdb.find({});
         const categories=await Categorydb.find({});
+        console.log("user",req.cookies.email)
         if(req.cookies.userToken){
             res.render('index',{ title: "LOOM", products: products, categories: categories });
         }
@@ -81,6 +87,7 @@ exports.login = async (req, res) => {
                     delete req.session.uemail;
                     delete req.session.upass;
                     delete req.session.gender;
+                    req.session.email= req.body.email;
                     res.redirect('/home');
                 } else {
                     res.redirect('/loginpage?pass=wrong');
@@ -200,6 +207,9 @@ exports.manage=(req,res)=>{
     else if(req.cookies.adminToken){
     res.render('admindashboard')
     }
+    else{
+        res.redirect('/');
+    }
 }
 
 exports.users = (req, res) => {
@@ -251,4 +261,5 @@ exports.logout=(req,res)=>{
        }
     })
  }
+
 

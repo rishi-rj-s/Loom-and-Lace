@@ -5,19 +5,19 @@ const multer = require('multer');
 const sharp = require('sharp');
 const path= require('path');
 
-// Multer configuration for file upload
-const upload = multer({
-    limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB limit per file
-    },
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only images are allowed'));
-       }
-    },
-  });
+// // Multer configuration for file upload
+// const upload = multer({
+//     limits: {
+//         fileSize: 10 * 1024 * 1024, // 10MB limit per file
+//     },
+//     fileFilter: (req, file, cb) => {
+//         if (file.mimetype.startsWith('image/')) {
+//             cb(null, true);
+//         } else {
+//             cb(new Error('Only images are allowed'));
+//        }
+//     },
+//   });
   
   exports.createproduct = async (req, res) => {
     // Check if request body and files exist

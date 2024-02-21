@@ -5,6 +5,10 @@ var Categoryschema = new mongoose.Schema({
         type: String,
          required: true,
          },
+    list: {
+            type: String,
+            default: 'listed'
+        },  
     description: { 
         type: String },
 })

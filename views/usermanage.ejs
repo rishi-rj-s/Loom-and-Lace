@@ -79,7 +79,7 @@
       <form action="/" method="POST">
         <table class="table table-striped" id="userTable">
             <thead class="thead-dark">
-                <tr class="bg-dark text-light">
+                <tr class="bg-dark text-white">
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -94,7 +94,8 @@
                     <tr class="mt-3">
                         <td><%= i + 1 %></td>
                         <td><%= users[i].name %></td>
-                        <td><%= users[i].email %></td>
+                        <td><%if(users[i].googleId){%>Google: <%}%>
+                          <%= users[i].email || users[i].googleId %></td>
                         <td><%= users[i].gender %></td>
                         <td><%= new Date(users[i].createdAt).toLocaleDateString() %></td>
                         <td>

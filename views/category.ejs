@@ -89,6 +89,7 @@
                     <th>ID</th>
                     <th>Category name</th>
                     <th>Category Description</th>
+                    <th>Category Description</th>
                     <th>Action</th>
                 </tr>
               </thead>
@@ -98,12 +99,23 @@
                        <td><%= i + 1 %></td>
                        <td><%= categories[i].category %></td>
                        <td><%= categories[i].description %></td>
+                       <td>
+                        <% if (categories[i].list === 'listed') { %>
+                          <span class="text-success"><%= categories[i].list %></span>
+                      <% } else if (categories[i].list === 'unlisted') { %>
+                          <span class="text-danger"><%= categories[i].list %></span>
+                      <% } %>
+                    </td>
                        <td><a href="/update-category?id=<%= categories[i]._id %>" class="btn border-shadow shadow update">
                         <span class="material-symbols-outlined">edit</span>
                     </a>
                     <a class="btn border-shadow shadow delete" data-id=<%= categories[i]._id %>>
                       <span class="material-symbols-outlined">delete</span>
-                    </a></td>
+                    </a>
+                    <a href="/list-cat?id=<%= categories[i]._id %>" class="btn border-shadow shadow visible">
+                      <span class="material-symbols-outlined">visibility</span>
+                    </a>
+                    </td>
                     </tr>
                     <% }%>
             </tbody>

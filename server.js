@@ -8,6 +8,9 @@ const express =require('express');
  const nocache = require("nocache");  
  const jwt = require('jsonwebtoken');
  const cookieParser = require('cookie-parser');
+ const passport= require('passport');
+ require('passport-google-oauth20').Strategy
+ require('./server/middleware/auth');
 
  const connectDB =require('./server/database/connection')
 
@@ -34,10 +37,12 @@ app.set("view engine","ejs")
 
 app.use(session({
     secret : uuidv4(),
-    cookie: {maxAge: 300000},
+    cookie: {maxAge: 3600000},
     resave :false,
     saveUninitialized:true
 }))
+app.use(passport.initialize());
+app.use(passport.session());
 
 // app.use(express.static('public'))
 app.use('/uploads',express.static('uploads'));
@@ -51,6 +56,16 @@ app.use('/js',express.static(path.resolve(__dirname,"assets/js")))
 app.get('/', async (req, res) => {
     res.redirect('/home');
 });
+
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), (req, res) => {
+  const userToken = req.user.userToken; // Assuming userToken is attached to the user object by Passport
+  res.cookie('userToken', userToken);
+    res.redirect('/');
+});
+
 app.use('/',require("./server/routes/router"))
+
 
  app.listen(PORT,()=>{ console.log(`Server is running on http://localhost:${PORT}`)})

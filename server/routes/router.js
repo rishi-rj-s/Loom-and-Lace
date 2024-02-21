@@ -10,6 +10,7 @@ const shop=require('../services/shop')
 const controller = require('../controller/controller');
 const productcontroller = require('../controller/productcontroller');
 const categorycontroller = require('../controller/categorycontroller');
+
 const storage = multer.diskStorage({
   destination: 'uploads/',
   filename: function (req, file, cb) {
@@ -28,11 +29,14 @@ route.post('/login',services.login);
 route.post('/verify-otp',services.verify);
 route.get('/signup',services.signup);
 
+
 // user home side
 route.get('/prodetail',shop.prodetail);
 route.get('/menrelated',shop.men);
 route.get('/womenrelated',shop.women);
 route.get('/kidsrelated',shop.kids);
+route.get('/useraccount',shop.account);
+route.get('/useraddress',shop.useraddress);
 
 //admin side
 route.get('/admin',services.admin)
@@ -48,6 +52,7 @@ route.get('/admin/addproduct',products.addproduct)
 route.get('/update-product',products.update)
 route.get('/admin/addcategory',products.addcategory)
 route.get('/update-product',products.update)
+route.get('/list-product',products.list)
 
 //api realted to db
 route.post('/api/signup',controller.signup);
@@ -66,5 +71,6 @@ route.get('/admin/categories',categorycontroller.getCategories);
 route.get('/update-category',categorycontroller.getupdateCategory);
 route.post('/api/admin/editcategory/:id',upload.array('images',4 ),categorycontroller.postupdateCategory);
 route.delete('/api/admin/categories/:id',categorycontroller.delete);
+route.get('/list-cat',products.listcat)
 
 module.exports =route
