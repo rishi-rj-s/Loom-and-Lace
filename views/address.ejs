@@ -19,13 +19,46 @@
             </ul>
         </div>
         <div class="col-9 account-content  px-5">
-            <div id="profile" class="rounded bg-white p-5 h-100">
+            <div id="ad" class="rounded bg-white p-5 h-100">
                 <h2>Manage Addresses</h2>
                 <div class="row">
-                    <div class="col-8"><a class="btn btn-primary border rounded px-4 py-2 my-4 w-100" href="#">Add New Address</a></div>
-                </div>
-                  
+                    <div class="col-9"><a  href="/addaddress" class="btn btn-primary border rounded px-4 py-2 my-4 w-100">Add New Address</a></div>
                 
+                <div class="container mt-4">
+                    <ul class="list-group">
+                        <% addresses.forEach(address => { %>
+                        <li class="list-group-item col-9">
+                            <div class="row"><div class="col-10">
+                            <% if(address.addressType=='work'){%>
+                                <label for="work" class="bg-secondary text-white px-2 rounded">work </label>
+                                <% } %>
+                            </div> 
+                            <div class="del col-2">
+                                <ul style="list-style: none;">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" href='/update-address?id=<%= address._id %>'>Edit</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item delete" data-id=<%= address._id %>>Delete</a></li>
+                                        
+                                    </ul>
+                                </li>
+                            </ul>
+                           </div>
+                        </div>
+                            <strong><%= address.name %></strong>
+                            <br>
+                            <strong>Phone: <%= address.mobileNumber %></strong>
+                            <br>
+                            Address: <%= address.address %>, <%= address.locality %>, <%= address.district %>, <%= address.state %> - <%= address.pincode %>
+                        </li>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
             </div>
         </div>
     </div>

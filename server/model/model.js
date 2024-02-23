@@ -15,6 +15,10 @@ var schema = new mongoose.Schema({
     password:{
         type: String
     },
+    addresses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'addressdb'
+    }],
     gender: String,
     status: {
         type: String,

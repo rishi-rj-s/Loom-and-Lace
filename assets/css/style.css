@@ -225,13 +225,6 @@ body{
 	width: 125px;
 }
 
-
-#feat{
-	max-width: 500px;
-	max-height: 600px;
-	cursor: pointer;
-	border: 2px solid rgba(0, 0, 0, 0);
-}
 .account-nav {
 	background-color: #f5f5f5;
 	padding: 20px;

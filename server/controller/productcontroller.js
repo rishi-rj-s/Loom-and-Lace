@@ -1,9 +1,11 @@
 const { query } = require('express');
 const Categorydb =require('../model/categorymodel');
 const Productdb =require('../model/productmodel');
+const Cartdb =require('../model/cartmodel');
 const multer = require('multer');
 const sharp = require('sharp');
 const path= require('path');
+const Userdb = require('../model/model');
 
 // // Multer configuration for file upload
 // const upload = multer({
@@ -164,3 +166,55 @@ exports.delete= (req,res)=>{
         res.status(500).send({ message: "Could not delete user with id "+id});
     });
 }
+exports.addtocart = async (req, res) => {
+    try {
+        const { productId, userId } = req.body;
+        const user = await Userdb.findOne({ email: req.session.email });
+       
+        // Always set the quantity to 1 when adding a new item
+        const parsedQuantity = 1;
+ 
+        let cart = await Cartdb.findOne({ user: userId });
+ 
+        if (!cart) {
+            cart = new Cartdb({
+                user: userId,
+                items: []
+            });
+        }
+        const existingItemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+
+        if (existingItemIndex !== -1) {
+            cart.items[existingItemIndex].quantity += parsedQuantity;
+        } else {
+            cart.items.push({ productId, quantity: parsedQuantity });
+        }
+        await cart.save();
+
+        // Fetch the updated cart with product details
+        const cartItems = await Cartdb.findOne({ user: userId }).populate('items.productId');
+        
+        // Calculate total amount and total discount
+        let totalAmount = 0;
+        let totalDiscount = 0;
+        cartItems.items.forEach(item => {
+            const { productId, quantity } = item;
+            const totalPrice = productId.price * quantity;
+            const totalDiscountAmount = productId.total_price * quantity;
+
+            totalAmount += totalPrice;
+            totalDiscount += totalDiscountAmount;
+        });
+        
+        // Update the cart with total amount and total discount
+        cartItems.totalAmount = totalAmount;
+        cartItems.totalDiscount = totalDiscount;
+        await cartItems.save();
+        
+        // Render the cart page with the updated cartItems
+         res.redirect('/cart');
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

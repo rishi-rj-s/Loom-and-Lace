@@ -21,7 +21,7 @@
         <div class="col-9 account-content  px-5">
             <div id="profile" class="rounded bg-white p-5">
                 <h2>Profile</h2>
-                <form action="/update-user/<%= user.id %>" method="post" encType="multipart/form-data" class="p-5 sm:p-10" id="profileForm">
+                <form action="/update-user/<%= user.id %>" method="post" class="p-5 sm:p-10" id="profileForm">
                     <div class="row">
                         <label class="col-9"><b>Personal Information </b><a href="#" class="ms-5 edit-link" onclick="enableEdit()">Edit</a></label>
                     </div>
@@ -30,22 +30,22 @@
                             <input type="hidden" id="user_id" name="id" value="<%= user.id %>">
                             <label for="name" class="col-6 col-form-label me-5">Username:</label><br>
                             <div class="col-6 me-5">
-                                <input type="text" class="form-control mb-3" name="name" value="<%= user.name %>" required disabled />
-                            </div>
+                                <input type="text" class="form-control mb-3" id="username" name="name" value="<%= user.name %>" required disabled />
+                                </div>
                             <label class="col-6 col-form-label me-5">Gender:</label><br>
                             <div class="col-6 me-5" id="radioInput">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gender" value="male" <% if(user.gender == "Male") { %> checked <% } %> required disabled />
+                                    <input class="form-check-input" type="radio" name="gender" value="Male" <% if(user.gender == "Male") { %> checked <% } %> required disabled />
                                     <label class="form-check-label">Male</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="gender" value="female" <% if(user.gender == "Female") { %> checked <% } %> required disabled />
+                                    <input class="form-check-input" type="radio" name="gender" value="Female" <% if(user.gender == "Female") { %> checked <% } %> required disabled />
                                     <label class="form-check-label">Female</label>
                                 </div>
                             </div>
                             <label for="email" class="col-6 me-5 col-form-label">Email:</label><br>
                             <div class="col-6 me-5">
-                                <input type="email" class="form-control" name="email" value="<%= user.email %>" required disabled />
+                                <input type="email" class="form-control" id="email" name="email" value="<%= user.email || user.googleId%>" required disabled />
                             </div>
                         </div>
                         <div class="row" id="editButtons" style="display: none;">

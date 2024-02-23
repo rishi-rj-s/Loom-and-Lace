@@ -45,7 +45,7 @@ const GOOGLE_CLIENT_SECRET = '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'
 passport.serializeUser((user, done) => {
   const sessionUser = {
     name: user.name,
-    googleId: user.googleId
+    email: user.email
   };
   done(null, sessionUser);  
 });

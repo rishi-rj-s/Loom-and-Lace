@@ -1,105 +1,89 @@
-<%-include('include/header')-%>
+<%- include('include/header') -%>
 
-    <!-- navbar -->
-    <%-include('include/navbr')-%>
+<!-- navbar -->
+<%- include('include/navbr') -%>
 
 <!-- productdetailed -->
-
-      <div class="row g-4 justify-content-between">
-        <div class="col-lg-4 me-5">
-          <div class="row">
+<div class="row g-4 justify-content-between">
+    <div class="col-lg-4 me-5">
+        <div class="row">
             <div class="col-3 ms-4">
-          <% for (let i = 0; i < product.images.length; i++) { %>
-          <div class="thumbnail my-3" onclick="displayImage(this)">
-            <img src="<%= product.images[i] %>" class="pro_image w-75" alt="<%= product.product_name %>">
-          </div>
-          <% } %>
-        </div>
-          
-          <div class="col-8 mt-3">
-          <div class="main-image" id="img-container">
-            <div id="lens"></div>
-            <img src="<%= product.images[0] %>"class="pro_image w-100" id=featured alt="Main Image">
-          </div>
-        </div>
-        </div>
-        </div>
-        <div class="col-lg-7 ps-5">
-            <h2 class="fw-bold mb-3 mt-4"><%= product.brand %></h4>
-            <h5 class="mb-3"><%= product.product_name %></h5>
-            <div class="d-flex mb-4">
-              <i class="fa fa-star text-warning"></i>
-              <i class="fa fa-star text-warning"></i>
-              <i class="fa fa-star text-warning"></i>
-              <i class="fa fa-star text-warning"></i>
-              <i class="fa fa-star"></i>
-          </div>
-          <hr>
-            <h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5>
-            
-            <p class="mb-4"><b>Size : </b><%= product.size %> </p>
-            <p class="mb-4"><b>Colour : </b><%= product.color %> </p>
-            <p class="mb-4 text-primary"><b>Stock : <%= product.stock %></b> </p>
-            <p class="mb-4"><%= product.description %></p>
-            <div class="input-group quantity mb-5 row" style="width: 200px;">
-                <div class="input-group-btn col">
-                    <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
-                        <i class="fa fa-minus"></i>
-                    </button>
+                <% for (let i = 0; i < product.images.length; i++) { %>
+                <div class="thumbnail my-3" onclick="displayImage(this)">
+                    <img src="<%= product.images[i] %>" class="pro_image w-75" alt="<%= product.product_name %>">
                 </div>
-                <input type="text" class="col form-controlq form-control-sm text-center border-0" value="1">
-                <div class="input-group-btn col">
-                    <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                        <i class="fa fa-plus"></i>
-                    </button>
+                <% } %>
+            </div>
+
+            <div class="col-8 mt-3">
+                <div class="main-image" id="img-container">
+                    <div id="lens"></div>
+                    <img src="<%= product.images[0] %>" class="pro_image w-100" id="featured" alt="Main Image">
                 </div>
             </div>
-            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa-regular fa-heart me-2 text-danger"></i> Wishlist</a>
-          </div>
+        </div>
+    </div>
+    <div class="col-lg-7 ps-5">
+        <h2 class="fw-bold mb-3 mt-4"><%= product.brand %></h2>
+        <h5 class="mb-3"><%= product.product_name %></h5>
+        <div class="d-flex mb-4">
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star text-warning"></i>
+            <i class="fa fa-star"></i>
+        </div>
+        <hr>
+        <h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5>
 
- <!-- description and reviews -->
-  <%-include('include/descriptionreview')-%>
+        <p class="mb-4"><b>Size : </b><%= product.size %> </p>
+        <p class="mb-4"><b>Colour : </b><%= product.color %> </p>
+        <p class="mb-4 text-primary"><b>Stock : <%= product.stock %></b> </p>
+        <p class="mb-4"><%= product.description %></p>
+        <div class="row">
+            <div class="col-3">
+        <% if (userToken && product.stock > 0) { %>
+            <% if (productInCart && productInCart.quantity > 0) { %>
+                <a href="/cart" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">Go To Cart</a>
+            <% } else { %>
+                <form id="addToCartForm" method="POST" action="/addtocart/<%= product._id %>">
+                    <input type="hidden" name="productId" value="<%= product._id %>">
+                    <input type="hidden" name="userId" value="<%= user._id %>">
+                    <button type="submit" id="addToCartBtn" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                        <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                    </button>
+                </form>
+            <% } %>
+        <% } else { %>
+            <a href="/loginpage" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">Login to Add to Cart</a>
+        <% } %>
+    </div>
+    <div class="col-3">
+        <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa-regular fa-heart me-2 text-danger"></i> Wishlist</a>
+    </div>
 </div>
+    </div>
+
+    <!-- description and reviews -->
+    <%- include('include/descriptionreview') -%>
+</div>
+
 <!-- related items -->
 <hr>
 <h2 class="ms-5">Related Items</h2>
 <div class="row product__filter">
-<%-include('include/related')-%>
-
+    <%- include('include/related') -%>
 </div>
 
-
-
 <!-- footer -->
-
-<%-include('include/userFooter')-%>
+<%- include('include/userFooter') -%>
 
 <script>
- let currentQuantity = 1;
-
-// When the minus button is clicked
-document.querySelector('.btn-minus').addEventListener('click', () => {
-    if (currentQuantity > 0) {
-        currentQuantity -= 1;
+    // image
+    function displayImage(element) {
+        var mainImage = document.getElementById("featured");
+        mainImage.src = element.getElementsByTagName("img")[0].src;
     }
-    // Update the input field value
-    document.querySelector('.form-controlq').value = currentQuantity;
-});
-
-// When the plus button is clicked
-document.querySelector('.btn-plus').addEventListener('click', () => {
-    currentQuantity += 1;
-    // Update the input field value
-    document.querySelector('.form-controlq').value = currentQuantity;
-});
-
-// image
-function displayImage(element) {
-  var mainImage = document.getElementById("featured");
-  mainImage.src = element.getElementsByTagName("img")[0].src;
-}              
-
 </script>
 <script src="/js/imgzoom.js"></script>
-<%-include('include/footer')-%>
+<%- include('include/footer') -%>

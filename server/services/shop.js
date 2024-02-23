@@ -2,27 +2,38 @@ const axios= require('axios');
 const Userdb = require('../model/model');
 const jwt = require('jsonwebtoken');
 const Categorydb =require('../model/categorymodel');
+const Addressdb =require('../model/addressmodel');
 const Productdb =require('../model/productmodel');
+const Cartdb =require('../model/cartmodel');
 
-exports.prodetail=async(req,res)=>{
-    const productId = req.query.id; 
-    
-    const product = await Productdb.findById(productId);
-    const categories=await Categorydb.find({});
-    const products=await Productdb.find({});
-    const relatedProducts= await Productdb.find({category: product.category,_id:{$ne: productId}}).limit(3);
-    if(req.cookies.userToken){
-    const email= req.session.email;
-    const user = await Userdb.findOne({ email: email });
-    res.render('productdetails',{userToken: req.cookies.userToken,product: product, categories: categories,products: products,relatedProducts: relatedProducts,user: user})
-    }
-    else if(req.cookies.adminToken){
-    res.redirect('/admin/manage');
-    }
-    else{
-    res.render('productdetails',{userToken: undefined,product: product, categories: categories,products: products,relatedProducts: relatedProducts}) 
+exports.prodetail = async (req, res) => {
+    try {
+        const productId = req.query.id;
+        const product = await Productdb.findById(productId);
+        const categories = await Categorydb.find({});
+        const products = await Productdb.find({});
+        const relatedProducts = await Productdb.find({ category: product.category, _id: { $ne: productId } }).limit(3);
+
+        if (req.cookies.userToken) {
+            const email = req.session.email;
+            const user = await Userdb.findOne({ email: email });
+            const cart = await Cartdb.findOne({ user: user._id });
+            let productInCart = null;
+            if (cart) {
+                productInCart = cart.items.find(item => item.productId.toString() === productId);
+            }
+            res.render('productdetails', { userToken: req.cookies.userToken, product: product, categories: categories, products: products, relatedProducts: relatedProducts, user: user, productInCart: productInCart });
+        } else if (req.cookies.adminToken) {
+            res.redirect('/admin/manage');
+        } else {
+            res.render('productdetails', { userToken: undefined, product: product, categories: categories, products: products, relatedProducts: relatedProducts, user: undefined });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 exports.men=async(req, res) => {
     try {
         const menCategory = await Categorydb.findOne({ category: 'Men' });
@@ -124,13 +135,15 @@ else{
 exports.useraddress=async (req,res)=>{
     if (req.cookies.userToken) {
     const user = await Userdb.findOne({ email: req.session.email });
+    const userId= user._id;
+    const addresses= await Addressdb.find({user: userId});
     if (!user) {
         // Handle case where user is not found
         console.error("User not found");
         // Render an error page or redirect to a relevant route
         return res.status(404).render('error', { message: 'User not found' });
     }
-    res.render("address",{userToken: req.cookies.userToken, user: user});
+    res.render("address",{userToken: req.cookies.userToken, user: user,addresses:addresses});
 }
 else if (req.cookies.adminToken) {
     res.redirect('/admin/manage');
@@ -139,4 +152,53 @@ else{
     res.redirect('/home');
 }
 };
- 
+exports.addaddress=async (req,res)=>{
+    if (req.cookies.userToken) {
+    const user = await Userdb.findOne({ email: req.session.email });
+    if (!user) {
+        // Handle case where user is not found
+        console.error("User not found");
+        // Render an error page or redirect to a relevant route
+        return res.status(404).render('error', { message: 'User not found' });
+    }
+    res.render("addaddress",{userToken: req.cookies.userToken, user: user});
+}
+else if (req.cookies.adminToken) {
+    res.redirect('/admin/manage');
+}
+else{
+    res.redirect('/home');
+}
+};
+exports.editaddress=async (req,res)=>{
+    if (req.cookies.userToken) {
+    const user = await Userdb.findOne({ email: req.session.email });
+    if (!user) {
+        // Handle case where user is not found
+        console.error("User not found");
+        // Render an error page or redirect to a relevant route
+        return res.status(404).render('error', { message: 'User not found' });
+    }
+    res.render("editaddress",{userToken: req.cookies.userToken, user: user});
+}
+else if (req.cookies.adminToken) {
+    res.redirect('/admin/manage');
+}
+else{
+    res.redirect('/home');
+}
+};
+exports.cart = async (req, res) => {
+    try {
+        const user = await Userdb.findOne({ email: req.session.email });
+        // Always set the quantity to 1 when adding a new item
+        const parsedQuantity = 1;
+
+        const cart = await Cartdb.findOne({ user: user._id }).populate('items.productId');
+
+        res.render('cart', { userToken: req.cookies.userToken, cart: cart, user: user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}

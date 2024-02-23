@@ -37,6 +37,16 @@ route.get('/womenrelated',shop.women);
 route.get('/kidsrelated',shop.kids);
 route.get('/useraccount',shop.account);
 route.get('/useraddress',shop.useraddress);
+route.get('/addaddress',shop.addaddress);
+route.get('/cart',shop.cart)
+
+//home api
+route.post('/update-user/:id',controller.updateuser);
+route.post('/api/addaddress/:id',controller.postaddaddress);
+route.delete('/api/useraddress/:id',controller.deleteaddress);
+route.get('/update-address',controller.updateaddress)
+route.post('/api/editaddress/:id',controller.posteditaddress);
+route.post('/addtocart/:id',productcontroller.addtocart);
 
 //admin side
 route.get('/admin',services.admin)
