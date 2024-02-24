@@ -169,9 +169,7 @@ exports.delete= (req,res)=>{
 exports.addtocart = async (req, res) => {
     try {
         const { productId, userId } = req.body;
-        const user = await Userdb.findOne({ email: req.session.email });
        
-        // Always set the quantity to 1 when adding a new item
         const parsedQuantity = 1;
  
         let cart = await Cartdb.findOne({ user: userId });
@@ -182,6 +180,7 @@ exports.addtocart = async (req, res) => {
                 items: []
             });
         }
+
         const existingItemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
 
         if (existingItemIndex !== -1) {
@@ -218,3 +217,47 @@ exports.addtocart = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+exports.deletecart = async (req, res) => {
+            const itemId = req.params.id;
+            const user = await Userdb.findOne({ email: req.session.email });
+            const userId= user._id;
+            const updatedCart = await Cartdb.findOneAndUpdate(
+                { user: userId },
+                { $pull: { items: { _id: itemId } } },
+                { new: true }
+            ).then(data =>{
+                if(!data){
+                    res.status(404).send({message:  `Cannot delete with id ${id}.Id may be wrong`})
+                }else{
+                    res.send({
+                        message: "Cart was was deleted successfully!!!"
+                    })
+                }
+            })
+            .catch(err=>{
+                res.status(500).send({ message: "Could not delete cart item with id "+id});
+            });    
+};
+exports.addquantitycart=async (req, res) => {
+        const itemId = req.params.id;
+        const newQuantity = parseInt(req.body.quantity);
+
+        const user = await Userdb.findOne({ email: req.session.email });
+        const userId= user._id;
+        const updatedCart = await Cartdb.findOneAndUpdate(
+            { user: userId, "items._id": itemId }, // Filter by user ID and item ID
+            { $set: { "items.$.quantity": newQuantity } }, // Update the quantity of the matched item
+            { new: true }
+        ).then(data =>{
+            if(!data){
+                res.status(404).send({message:  `Cannot delete with id ${id}.Id may be wrong`})
+            }else{
+                res.send({
+                    message: "Cart quantity added succesfully"
+                })
+            }
+        })
+        .catch(err=>{
+            res.status(500).send({ message: "Could not delete cart item with id "+id});
+        }); 
+}

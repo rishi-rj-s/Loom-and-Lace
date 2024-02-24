@@ -39,6 +39,9 @@ route.get('/useraccount',shop.account);
 route.get('/useraddress',shop.useraddress);
 route.get('/addaddress',shop.addaddress);
 route.get('/cart',shop.cart)
+route.delete('/api/cart/:id',productcontroller.deletecart);
+route.put('/api/cart/:id',productcontroller.addquantitycart);
+route.get('/checkout',shop.checkout)
 
 //home api
 route.post('/update-user/:id',controller.updateuser);

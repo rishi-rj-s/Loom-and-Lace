@@ -3,8 +3,40 @@
 <!-- navbar -->
 <%- include('include/navbr') -%>
 
+<% if(cart.totalDiscount==0){ %>
+  <div id="countZero" class="container-fluid mt-100">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/home" class="text-black text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Cart</li>
+      </ol>
+    </nav>
+    <div class="row">
+    
+     <div class="col-md-12">
+
+       <div class="card-body cart">
+           <div class="col-sm-12 empty-cart-cls text-center">
+             <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
+             <h1><strong>Your Cart is Empty</strong></h1>
+             <h2>Add something to make me happy :)</h2>
+             <a href="/" class="btn btn-primary cart-btn-transform m-3" data-abc="true">Continue Shopping</a>
+           </div>
+       </div>
+     </div>
+
+    </div>
+    </div>
+    <%}%>
+<% if(cart.totalDiscount>0){ %>
 <section class="">
   <div class="container py-5">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/home" class="text-black text-decoration-none">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Cart</li>
+      </ol>
+    </nav>
     <div class="row d-flex justify-content-center">
       <div class="col-9">
 
@@ -16,6 +48,7 @@
                 <th scope="col">Size</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Price</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -41,7 +74,7 @@
                               <i class="fa fa-minus"></i>
                           </button>
                       </div>
-                      <input type="number" class="col form-control form-control-sm text-center border-0" value="<%= item.quantity %>" min="1" max="<%= Math.min(item.productId.stock, 5) %>" id="quantityInput" name="quantity">
+                      <input type="number" class="col form-control form-control-sm add text-center border-0" value="<%= item.quantity %>" min="1" max="<%= Math.min(item.productId.stock, 5) %>" id="quantityInput" name="quantity" data-id=<%= item._id %> >
                       <div class="input-group-btn col">
                           <button class="btn btn-sm btn-plus rounded-circle bg-light border">
                               <i class="fa fa-plus"></i>
@@ -53,14 +86,19 @@
                 <td class="align-middle">
                   <p class="mb-0" style="font-weight: 500;">₹<%= item.quantity*item.productId.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= item.quantity*item.productId.price %></label><label class="text-secondary ms-1"> (<%= item.productId.discount %>%)</label></p>
                 </td>
+                <td class="align-middle">
+                  <a class="btn delete" data-id=<%= item._id %>>
+                    <i class="fa-solid fa-x"></i>
+                  </a>
+                </td>
               </tr>
               <% }) %>
             </tbody>
           </table>
         </div>
       </div>
-      <div class="col-3">
-      <div class="card fixed-plugin-button position-fixed shadow-2-strong mb-5 mb-lg-0" style="border-radius: 16px;">
+      <div class="col-3 mb-3">
+      <div class="card fixed-plugin-button position-fixed shadow-2-strong mb-5 mb-lg-0" style="border-radius: 16px; width: 300px;">
         <div class="card-body p-4">
 
               <div class="d-flex justify-content-between" style="font-weight: 500;">
@@ -76,16 +114,16 @@
               <hr class="my-4">
 
               <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                <p class="mb-2">Total (tax included)</p>
+                <p class="mb-2">Total (tax included)   :</p>
                 <p id="total" class="mb-2">₹<%= cart.totalDiscount %></p>
               </div>
 
-              <button type="button" class="btn btn-primary btn-block btn-lg">
+              <a href="/checkout" class=" w-100 btn btn-primary btn-block btn-lg">
                 <div class="d-flex justify-content-between">
                   <span>Checkout </span>
                   <span> ₹<%= cart.totalDiscount %></span>
                 </div>
-              </button>
+              </a>
 
         </div>
       </div>
@@ -93,35 +131,85 @@
     </div>
   </div>
 </section>
-
+<%}%>
 <%- include('include/userFooter') -%>
 
 <%- include('include/footer') -%>
 
 <script>
-     document.querySelectorAll('.btn-minus').forEach(button => {
-        button.addEventListener('click', () => {
-            const quantityInput = button.closest('.quantity').querySelector('input');
-            let currentQuantity = parseInt(quantityInput.value);
-            if (currentQuantity > 1) {
-                currentQuantity -= 1;
-                quantityInput.value = currentQuantity;
-                updateTotalPrice(quantityInput, currentQuantity);
-            }
-        });
-    });
+ function updateCart(itemId, newQuantity) {
+  // AJAX request to update cart
+  $.ajax({
+      url: `/api/cart/${itemId}`,
+      method: "PUT",
+      data: { quantity: newQuantity },
+      success: function(response) {
+          // alert("Cart item quantity updated successfully");
+          location.reload();
+      },
+      error: function(xhr, status, error) {
+          console.error(xhr.responseText);
+      }
+  });
+}
 
-    document.querySelectorAll('.btn-plus').forEach(button => {
-        button.addEventListener('click', () => {
-            const quantityInput = button.closest('.quantity').querySelector('input');
-            let currentQuantity = parseInt(quantityInput.value);
-            const maxQuantity = parseInt(quantityInput.getAttribute('max'));
-            if (currentQuantity < maxQuantity) {
-                currentQuantity += 1;
-                quantityInput.value = currentQuantity;
-                updateTotalPrice(quantityInput, currentQuantity);
-            }
-        });
-    });
+// Event listener for decrement button
+document.querySelectorAll('.btn-minus').forEach(button => {
+  button.addEventListener('click', () => {
+      const quantityInput = button.closest('.quantity').querySelector('input');
+      let currentQuantity = parseInt(quantityInput.value);
+      if (currentQuantity > 1) {
+          currentQuantity -= 1;
+          quantityInput.value = currentQuantity;
+          const itemId = quantityInput.getAttribute('data-id');
+          updateCart(itemId, currentQuantity);
+      }
+  });
+});
 
+// Event listener for increment button
+document.querySelectorAll('.btn-plus').forEach(button => {
+  button.addEventListener('click', () => {
+      const quantityInput = button.closest('.quantity').querySelector('input');
+      let currentQuantity = parseInt(quantityInput.value);
+      const maxQuantity = parseInt(quantityInput.getAttribute('max'));
+      if (currentQuantity < maxQuantity) {
+          currentQuantity += 1;
+          quantityInput.value = currentQuantity;
+          const itemId = quantityInput.getAttribute('data-id');
+          updateCart(itemId, currentQuantity);
+      }
+  });
+});
+
+// Event listener for quantity input field
+document.querySelectorAll('.quantity input').forEach(input => {
+  input.addEventListener('change', () => {
+      const itemId = input.getAttribute('data-id');
+      const newQuantity = parseInt(input.value);
+      updateCart(itemId, newQuantity);
+  });
+});
+  // Delete
+  if (window.location.pathname === "/cart") {
+      const $ondelete = $(".table tbody td a.delete");
+      $ondelete.click(function() {
+          const itemId = $(this).attr("data-id");
+
+          if (confirm("Do you really want to delete this record?")) {
+              $.ajax({
+                  url: `/api/cart/${itemId}`,
+                  method: "DELETE",
+                  success: function(response) {
+                      alert("Cart item deleted successfully");
+                      location.reload();
+                  },
+                  error: function(xhr, status, error) {
+                      console.error(xhr.responseText);
+                  }
+              });
+          }
+      });
+  }
 </script>
+

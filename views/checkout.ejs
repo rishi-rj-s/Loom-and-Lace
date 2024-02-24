@@ -1,0 +1,130 @@
+<%- include('include/header') -%>
+
+<!-- navbar -->
+<%- include('include/navbr') -%>
+
+<div class="py-3 py-md-4 checkout">
+    <div class="container-fluid" >
+        <h4>Checkout</h4>
+        <hr>
+        <form id="form-checkout">
+            <div class="row">
+                <!-- <div class="col-md-12 mb-4">
+        <div class="shadow bg-white p-3">
+            <h4 class="text-primary">
+                Item Total Amount :
+                <span class="float-end">$5454</span>
+            </h4>
+            <hr>
+            <small>* Items will be delivered in 3 - 5 days.</small>
+            <br/>
+            <small>* Tax and other charges are included ?</small>
+        </div>
+    </div> -->
+                <div class="d-flex ">
+                    <h5 class="text-dark">
+                        Select Address
+                    </h5>
+                    <a href="/addAddressCheckout" class="ms-4 mb-2 btn btn btn-info">Add new address<i class="fa-sharp fa-solid fa-plus"></i></a>
+
+                </div>
+
+                <div class="col-md-6 ">
+                    <div class="shadow bg-white p-3 rounded">
+                        <%if(addresses){%>
+                            <%addresses.forEach(address=>{ %>
+
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-1 rounded">
+                                            <input class="m-3" type="radio" required name="address"
+                                                value="<%=address._id%>" id="<%= address._id%>">
+                                        </div>
+                                        <div class="col-md-10  g-2 shadow">
+                                            <div class="">
+                                                <!-- Card Header -->
+
+                                                <!-- Card content -->
+
+                                                <div class="card-body">
+                                                    <div class="d-flex">
+                                                        <span class="m-1 font-weight-bold text-uppercase">
+                                                            <%=address.name %>
+                                                        </span>
+                                                    </div>
+                                                    <span class="m-1 font-weight-bold text-uppercase">
+                                                        <%=address.mobileNumber %>
+                                                    </span>
+                                                    <div class="d-flex">
+                                                        <span class="m-1 font-weight-bold text-uppercase">
+                                                            <%=address.address %>
+                                                        </span>
+                                                        <span class="m-1 font-weight-bold text-uppercase">
+                                                            ,<%=address.locality %>
+                                                        </span>
+                                                        <span class="m-1 font-weight-bold text-uppercase">
+                                                            -<%=address.pincode %>
+                                                        </span>
+                                                    </div>
+                                                    <div class="d-flex">
+                                                        <span class="m-1 font-weight-bold text-uppercase">
+                                                            <%=address.district %>
+                                                        </span>
+                                                        <span class="m-1 font-weight-bold text-uppercase">
+                                                            ,<%=address.state %>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <% }) %>
+
+                                    <% } %>
+
+
+                    </div>
+                </div>
+                <div class="col-md-6" >
+                    <div class="shadow bg-white p-3">
+                        <h4 class="text-dark">
+                            Select Payment Method
+                        </h4>
+                        <hr>
+
+
+                        <div class="">
+                            <label class="" for=""><input type="radio" name="paymentMethod" value="cod">
+                                Cash On Delivery(COD)</label>
+                        </div>
+                        <hr>
+                        <div class="d-flex">
+                            <label class="" for=""><input type="radio" name="paymentMethod" value="online">
+                                Razorpay</label>
+                        </div>
+                        <hr>
+                        <!-- <div class="d-flex">
+                            <label class=" pe-3" for=""><input type="radio" name="paymentMethod" value="wallet">
+                                Wallet</label>
+                            <span class="ms-5">Wallet Balance : ₹ 99999</span>
+                        </div> -->
+
+                        <div>
+                            <button class="btn btn-block w-100 btn-primary text-dark me-auto "> PLACE  ORDER</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('include/userFooter') -%>
+
+<%- include('include/footer') -%>
