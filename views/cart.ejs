@@ -196,7 +196,7 @@ document.querySelectorAll('.quantity input').forEach(input => {
       $ondelete.click(function() {
           const itemId = $(this).attr("data-id");
 
-          if (confirm("Do you really want to delete this record?")) {
+          if (confirm("Do you really want to delete this from cart?")) {
               $.ajax({
                   url: `/api/cart/${itemId}`,
                   method: "DELETE",

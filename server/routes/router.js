@@ -10,6 +10,7 @@ const shop=require('../services/shop')
 const controller = require('../controller/controller');
 const productcontroller = require('../controller/productcontroller');
 const categorycontroller = require('../controller/categorycontroller');
+const ordercontroller = require('../controller/ordercontroller');
 
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -38,10 +39,6 @@ route.get('/kidsrelated',shop.kids);
 route.get('/useraccount',shop.account);
 route.get('/useraddress',shop.useraddress);
 route.get('/addaddress',shop.addaddress);
-route.get('/cart',shop.cart)
-route.delete('/api/cart/:id',productcontroller.deletecart);
-route.put('/api/cart/:id',productcontroller.addquantitycart);
-route.get('/checkout',shop.checkout)
 
 //home api
 route.post('/update-user/:id',controller.updateuser);
@@ -49,7 +46,14 @@ route.post('/api/addaddress/:id',controller.postaddaddress);
 route.delete('/api/useraddress/:id',controller.deleteaddress);
 route.get('/update-address',controller.updateaddress)
 route.post('/api/editaddress/:id',controller.posteditaddress);
-route.post('/addtocart/:id',productcontroller.addtocart);
+
+//orders and cart
+route.get('/cart',ordercontroller.cart);
+route.post('/addtocart/:id',ordercontroller.addtocart);
+route.delete('/api/cart/:id',ordercontroller.deletecart);
+route.put('/api/cart/:id',ordercontroller.addquantitycart);
+route.get('/checkout',ordercontroller.checkout);
+route.post('/placeorder',ordercontroller.placeorder);
 
 //admin side
 route.get('/admin',services.admin)
