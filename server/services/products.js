@@ -4,6 +4,9 @@ const connectDB = require('../database/connection');
 const jwt = require('jsonwebtoken');
 const multer= require('multer');
 const Categorydb =require('../model/categorymodel');
+const Orderdb =require('../model/ordermodel');
+const Userdb =require('../model/model');
+
 
 exports.product = async (req, res) => {
     if (req.cookies.adminToken) {
@@ -102,15 +105,15 @@ exports.listcat=async (req, res) => {
 exports.orders = async (req, res) => {
     if (req.cookies.adminToken) {
         try {
-            // Fetch products from the API
-            const orderResponse = await axios.get('http://localhost:3000/api/adminorders');
-            const products = orderResponse.data;
+            const orders = await Orderdb.find().populate({
+                path: 'userId',
+                model: Userdb
+            }).populate({
+                path: 'items.productId',
+                model: Productdb
+            }).exec();
 
-            // Fetch categories from the database
-           
-
-            // Render productmanage view and pass categories and products
-            res.render('adminorder', { categories, products });
+            res.render('adminorder', { orders: orders });
         } catch (error) {
             res.status(500).send({ message: error.message || "Error occurred while fetching products or categories" });
         }
@@ -118,3 +121,31 @@ exports.orders = async (req, res) => {
         res.redirect('/');
     }
 };
+exports.getAdminorderdetails=async (req, res) => {
+    const orderId = req.params.orderId;
+    try {
+        // Find the order by its ID
+        const order = await Orderdb.findById(orderId).populate('items.productId');
+        if (!order) {
+            return res.status(404).render('errorPage', { errorMessage: 'Order not found' });
+        }
+        res.render('orderdetails', { order: order });
+    } catch (error) {
+
+        console.error('Error fetching order details:', error);
+         res.redirect('/admin/orders');
+    }
+};
+exports.updateorderstatus=async (req, res) => {
+    try {
+      const orderId = req.params.orderId;
+      const newStatus = req.body.status;
+
+      const updatedOrder = await Orderdb.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+ 
+      res.json(updatedOrder);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      res.status(500).json({ error: 'Failed to update order status' });
+    }
+  }

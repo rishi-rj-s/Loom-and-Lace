@@ -1,445 +1,70 @@
-<%- include ('../layouts/header') %>
-    <%- include ('../partials/userHeader') %>
-
-        <style>
-            .product-grid {
-                background-color: #fff;
-                font-family: 'Work Sans', sans-serif;
-                text-align: center;
-                transition: all 0.3s ease 0s;
-            }
-
-            .product-grid:hover {
-                box-shadow: 0 0 20px -10px rgba(237, 29, 36, 0.3);
-            }
-
-            .product-grid .product-image {
-                overflow: hidden;
-                position: relative;
-                transition: all 0.3s ease 0s;
-            }
-
-            .product-grid:hover .product-image {
-                border-radius: 0 0 30px 30px;
-            }
-
-            .product-grid .product-image a.image {
-                display: block;
-            }
-
-            .product-grid .product-image img {
-                width: 100%;
-                height: auto;
-            }
-
-            .product-image .pic-1 {
-                backface-visibility: hidden;
-                transition: all 0.5s ease 0s;
-            }
-
-            .product-grid:hover .product-image .pic-1 {
-                opacity: 0;
-            }
-
-            .product-image .pic-2 {
-                width: 100%;
-                height: 100%;
-                backface-visibility: hidden;
-                opacity: 0;
-                position: absolute;
-                top: 0;
-                left: 0;
-                transition: all 0.5s ease 0s;
-            }
-
-            .product-grid:hover .product-image .pic-2 {
-                opacity: 1;
-            }
-
-            .product-grid .product-links {
-                padding: 0;
-                margin: 0;
-                list-style: none;
-                opacity: 0;
-                position: absolute;
-                bottom: 0;
-                right: 10px;
-                transition: all 0.3s ease 0s;
-            }
-
-            .product-grid:hover .product-links {
-                opacity: 1;
-            }
-
-            .product-grid .product-links li {
-                margin: 0 0 10px 0;
-                transform: rotate(360deg) scale(0);
-                transition: all 0.3s ease 0s;
-            }
-
-            .product-grid:hover .product-links li {
-                transform: rotate(0) scale(1);
-            }
-
-            .product-grid:hover .product-links li:nth-child(3) {
-                transition-delay: 0.1s;
-            }
-
-            .product-grid:hover .product-links li:nth-child(2) {
-                transition-delay: 0.2s;
-            }
-
-            .product-grid:hover .product-links li:nth-child(1) {
-                transition-delay: 0.3s;
-            }
-
-            .product-grid .product-links li a {
-                color: #666;
-                background-color: #fff;
-                font-size: 18px;
-                line-height: 42px;
-                width: 40px;
-                height: 40px;
-                border-radius: 50px;
-                display: block;
-                transition: all 0.3s ease 0s;
-            }
-
-            .product-grid .product-links li a:hover {
-                color: #fff;
-                background-color: #ed1d24;
-            }
-
-            .product-grid .product-content {
-                text-align: left;
-                padding: 15px 10px;
-            }
-
-            .product-grid .rating {
-                padding: 0;
-                margin: 0 0 7px;
-                list-style: none;
-            }
-
-            .product-grid .rating li {
-                color: #f7bc3d;
-                font-size: 13px;
-            }
-
-            .product-grid .rating li.far {
-                color: #777;
-            }
-
-            .product-grid .title {
-                font-size: 16px;
-                font-weight: 600;
-                text-transform: capitalize;
-                margin: 0 0 6px;
-            }
-
-            .product-grid .title a {
-                color: #555;
-                transition: all 0.3s ease 0s;
-            }
-
-            .product-grid .title a:hover {
-                color: #1568b0;
-            }
-
-            .product-grid .price {
-                color: #ed1d24;
-                font-size: 18px;
-                font-weight: 700;
-            }
+<%-include ('../layouts/adminHeader') %>
+    <%-include ('../partials/adminSidebar') %>
 
 
-            @media screen and (max-width:990px) {
-                .product-grid {
-                    margin: 0 0 30px;
-                }
-            }
-        </style>
-
-        <div class="container-fluid ">
-
-            <!-- offcanvas starts here -->
-            
-            <div class="col-md-2">
-                <br>
-                <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-                    <i class="fa fa-filter"> | </i>Filter
-                    </button>
-                    
+<div class="container ">
+    <div>
+        <h3 class="m-4">Order Details</h3>
+        <hr>
+    </div>
     
-                <div class="offcanvas offcanvas-start p-0"   data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
-                    aria-labelledby="offcanvasWithBothOptionsLabel">
-                    <div class="offcanvas-header bg-black text-center">
-                        <h5 class="offcanvas-title text-white " id="offcanvasWithBothOptionsLabel">FILTER</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <% if(order){ %>
+    <div class="row justify-content-center">
+
+        <% order.items.forEach((item)=>{ %>
+
+            <div class="card m-3  shadow col-md-8  ">
+                <div class="d-flex justify-content-between m-3" >
+                    <div class="img-container">
+                        <img width="250px" class="img-fluid" src="/uploads/<%= item.productId.productImage1 %>" alt="">
                     </div>
-                    <div class="offcanvas-body container-fluid" >
-                        <!-- Add a form element around the existing content -->
-                        <form action="/filterProducts" method="post">
-                            <div class="filter-sidebar p-0">
-                                <div class="bg-light text-center p-0">
-                                    <h4 class="filter-title">Filter by Category</h4>
-                                </div>
-                                
-                                <ul class="filter-list" style="list-style: none;">
-                                    <!-- Radio buttons for category -->
-                                    <% if( categories){ %>
-                                        <% categories.forEach((category)=>{%>
-                                            <li class="filter-item">
-                                                <input type="radio" name="category" id="category1" class="filter-radio"
-                                                    value="<%= category._id %>">
-                                                <label for="category1" class="filter-label"><%= category.name %></label>
-                                                <hr>
-                                            </li>
-                                            <% }) %>
-                                    <%} %>
-                                    
-                                   
-                                    <!-- Add more radio buttons for other categories -->
-                                </ul>
-    
-                                <div class="bg-light text-center p-0">
-                                    <h4 class="filter-title">Filter by Brand</h4>
-                                </div>
-                                <ul class="filter-list " style="list-style: none;">
-                                    <!-- Checkbox inputs for brands -->
-                                    <% if( brands){ %>
-                                        <% brands.forEach((brand)=>{%>
-                                    <li class="filter-item">
-                                        <input type="checkbox" value="<%= brand._id %>" name="brand" id="brand1" class="filter-checkbox">
-                                        <label for="brand1"  class="filter-label"> <%= brand.name %></label> 
-                                        <hr>
-                                    </li>
-                                    <% }) %>
-                                    <%} %>
-                                    <!-- Add more checkboxes for other brands -->
-                                </ul>
-    
-                                <!-- <h4 class="filter-title">Filter by RAM</h4>
-                                <select name="RAM" class="filter-select">
-                                    <option value="" selected></option> 
-                                    <option value="2GB">2GB</option>
-                                    <option value="4GB">4GB</option>
-                                    <option value="8GB">8GB</option>
-                                    <option value="16GB">16GB</option>
-                                </select> -->
-    
-                                <!-- <h4 class="filter-title">Filter by Internal Storage</h4>
-                                <select name="InternalStorage" class="filter-select">
-                                    <option value="" selected></option> 
-                                    <option value="32GB">32GB</option>
-                                    <option value="64GB">64GB</option>
-                                    <option value="128GB">128GB</option>
-                                    <option value="256GB">256GB</option>
-                                    <option value="512GB">512GB</option>
-                                </select> -->
-    
-                                <!-- <h4 class="filter-title">Filter by Price</h4>
-                                <ul class="filter-list"> -->
-                                    
-                                    <!-- <li class="filter-item">
-                                        <input type="checkbox" value="lte10000" name="DiscountPrice" id="price1" class="filter-checkbox">
-                                        <label for="price1" class="filter-label">₹10,000 and Below</label>
-                                    </li>
-                                    <li class="filter-item">
-                                        <input type="checkbox" name="DiscountPrice" value="gte10001" id="price2" class="filter-checkbox">
-                                        <label for="price2" class="filter-label">₹10,001 - ₹15,000</label>
-                                    </li>
-                                    <li class="filter-item">
-                                        <input type="checkbox" name="DiscountPrice" value="gte 15001" id="price3" class="filter-checkbox">
-                                        <label for="price3" class="filter-label">₹15,001 - ₹25,000</label>
-                                    </li>
-                                    <li class="filter-item">
-                                        <input type="checkbox" name="DiscountPrice" id="price4" class="filter-checkbox">
-                                        <label for="price4" class="filter-label">₹25,001 - ₹50,000</label>
-                                    </li>
-                                    <li class="filter-item">
-                                        <input type="checkbox" name="DiscountPrice" id="price5" class="filter-checkbox">
-                                        <label for="price5" class="filter-label">₹50,001 and Above</label>
-                                    </li>
-                                </ul> -->
-    
-                                <button type="submit" class="apply-button btn btn-larg btn-dark " style="width: 100%;">Apply</button>
-                            </div>
-                        </form>
+                    <div class="m-2" style="width: 2px; background-color: rgb(156, 156, 156); height: 100%;">
+                        <!-- vertical line -->
+                    </div>
+                    <div class="d-flex flex-column">
+                        <span class="fw-light text-primary mt-1">OrderID : <%= order._id %></span>
+                        <span class="fw-bold mt-2"><%= item.productId.name %></span>
+                        <span class="mt-3">Quantity :<%= item.quantity %></span>
+                        <span class="mt-1">Price : ₹<%= item.productId.price %></span>
+                    </div>
+                    <div class="m-2" style="width: 2px; background-color: rgb(163, 163, 163); height: 100%;">
+                            <!-- vertical line -->
+                    </div>
+                    <div  class=" d-flex flex-column mt-4">
+                        <div>
+                            <h6>Shipping Adress :</h6>
+                        </div>
+                        <span class="" >Name: <%= order.shippingAddress.name %></span>
+                        <span class="" >Mobile: <%= order.shippingAddress.mobile %></span>
+                        <span class="" >House/Flat: <%= order.shippingAddress.houseName %></span>
+                        <span class="" >Locality: <%= order.shippingAddress.locality %></span>
+                        <span class="" >PIN: <%= order.shippingAddress.pincode %></span>
+                        <span class="" >Dist:<%= order.shippingAddress.district %></span>
+                        <span class="" >State:<%= order.shippingAddress.state %></span>
                     </div>
                 </div>
+                <hr>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold m-3" >Payment Mode : <span class="text-uppercase "> <%= order.paymentMethod %></span>   </span>
+                        <%if(order.status==='!Cancelled'){ %>
+                            <span class="fw-bold m-3">Payment Status : <span class="text-warning "><%= order.paymentStatus %></span> </span>
+                            <%}%>
+                            <%if(order.status==='Cancelled'){ %>
+                        <span class="fw-bold m-3" >Order status : <span  class="text-danger text-uppercase "> <%= order.status %></span>  </span>
+                        <%}else{%>
+                            <span class="fw-bold m-3" >Order status : <span  class="text-success text-uppercase "> <%= order.status %></span>  </span>
+                            <%}%>
+                    </div>
+                    
+                </div>
             </div>
-
-<!-- off canvas ends here -->
             
-            <div class="row">
-                <% if(message) { %>
-                <span><%= message.productSearchMessage%> </span>
-                <% } %>
-                <% if(products) { %>
-                    <% products.forEach((product)=>{ %>
-                        <% if(product.active){ %>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="product-grid m-3 position-relative">
-                                    <div class="product-image" >
-                                        <a href="/productView/<%=product._id %>" class="image">
-                                            <img class="pic-1" src="/uploads/<%=product.productImage1 %>">
-                                            <img class="pic-2" src="/uploads/<%=product.productImage2 %>">
-                                        </a>
-                                        <% if(user) { %>
-                                            <ul class="product-links">
-                                                <li><a class="add-to-cart-button"
-                                                        onclick="addToCart('<%= product._id%>','<%=product.name%>')"><i
-                                                            class="fa fa-shopping-cart"></i></a></li>
-                                                <li><a><i onclick="addToWishlist('<%= product._id%>')" class="far fa-heart"></i></a></li>
-                                            </ul>
-                                            <%}else{ %>
-                                                <ul class="product-links">
-                                                    <li><a class="add-to-cart-button" onclick="redirectToLoginPage()"><i
-                                                                class="fa fa-shopping-cart"></i></a></li>
-                                                    <li><a onclick="redirectToLoginPage()"><i
-                                                                class="far fa-heart"></i></a></li>
+        <%})%>
+       
+        
+    </div>
+    <% } %> 
+</div>
 
-                                                </ul>
-                                                <% } %>
-
-                                    </div>
-                                    <div class="product-content">
-                                        <ul class="rating">
-                                            <li class="fa fa-star"></li>
-                                            <li class="fa fa-star"></li>
-                                            <li class="fa fa-star"></li>
-                                            <li class="fa fa-star"></li>
-                                            <li class="far fa-star"></li>
-                                        </ul>
-                                        <h3 class="title"><a href="/productView/<%=product._id %>">
-                                                <%=product.name%>
-                                            </a></h3>
-                                            <% if(product.isDiscountApplied) {%>
-                                        <div class="d-flex ">
-                                            
-                                            <span class="price pe-2"  >₹<%=Math.floor(product.price - product.discountAmount)%></span>
-                                                <span class="badge bg-danger ml-3 position-absolute top-2 end-0 me-1 text-light" ><%=product.currentDiscountPercentage %>% OFF</span>
-                                                <span class="text-decoration-line-through text-muted" >₹<%=product.price%> </span>
-                                                
-                                                
-                                        </div>
-                                        <% }else{ %>
-                                            <div class="d-flex ">
-                                            
-                                                <span class="price pe-2"  >₹<%=product.price%></span>
-                                                    
-                                            </div>
-                                        <%} %>
-                                            
-                                    </div>
-                                </div>
-                            </div>
-                            <%} %>
-                                <% }) %>
-
-                                    <%} %>
-            </div>
-            <div class="pagination d-flex justify-content-center g-2 m-5">
-                <%if(currentPage>1){%>
-            <a href="/shopProduct?page=<%=currentPage-1%>" class="btn btn-sm btn-outline-dark ">Prev</a>
-            <% } %>
-            
-                <a href="/shopProduct?page=<%=currentPage%>"  class="btn btn-sm btn-outline-dark "><%=currentPage%></a>
-            
-                <%if(currentPage< totalPages){%>
-            <a href="/shopProduct?page=<%=currentPage+1%>" class="btn btn-sm btn-outline-dark ">Next</a>
-                <% } %>
-            </div>
-        </div>
-
-        <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
-        <script>
-
-            function addToCart(id, name) {
-                console.log(id);
-
-                $.ajax({
-                    url: `/addToCart/${id}`,
-                    method: 'POST',
-                    dataType: 'json', // Expect JSON response
-                    contentType: 'application/json', // Set request content type
-                })
-                    .done(function (data) {
-                        console.log(data);
-                        if(data.success){
-                            swal(name, 'is added to cart', 'success');
-                        const cartCountElement = document.getElementById('cart-count');
-                        if (cartCountElement) {
-                            cartCountElement.textContent = data.cartCount;
-                        }
-
-                        }else{
-                            swal(data.error);
-                        }
-                        
-                    })
-                    .fail(function (jqXHR, textStatus, errorThrown) {
-                        console.error(errorThrown);
-                        swal("Cannot add item to cart", "Kindly try after sometime.");
-                    });
-            }
-
-            function addToWishlist(productId){
-                console.log(productId);
-                $.ajax({
-                    url: `/addToWishlist/${productId}`,
-                    method: 'POST',
-                    dataType: 'json', // Expect JSON response
-                    contentType: 'application/json', // Set request content type
-                })
-                    .done(function (data) {
-                        console.log(data);
-                        if(data.success){
-                            swal(name, 'is added to wishlist', 'success');
-                        const wishlistCountElement = document.getElementById('wishlist-count');
-                        if (wishlistCountElement) {
-                            wishlistCountElement.textContent = data.wishlistCount;
-                        }
-
-                        }else{
-                            swal(data.error);
-                        }
-                        
-                    })
-                    .fail(function (jqXHR, textStatus, errorThrown) {
-                        console.error(errorThrown);
-                        swal("Cannot add item to wishlist", "Kindly try after sometime.");
-                    });
-            
-            }
-
-
-            function redirectToLoginPage() {
-                Swal.fire({
-                    title: 'Login Required',
-                    text: 'You must be logged in to access this feature.',
-                    icon: 'info',
-                    iconColor: 'black',
-                    confirmButtonColor: 'black',
-                    showCancelButton: true,
-                    confirmButtonText: 'Go to Login Page',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true, // Reverses the order of the buttons
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Redirect to the login page when the "Go to Login Page" button is clicked
-                        window.location.href = '/login'; // Replace '/login' with your actual login page URL
-                    }
-                });
-            }
-
-
-
-
-
-        </script>
-
-        <%- include ('../partials/userFooter') %>
-            <%- include ('../layouts/footer') %>
+<%-include ('../layouts/adminFooter') %>

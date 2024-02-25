@@ -15,7 +15,8 @@ const orderSchema = new mongoose.Schema({
         }
     }],
     orderedDate : {
-        type: Date
+        type: Date,
+        default: () => new Date().toISOString().split('T')[0]
     },
     deliveredDate : {
         type: Date

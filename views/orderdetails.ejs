@@ -1,0 +1,153 @@
+<%-include('include/header2')-%>
+
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3  mt-5 bg-gradient-dark" id="sidenav-main">
+  <div class="sidenav-header">
+    <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+    <a class="navbar-brand m-0" >
+      <span class="ms-1 font-weight-bold text-white">Admin</span>
+    </a>
+  </div>
+  <hr class="horizontal light mt-0 mb-2">
+  <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/admin/manage">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">dashboard</i>
+          </div>
+          <span class="nav-link-text ms-1">Dashboard</span>
+        </a>
+      </li> 
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/admin/categories">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">assignment</i>
+          </div>
+          <span class="nav-link-text ms-1">Category</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/products">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">table_view</i>
+          </div>
+          <span class="nav-link-text ms-1">Products</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white  active bg-gradient-primary" href="/admin/orders">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">receipt_long</i>
+          </div>
+          <span class="nav-link-text ms-1">Orders</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/admin/users">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">person</i>
+          </div>
+          <span class="nav-link-text ms-1">Users</span>
+        </a>
+      </li>
+      <li class="nav-item mt-3">
+        <hr class="dark horizontal my-0">
+      </li>
+      <hr class="light horizontal my-0">
+      <li class="nav-item">
+        <a class="nav-link text-white " href="/logout">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">login</i>
+          </div>
+          <span class="nav-link-text ms-1">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
+  <!-- List of users -->
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#" class="text-black">Admin</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Orders</li>
+      </ol>
+  </nav>
+  <div class="container  mb-10">
+    <div>
+        <h3 class="m-4">Order Details</h3>
+        <hr>
+    </div>
+    
+    <% if(order){ %>
+    <div class="row justify-content-center">
+
+        <% order.items.forEach((item)=>{ %>
+
+            <div class="card m-3  shadow col-md-8  ">
+                <div class="d-flex justify-content-between m-3" >
+                    <div class="img-container">
+                        <img width="250px" class="img-fluid" src="/<%= item.productId.images[0] %>" alt="<%= item.productId.images[0] %>">
+                    </div>
+                    <div class="m-2" style="width: 2px; background-color: rgb(156, 156, 156); height: 100%;">
+                        <!-- vertical line -->
+                    </div>
+                    <div class="d-flex flex-column">
+                        <span class="fw-light text-primary mt-1">OrderID : <%= order._id %></span>
+                        <span class="fw-bold mt-2"><%= item.productId.name %></span>
+                        <span class="mt-3">Quantity :<%= item.quantity %></span>
+                        <span class="mt-1">Price : ₹<%= item.productId.price %></span>
+                    </div>
+                    <div class="m-2" style="width: 2px; background-color: rgb(163, 163, 163); height: 100%;">
+                    </div>
+                    <div  class=" d-flex flex-column mt-4">
+                        <div>
+                            <h6>Shipping Adress :</h6>
+                        </div>
+                        <span class="" >Name: <%= order.shippingAddress.name %></span>
+                        <span class="" >Mobile: <%= order.shippingAddress.mobileNumber %></span>
+                        <span class="" >House/Flat: <%= order.shippingAddress.address %></span>
+                        <span class="" >Locality: <%= order.shippingAddress.locality %></span>
+                        <span class="" >PIN: <%= order.shippingAddress.pincode %></span>
+                        <span class="" >Dist:<%= order.shippingAddress.district %></span>
+                        <span class="" >State:<%= order.shippingAddress.state %></span>
+                    </div>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold m-3" >Payment Mode : <span class="text-uppercase "> <%= order.paymentMethod %></span>   </span>
+                        <%if(order.status==='!Cancelled'){ %>
+                            <span class="fw-bold m-3">Payment Status : <span class="text-warning "><%= order.paymentStatus %></span> </span>
+                            <%}%>
+                            <%if(order.status==='Cancelled'){ %>
+                        <span class="fw-bold m-3" >Order status : <span  class="text-danger text-uppercase "> <%= order.status %></span>  </span>
+                        <%}else{%>
+                            <span class="fw-bold m-3" >Order status : <span  class="text-success text-uppercase "> <%= order.status %></span>  </span>
+                            <%}%>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        <%})%>
+       
+        
+    </div>
+    <% } %> 
+</div>
+
+</main>
+<%-include('include/UIdark')-%>
+<script>
+  new DataTable('#userTable');
+
+</script>
+
+
+
+
+
+
+
+<%-include('include/footer2')-%>

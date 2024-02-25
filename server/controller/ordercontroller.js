@@ -165,7 +165,6 @@ exports.placeorder = async (req, res) => {
             res.redirect('/cart');
         }
 
-        // Extract item details from cartItems
         const items = cart.items.map(item => ({
             productId: item.productId._id, 
             quantity: item.quantity
