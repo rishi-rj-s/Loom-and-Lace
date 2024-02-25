@@ -1,0 +1,107 @@
+<%- include('include/header') -%>
+
+<!-- navbar -->
+<%- include('include/navbr') -%>
+
+<div class="container-fluid ms-4 mt-4">
+    <div class="row">
+        <div class="col-md-3 account-nav rounded shadow">
+            <label for="name"><%= user.name %></label>
+            <hr>
+            <ul>
+                <li><a href="/useraccount">Profile</a></li>
+                <li><a href="/useraddress">Addresses</a></li>
+                <div class="w-100 bg-secondary"><li><a href="/userorders"  class="text-white">My Orders</a></li></div>
+                <li><a href="#">Forgot Password</a></li>
+                <hr>
+                <li class="align-bottom"><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+        
+<!-- //orders -->
+<div class="col-md-9 checkout">
+    <div class="container">
+        <div class="d-flex justify-content-between">
+            <h4>Orders</h4>
+
+        </div>
+
+        <hr>
+
+        <div class="row">
+
+            <% orders.reverse().forEach((order, index)=> { %>
+                <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                    <div class="col-md-12 mb-3">
+                        <div class="card shadow">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title text-muted m-2">OrderID. <%= order._id %>
+                                </h5>
+
+                                <% if(order.status==='Cancelled' ){ %>
+                                    <span class="text-danger">Order Cancelled </span>
+                                    <%}else if( order.status=='Rejected' ){%>
+                                        <span class="text-danger">Order Rejected </span>
+                                        <%}else if( order.status=='Return requested' ){%>
+                                            <a href="#" id="cancel-return-btn" class=" btn btn-success return-order">cancel return</a>
+                                            <%}else if( order.status=='Return accepted' ){%>
+                                                <span class="text-danger">Order returned, Amount refunded
+                                                </span>
+                                                <%}else if(order.status=='Delivered' ){%>
+                                                    <span class="text-success">Order Delivered </span>
+                                                    <a href="#" id="return-order-btn" data-toggle="modal" data-target="#return-order-modal" id="return-order" class=" btn btn-info return-order">Retun Order</a>
+                                                    <%}else if(order.status=='Order Placed' ){ %>
+                                                        <a href="/cancelOrder/<%= order._id %>"
+                                                            id="cancel-order-btn"
+                                                            class=" btn btn-danger cancel-order">Cancel
+                                                            Order</a>
+                                                        <%}else{%>
+                                                            <span class="text-danger">
+                                                                <%= order.status %>
+                                                            </span>
+                                                            <%}%>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="d-flex">
+                                 <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                </div>
+                                <div class="d-flex">
+                                    <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %>
+                                    </span>
+                                </div>
+                                <div class="d-flex">
+                                    <span class="m-1 font-weight-bold">payment method : <%= order.paymentMethod
+                                            %></span>
+                                </div>
+                                <span class="m-1 font-weight-bold">Status :<%= order.status %></span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <% }) %>
+        </div>
+
+    </div>
+</div>
+
+<script>
+$('.cancel-order-btn').click((e) => {
+        e.preventDefault();
+
+        const orderId = $(e.target).data('order-id');
+        $.ajax({
+            url: `/cancelOrder/${orderId}`,
+            type: 'GET',
+            success: (response) => {
+                console.log(response);
+            },
+            error: (xhr, status, error) => {
+                console.error(xhr.responseText);
+            }
+        });
+    });    
+  </script>
+<%- include('include/userFooter') -%>
+
+<%- include('include/footer') -%>

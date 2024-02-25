@@ -60,7 +60,7 @@ app.get('/', async (req, res) => {
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), async(req, res) => {
-  const userToken = req.user.userToken; // Assuming userToken is attached to the user object by Passport
+  const userToken = req.cookies.userToken; // Assuming userToken is attached to the user object by Passport
   res.cookie('userToken', userToken);
     res.redirect('/home');
 });

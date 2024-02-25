@@ -154,13 +154,10 @@ exports.placeorder = async (req, res) => {
         const user = await Userdb.findOne({ email: req.session.email });
         const userId = user._id;
 
-        // Fetch address details from the database using the addressId
         const address = await Addressdb.findById(addressId);
 
-        // Fetch cart items for the user and populate them
         const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
         if(cart){
-        // Ensure cart is not null and has items
         if (!cart || !cart.items || cart.items.length === 0) {
             res.redirect('/cart');
         }
@@ -170,7 +167,6 @@ exports.placeorder = async (req, res) => {
             quantity: item.quantity
         }));
 
-        // Create a new order
         const order = new Orderdb({
             userId: userId,
             items: items,
@@ -181,7 +177,6 @@ exports.placeorder = async (req, res) => {
             totalAmount: totalAmount
         });
 
-        // Save the order to the database
         await order.save();
 
         // Delete purchased items from the cart
@@ -199,5 +194,52 @@ exports.placeorder = async (req, res) => {
         // Handle errors
         console.error(error);
          res.redirect('/cart');
+    }
+};
+exports.userorders=async (req, res) => {
+    try {
+      const user = await Userdb.findOne({ email: req.session.email });
+      const userId= user._id;
+        const orders = await Orderdb.find({ userId: user._id}).populate('items.productId');
+        const dates = orders.map(order => order.orderedDate.toDateString());
+        // Render the userorders.ejs template with orders data
+        res.render('userorders', { userToken: req.cookies.userToken,user: user, orders, dates });
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        // Render an error page or redirect to another route
+        res.status(500).send('Internal Server Error');
+    }
+  };
+  exports.userorderdetails=async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const user = await Userdb.findOne({ email: req.session.email });
+
+        const order = await Orderdb.findById(orderId).populate('items.productId');
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
+        res.render('userorderdetails', {userToken: req.cookies.userToken,user: user, order: order });
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        res.status(500).send('Internal Server Error');
+    }
+  }
+ exports.userordercancel= async (req, res) => {
+    try {
+        const order = await Orderdb.findById(req.params.orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+       }
+
+        order.status = 'Cancelled';
+        await order.save();
+
+        res.redirect('/userorders')
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };

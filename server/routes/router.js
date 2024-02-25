@@ -56,6 +56,9 @@ route.delete('/api/cart/:id',ordercontroller.deletecart);
 route.put('/api/cart/:id',ordercontroller.addquantitycart);
 route.get('/checkout',ordercontroller.checkout);
 route.post('/placeorder',ordercontroller.placeorder);
+route.get('/userorders', ordercontroller.userorders);
+route.get('/orderDetails/:orderId', ordercontroller.userorderdetails);
+route.get('/cancelOrder/:orderId', ordercontroller.userordercancel);
 
 //admin side
 route.get('/admin',services.admin)
@@ -94,5 +97,7 @@ route.get('/update-category',categorycontroller.getupdateCategory);
 route.post('/api/admin/editcategory/:id',upload.array('images',4 ),categorycontroller.postupdateCategory);
 route.delete('/api/admin/categories/:id',categorycontroller.delete);
 route.get('/list-cat',products.listcat);
+
+
 
 module.exports =route
