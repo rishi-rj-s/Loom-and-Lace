@@ -35,7 +35,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white " href="/admin/orders">
+        <a class="nav-link text-white  active bg-gradient-primary" href="/admin/orders">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">receipt_long</i>
           </div>
@@ -43,7 +43,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white active bg-gradient-primary" href="/admin/users">
+        <a class="nav-link text-white" href="/admin/users">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
           </div>
@@ -70,7 +70,7 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#" class="text-black">Admin</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Users</li>
+          <li class="breadcrumb-item active" aria-current="page">Orders</li>
       </ol>
   </nav>
   <div class="container-fluid py-4">
@@ -80,13 +80,15 @@
         <table class="table table-striped" id="userTable">
             <thead class="thead-dark">
                 <tr class="bg-dark text-white">
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Gender</th>
-                    <th>Created Time</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th scope="col">SL No</th>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Ordered Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Payment method</th>
+                    <th scope="col">Payment status</th>
+                    <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -110,6 +112,8 @@
                                 <span class="text-dark">Block/Unblock</span>
                             </a>
                         </td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 <% } %>
             </tbody>

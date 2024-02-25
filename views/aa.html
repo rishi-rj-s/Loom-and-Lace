@@ -1,208 +1,445 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <title>Address List</title>
-</head>
-<body>
-    <section class="h-100 h-custom">
-        <div class="container h-100 py-5">
-          <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col">
-      
-              <div class="table-responsive">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="h5">Shopping Bag</th>
-                      <th scope="col">Format</th>
-                      <th scope="col">Quantity</th>
-                      <th scope="col">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">
-                        <div class="d-flex align-items-center">
-                          <img src="https://i.imgur.com/2DsA49b.webp" class="img-fluid rounded-3"
-                            style="width: 120px;" alt="Book">
-                          <div class="flex-column ms-4">
-                            <p class="mb-2">Thinking, Fast and Slow</p>
-                            <p class="mb-0">Daniel Kahneman</p>
-                          </div>
-                        </div>
-                      </th>
-                      <td class="align-middle">
-                        <p class="mb-0" style="font-weight: 500;">Digital</p>
-                      </td>
-                      <td class="align-middle">
-                        <div class="d-flex flex-row">
-                          <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                            <i class="fas fa-minus"></i>
-                          </button>
-      
-                          <input id="form1" min="0" name="quantity" value="2" type="number"
-                            class="form-control form-control-sm" style="width: 50px;" />
-      
-                          <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                            <i class="fas fa-plus"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td class="align-middle">
-                        <p class="mb-0" style="font-weight: 500;">$9.99</p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row" class="border-bottom-0">
-                        <div class="d-flex align-items-center">
-                          <img src="https://i.imgur.com/Oj1iQUX.webp" class="img-fluid rounded-3"
-                            style="width: 120px;" alt="Book">
-                          <div class="flex-column ms-4">
-                            <p class="mb-2">Homo Deus: A Brief History of Tomorrow</p>
-                            <p class="mb-0">Yuval Noah Harari</p>
-                          </div>
-                        </div>
-                      </th>
-                      <td class="align-middle border-bottom-0">
-                        <p class="mb-0" style="font-weight: 500;">Paperback</p>
-                      </td>
-                      <td class="align-middle border-bottom-0">
-                        <div class="d-flex flex-row">
-                          <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                            <i class="fas fa-minus"></i>
-                          </button>
-      
-                          <input id="form1" min="0" name="quantity" value="1" type="number"
-                            class="form-control form-control-sm" style="width: 50px;" />
-      
-                          <button class="btn btn-link px-2"
-                            onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                            <i class="fas fa-plus"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td class="align-middle border-bottom-0">
-                        <p class="mb-0" style="font-weight: 500;">$13.50</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-      
-              <div class="card shadow-2-strong mb-5 mb-lg-0" style="border-radius: 16px;">
-                <div class="card-body p-4">
-      
-                  <div class="row">
-                    <div class="col-md-6 col-lg-4 col-xl-3 mb-4 mb-md-0">
-                      <form>
-                        <div class="d-flex flex-row pb-3">
-                          <div class="d-flex align-items-center pe-2">
-                            <input class="form-check-input" type="radio" name="radioNoLabel" id="radioNoLabel1v"
-                              value="" aria-label="..." checked />
-                          </div>
-                          <div class="rounded border w-100 p-3">
-                            <p class="d-flex align-items-center mb-0">
-                              <i class="fab fa-cc-mastercard fa-2x text-dark pe-2"></i>Credit
-                              Card
-                            </p>
-                          </div>
-                        </div>
-                        <div class="d-flex flex-row pb-3">
-                          <div class="d-flex align-items-center pe-2">
-                            <input class="form-check-input" type="radio" name="radioNoLabel" id="radioNoLabel2v"
-                              value="" aria-label="..." />
-                          </div>
-                          <div class="rounded border w-100 p-3">
-                            <p class="d-flex align-items-center mb-0">
-                              <i class="fab fa-cc-visa fa-2x fa-lg text-dark pe-2"></i>Debit Card
-                            </p>
-                          </div>
-                        </div>
-                        <div class="d-flex flex-row">
-                          <div class="d-flex align-items-center pe-2">
-                            <input class="form-check-input" type="radio" name="radioNoLabel" id="radioNoLabel3v"
-                              value="" aria-label="..." />
-                          </div>
-                          <div class="rounded border w-100 p-3">
-                            <p class="d-flex align-items-center mb-0">
-                              <i class="fab fa-cc-paypal fa-2x fa-lg text-dark pe-2"></i>PayPal
-                            </p>
-                          </div>
-                        </div>
-                      </form>
+<%- include ('../layouts/header') %>
+    <%- include ('../partials/userHeader') %>
+
+        <style>
+            .product-grid {
+                background-color: #fff;
+                font-family: 'Work Sans', sans-serif;
+                text-align: center;
+                transition: all 0.3s ease 0s;
+            }
+
+            .product-grid:hover {
+                box-shadow: 0 0 20px -10px rgba(237, 29, 36, 0.3);
+            }
+
+            .product-grid .product-image {
+                overflow: hidden;
+                position: relative;
+                transition: all 0.3s ease 0s;
+            }
+
+            .product-grid:hover .product-image {
+                border-radius: 0 0 30px 30px;
+            }
+
+            .product-grid .product-image a.image {
+                display: block;
+            }
+
+            .product-grid .product-image img {
+                width: 100%;
+                height: auto;
+            }
+
+            .product-image .pic-1 {
+                backface-visibility: hidden;
+                transition: all 0.5s ease 0s;
+            }
+
+            .product-grid:hover .product-image .pic-1 {
+                opacity: 0;
+            }
+
+            .product-image .pic-2 {
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: all 0.5s ease 0s;
+            }
+
+            .product-grid:hover .product-image .pic-2 {
+                opacity: 1;
+            }
+
+            .product-grid .product-links {
+                padding: 0;
+                margin: 0;
+                list-style: none;
+                opacity: 0;
+                position: absolute;
+                bottom: 0;
+                right: 10px;
+                transition: all 0.3s ease 0s;
+            }
+
+            .product-grid:hover .product-links {
+                opacity: 1;
+            }
+
+            .product-grid .product-links li {
+                margin: 0 0 10px 0;
+                transform: rotate(360deg) scale(0);
+                transition: all 0.3s ease 0s;
+            }
+
+            .product-grid:hover .product-links li {
+                transform: rotate(0) scale(1);
+            }
+
+            .product-grid:hover .product-links li:nth-child(3) {
+                transition-delay: 0.1s;
+            }
+
+            .product-grid:hover .product-links li:nth-child(2) {
+                transition-delay: 0.2s;
+            }
+
+            .product-grid:hover .product-links li:nth-child(1) {
+                transition-delay: 0.3s;
+            }
+
+            .product-grid .product-links li a {
+                color: #666;
+                background-color: #fff;
+                font-size: 18px;
+                line-height: 42px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50px;
+                display: block;
+                transition: all 0.3s ease 0s;
+            }
+
+            .product-grid .product-links li a:hover {
+                color: #fff;
+                background-color: #ed1d24;
+            }
+
+            .product-grid .product-content {
+                text-align: left;
+                padding: 15px 10px;
+            }
+
+            .product-grid .rating {
+                padding: 0;
+                margin: 0 0 7px;
+                list-style: none;
+            }
+
+            .product-grid .rating li {
+                color: #f7bc3d;
+                font-size: 13px;
+            }
+
+            .product-grid .rating li.far {
+                color: #777;
+            }
+
+            .product-grid .title {
+                font-size: 16px;
+                font-weight: 600;
+                text-transform: capitalize;
+                margin: 0 0 6px;
+            }
+
+            .product-grid .title a {
+                color: #555;
+                transition: all 0.3s ease 0s;
+            }
+
+            .product-grid .title a:hover {
+                color: #1568b0;
+            }
+
+            .product-grid .price {
+                color: #ed1d24;
+                font-size: 18px;
+                font-weight: 700;
+            }
+
+
+            @media screen and (max-width:990px) {
+                .product-grid {
+                    margin: 0 0 30px;
+                }
+            }
+        </style>
+
+        <div class="container-fluid ">
+
+            <!-- offcanvas starts here -->
+            
+            <div class="col-md-2">
+                <br>
+                <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                    <i class="fa fa-filter"> | </i>Filter
+                    </button>
+                    
+    
+                <div class="offcanvas offcanvas-start p-0"   data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+                    aria-labelledby="offcanvasWithBothOptionsLabel">
+                    <div class="offcanvas-header bg-black text-center">
+                        <h5 class="offcanvas-title text-white " id="offcanvasWithBothOptionsLabel">FILTER</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="col-md-6 col-lg-4 col-xl-6">
-                      <div class="row">
-                        <div class="col-12 col-xl-6">
-                          <div class="form-outline mb-4 mb-xl-5">
-                            <input type="text" id="typeName" class="form-control form-control-lg" siez="17"
-                              placeholder="John Smith" />
-                            <label class="form-label" for="typeName">Name on card</label>
-                          </div>
-      
-                          <div class="form-outline mb-4 mb-xl-5">
-                            <input type="text" id="typeExp" class="form-control form-control-lg" placeholder="MM/YY"
-                              size="7" id="exp" minlength="7" maxlength="7" />
-                            <label class="form-label" for="typeExp">Expiration</label>
-                          </div>
-                        </div>
-                        <div class="col-12 col-xl-6">
-                          <div class="form-outline mb-4 mb-xl-5">
-                            <input type="text" id="typeText" class="form-control form-control-lg" siez="17"
-                              placeholder="1111 2222 3333 4444" minlength="19" maxlength="19" />
-                            <label class="form-label" for="typeText">Card Number</label>
-                          </div>
-      
-                          <div class="form-outline mb-4 mb-xl-5">
-                            <input type="password" id="typeText" class="form-control form-control-lg"
-                              placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
-                            <label class="form-label" for="typeText">Cvv</label>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="offcanvas-body container-fluid" >
+                        <!-- Add a form element around the existing content -->
+                        <form action="/filterProducts" method="post">
+                            <div class="filter-sidebar p-0">
+                                <div class="bg-light text-center p-0">
+                                    <h4 class="filter-title">Filter by Category</h4>
+                                </div>
+                                
+                                <ul class="filter-list" style="list-style: none;">
+                                    <!-- Radio buttons for category -->
+                                    <% if( categories){ %>
+                                        <% categories.forEach((category)=>{%>
+                                            <li class="filter-item">
+                                                <input type="radio" name="category" id="category1" class="filter-radio"
+                                                    value="<%= category._id %>">
+                                                <label for="category1" class="filter-label"><%= category.name %></label>
+                                                <hr>
+                                            </li>
+                                            <% }) %>
+                                    <%} %>
+                                    
+                                   
+                                    <!-- Add more radio buttons for other categories -->
+                                </ul>
+    
+                                <div class="bg-light text-center p-0">
+                                    <h4 class="filter-title">Filter by Brand</h4>
+                                </div>
+                                <ul class="filter-list " style="list-style: none;">
+                                    <!-- Checkbox inputs for brands -->
+                                    <% if( brands){ %>
+                                        <% brands.forEach((brand)=>{%>
+                                    <li class="filter-item">
+                                        <input type="checkbox" value="<%= brand._id %>" name="brand" id="brand1" class="filter-checkbox">
+                                        <label for="brand1"  class="filter-label"> <%= brand.name %></label> 
+                                        <hr>
+                                    </li>
+                                    <% }) %>
+                                    <%} %>
+                                    <!-- Add more checkboxes for other brands -->
+                                </ul>
+    
+                                <!-- <h4 class="filter-title">Filter by RAM</h4>
+                                <select name="RAM" class="filter-select">
+                                    <option value="" selected></option> 
+                                    <option value="2GB">2GB</option>
+                                    <option value="4GB">4GB</option>
+                                    <option value="8GB">8GB</option>
+                                    <option value="16GB">16GB</option>
+                                </select> -->
+    
+                                <!-- <h4 class="filter-title">Filter by Internal Storage</h4>
+                                <select name="InternalStorage" class="filter-select">
+                                    <option value="" selected></option> 
+                                    <option value="32GB">32GB</option>
+                                    <option value="64GB">64GB</option>
+                                    <option value="128GB">128GB</option>
+                                    <option value="256GB">256GB</option>
+                                    <option value="512GB">512GB</option>
+                                </select> -->
+    
+                                <!-- <h4 class="filter-title">Filter by Price</h4>
+                                <ul class="filter-list"> -->
+                                    
+                                    <!-- <li class="filter-item">
+                                        <input type="checkbox" value="lte10000" name="DiscountPrice" id="price1" class="filter-checkbox">
+                                        <label for="price1" class="filter-label">₹10,000 and Below</label>
+                                    </li>
+                                    <li class="filter-item">
+                                        <input type="checkbox" name="DiscountPrice" value="gte10001" id="price2" class="filter-checkbox">
+                                        <label for="price2" class="filter-label">₹10,001 - ₹15,000</label>
+                                    </li>
+                                    <li class="filter-item">
+                                        <input type="checkbox" name="DiscountPrice" value="gte 15001" id="price3" class="filter-checkbox">
+                                        <label for="price3" class="filter-label">₹15,001 - ₹25,000</label>
+                                    </li>
+                                    <li class="filter-item">
+                                        <input type="checkbox" name="DiscountPrice" id="price4" class="filter-checkbox">
+                                        <label for="price4" class="filter-label">₹25,001 - ₹50,000</label>
+                                    </li>
+                                    <li class="filter-item">
+                                        <input type="checkbox" name="DiscountPrice" id="price5" class="filter-checkbox">
+                                        <label for="price5" class="filter-label">₹50,001 and Above</label>
+                                    </li>
+                                </ul> -->
+    
+                                <button type="submit" class="apply-button btn btn-larg btn-dark " style="width: 100%;">Apply</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="col-lg-4 col-xl-3">
-                      <div class="d-flex justify-content-between" style="font-weight: 500;">
-                        <p class="mb-2">Subtotal</p>
-                        <p class="mb-2">$23.49</p>
-                      </div>
-      
-                      <div class="d-flex justify-content-between" style="font-weight: 500;">
-                        <p class="mb-0">Shipping</p>
-                        <p class="mb-0">$2.99</p>
-                      </div>
-      
-                      <hr class="my-4">
-      
-                      <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                        <p class="mb-2">Total (tax included)</p>
-                        <p class="mb-2">$26.48</p>
-                      </div>
-      
-                      <button type="button" class="btn btn-primary btn-block btn-lg">
-                        <div class="d-flex justify-content-between">
-                          <span>Checkout</span>
-                          <span>$26.48</span>
-                        </div>
-                      </button>
-      
-                    </div>
-                  </div>
-      
                 </div>
-              </div>
-      
             </div>
-          </div>
+
+<!-- off canvas ends here -->
+            
+            <div class="row">
+                <% if(message) { %>
+                <span><%= message.productSearchMessage%> </span>
+                <% } %>
+                <% if(products) { %>
+                    <% products.forEach((product)=>{ %>
+                        <% if(product.active){ %>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="product-grid m-3 position-relative">
+                                    <div class="product-image" >
+                                        <a href="/productView/<%=product._id %>" class="image">
+                                            <img class="pic-1" src="/uploads/<%=product.productImage1 %>">
+                                            <img class="pic-2" src="/uploads/<%=product.productImage2 %>">
+                                        </a>
+                                        <% if(user) { %>
+                                            <ul class="product-links">
+                                                <li><a class="add-to-cart-button"
+                                                        onclick="addToCart('<%= product._id%>','<%=product.name%>')"><i
+                                                            class="fa fa-shopping-cart"></i></a></li>
+                                                <li><a><i onclick="addToWishlist('<%= product._id%>')" class="far fa-heart"></i></a></li>
+                                            </ul>
+                                            <%}else{ %>
+                                                <ul class="product-links">
+                                                    <li><a class="add-to-cart-button" onclick="redirectToLoginPage()"><i
+                                                                class="fa fa-shopping-cart"></i></a></li>
+                                                    <li><a onclick="redirectToLoginPage()"><i
+                                                                class="far fa-heart"></i></a></li>
+
+                                                </ul>
+                                                <% } %>
+
+                                    </div>
+                                    <div class="product-content">
+                                        <ul class="rating">
+                                            <li class="fa fa-star"></li>
+                                            <li class="fa fa-star"></li>
+                                            <li class="fa fa-star"></li>
+                                            <li class="fa fa-star"></li>
+                                            <li class="far fa-star"></li>
+                                        </ul>
+                                        <h3 class="title"><a href="/productView/<%=product._id %>">
+                                                <%=product.name%>
+                                            </a></h3>
+                                            <% if(product.isDiscountApplied) {%>
+                                        <div class="d-flex ">
+                                            
+                                            <span class="price pe-2"  >₹<%=Math.floor(product.price - product.discountAmount)%></span>
+                                                <span class="badge bg-danger ml-3 position-absolute top-2 end-0 me-1 text-light" ><%=product.currentDiscountPercentage %>% OFF</span>
+                                                <span class="text-decoration-line-through text-muted" >₹<%=product.price%> </span>
+                                                
+                                                
+                                        </div>
+                                        <% }else{ %>
+                                            <div class="d-flex ">
+                                            
+                                                <span class="price pe-2"  >₹<%=product.price%></span>
+                                                    
+                                            </div>
+                                        <%} %>
+                                            
+                                    </div>
+                                </div>
+                            </div>
+                            <%} %>
+                                <% }) %>
+
+                                    <%} %>
+            </div>
+            <div class="pagination d-flex justify-content-center g-2 m-5">
+                <%if(currentPage>1){%>
+            <a href="/shopProduct?page=<%=currentPage-1%>" class="btn btn-sm btn-outline-dark ">Prev</a>
+            <% } %>
+            
+                <a href="/shopProduct?page=<%=currentPage%>"  class="btn btn-sm btn-outline-dark "><%=currentPage%></a>
+            
+                <%if(currentPage< totalPages){%>
+            <a href="/shopProduct?page=<%=currentPage+1%>" class="btn btn-sm btn-outline-dark ">Next</a>
+                <% } %>
+            </div>
         </div>
-      </section>
-    <!-- Bootstrap 5 JS (optional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+        <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+        <script>
+
+            function addToCart(id, name) {
+                console.log(id);
+
+                $.ajax({
+                    url: `/addToCart/${id}`,
+                    method: 'POST',
+                    dataType: 'json', // Expect JSON response
+                    contentType: 'application/json', // Set request content type
+                })
+                    .done(function (data) {
+                        console.log(data);
+                        if(data.success){
+                            swal(name, 'is added to cart', 'success');
+                        const cartCountElement = document.getElementById('cart-count');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.cartCount;
+                        }
+
+                        }else{
+                            swal(data.error);
+                        }
+                        
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error(errorThrown);
+                        swal("Cannot add item to cart", "Kindly try after sometime.");
+                    });
+            }
+
+            function addToWishlist(productId){
+                console.log(productId);
+                $.ajax({
+                    url: `/addToWishlist/${productId}`,
+                    method: 'POST',
+                    dataType: 'json', // Expect JSON response
+                    contentType: 'application/json', // Set request content type
+                })
+                    .done(function (data) {
+                        console.log(data);
+                        if(data.success){
+                            swal(name, 'is added to wishlist', 'success');
+                        const wishlistCountElement = document.getElementById('wishlist-count');
+                        if (wishlistCountElement) {
+                            wishlistCountElement.textContent = data.wishlistCount;
+                        }
+
+                        }else{
+                            swal(data.error);
+                        }
+                        
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error(errorThrown);
+                        swal("Cannot add item to wishlist", "Kindly try after sometime.");
+                    });
+            
+            }
+
+
+            function redirectToLoginPage() {
+                Swal.fire({
+                    title: 'Login Required',
+                    text: 'You must be logged in to access this feature.',
+                    icon: 'info',
+                    iconColor: 'black',
+                    confirmButtonColor: 'black',
+                    showCancelButton: true,
+                    confirmButtonText: 'Go to Login Page',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true, // Reverses the order of the buttons
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect to the login page when the "Go to Login Page" button is clicked
+                        window.location.href = '/login'; // Replace '/login' with your actual login page URL
+                    }
+                });
+            }
+
+
+
+
+
+        </script>
+
+        <%- include ('../partials/userFooter') %>
+            <%- include ('../layouts/footer') %>

@@ -2,33 +2,13 @@
 
 <!-- navbar -->
 <%- include('include/navbr') -%>
-
-<% if(cart.totalDiscount==0){ %>
-  <div id="countZero" class="container-fluid mt-100">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/home" class="text-black text-decoration-none">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Cart</li>
-      </ol>
-    </nav>
-    <div class="row">
-    
-     <div class="col-md-12">
-
-       <div class="card-body cart">
-           <div class="col-sm-12 empty-cart-cls text-center">
-             <img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
-             <h1><strong>Your Cart is Empty</strong></h1>
-             <h2>Add something to make me happy :)</h2>
-             <a href="/" class="btn btn-primary cart-btn-transform m-3" data-abc="true">Continue Shopping</a>
-           </div>
-       </div>
-     </div>
-
-    </div>
-    </div>
+<% if(!cart){ %>
+  <%- include('include/cartempty') -%>
+  <%}%>
+<% if(cart && cart.items.length === 0){ %>
+  <%- include('include/cartempty') -%>
     <%}%>
-<% if(cart.totalDiscount>0){ %>
+<% if(cart && cart.items.length !== 0){ %>
 <section class="">
   <div class="container py-5">
     <nav aria-label="breadcrumb">
@@ -66,7 +46,9 @@
                 <td class="align-middle">
                   <p class="mb-0" style="font-weight: 500;"><%= item.productId.size %></p>
                 </td>
+                
                 <td class="align-middle">
+                  <%if(item.productId.stock==0){%> <div class="text-danger">out of stock</div> <%}else{%>
                   <div class="d-flex flex-row">
                     <div class="input-group quantity mb-1 row" style="width: 200px;">
                       <div class="input-group-btn col">
@@ -74,7 +56,7 @@
                               <i class="fa fa-minus"></i>
                           </button>
                       </div>
-                      <input type="number" class="col form-control form-control-sm add text-center border-0" value="<%= item.quantity %>" min="1" max="<%= Math.min(item.productId.stock, 5) %>" id="quantityInput" name="quantity" data-id=<%= item._id %> >
+                      <input type="number" class="col form-control form-control-sm add text-center border-0" value="<%= Math.min(item.quantity, item.productId.stock) %>" min="1" max="<%= Math.min(item.productId.stock, 5) %>" id="quantityInput" name="quantity" data-id=<%= item._id %> >
                       <div class="input-group-btn col">
                           <button class="btn btn-sm btn-plus rounded-circle bg-light border">
                               <i class="fa fa-plus"></i>
@@ -82,6 +64,7 @@
                       </div>
                   </div>
                 </div>
+                <%}%>
                 </td>
                 <td class="align-middle">
                   <p class="mb-0" style="font-weight: 500;">₹<%= item.quantity*item.productId.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= item.quantity*item.productId.price %></label><label class="text-secondary ms-1"> (<%= item.productId.discount %>%)</label></p>

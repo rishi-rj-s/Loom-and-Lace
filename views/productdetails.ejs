@@ -38,10 +38,11 @@
 
         <p class="mb-4"><b>Size : </b><%= product.size %> </p>
         <p class="mb-4"><b>Colour : </b><%= product.color %> </p>
-        <p class="mb-4 text-primary"><b>Stock : <%= product.stock %></b> </p>
+        <p class="mb-4 text-primary"><b><% if(product.stock==0) {%> <strong class="text-danger">Out of Stock !!!</strong><%} else{%>
+            Stock : <%= product.stock %> <%}%></b> </p>
         <p class="mb-4"><%= product.description %></p>
         <div class="row">
-            <div class="col-3">
+            <div class="col-4">
         <% if (userToken && product.stock > 0) { %>
             <% if (productInCart && productInCart.quantity > 0) { %>
                 <a href="/cart" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">Go To Cart</a>
@@ -54,9 +55,11 @@
                     </button>
                 </form>
             <% } %>
-        <% } else { %>
+        <% } else if(product.stock > 0) { %>
             <a href="/loginpage" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">Login to Add to Cart</a>
-        <% } %>
+        <% }else{ %>
+            <a class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">Out of stock</a>
+        <% }%>
     </div>
     <div class="col-3">
         <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa-regular fa-heart me-2 text-danger"></i> Wishlist</a>

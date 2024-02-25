@@ -21,6 +21,7 @@ exports.home=async(req,res)=>{
          if (req.cookies.userToken) {
             try {
                 const email= req.session.email;
+                console.log(req.session.email);
                 const user = await Userdb.findOne({ email: email });
                 // Define userToken with the token value
                 const userToken = req.cookies.userToken;

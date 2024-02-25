@@ -99,3 +99,22 @@ exports.listcat=async (req, res) => {
         res.status(500).send('Error occurred while updating user status');
     }
 }
+exports.orders = async (req, res) => {
+    if (req.cookies.adminToken) {
+        try {
+            // Fetch products from the API
+            const orderResponse = await axios.get('http://localhost:3000/api/adminorders');
+            const products = orderResponse.data;
+
+            // Fetch categories from the database
+           
+
+            // Render productmanage view and pass categories and products
+            res.render('adminorder', { categories, products });
+        } catch (error) {
+            res.status(500).send({ message: error.message || "Error occurred while fetching products or categories" });
+        }
+    } else {
+        res.redirect('/');
+    }
+};

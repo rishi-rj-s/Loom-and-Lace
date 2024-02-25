@@ -11,6 +11,7 @@ const controller = require('../controller/controller');
 const productcontroller = require('../controller/productcontroller');
 const categorycontroller = require('../controller/categorycontroller');
 const ordercontroller = require('../controller/ordercontroller');
+const auths= require('../middleware/authentication')
 
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -62,6 +63,8 @@ route.get('/admin/manage',services.manage)
 route.get('/logout',services.logout)
 route.get('/admin/users',services.users)
 route.get('/block-user',services.block)
+route.get('/admin/orders',products.orders)
+
 
 //products side
 route.get('/products',products.product)
