@@ -1,151 +1,16 @@
-<%-include ('../layouts/adminHeader') %>
-    <%-include ('../partials/adminSidebar') %>
+<div class="bg-light text-center p-0">
+    <h4 class="filter-title">Filter by Brand</h4>
+</div>
+<ul class="filter-list " style="list-style: none;">
+    <!-- Checkbox inputs for brands -->
+    <% if( brands){ %>
+        <% brands.forEach((brand)=>{%>
+    <li class="filter-item">
+        <input type="checkbox" value="<%= brand._id %>" name="brand" id="brand1" class="filter-checkbox">
+        <label for="brand1"  class="filter-label"> <%= brand.name %></label> 
+        <hr>
+    </li>
+    <% }) %>
+    <%} %>
 
-
-
-        <div class="form-group justify-content-between m-2 d-flex">
-            
-            <div class=" ">
-                <a href="/admin/orderReturnRequest" class="btn btn-outline-danger ms-5">Return requests</a>
-            </div>
-            <!-- <button class="btn btn-secondary me-2">SEARCH USER</button> -->
-        </div>
-        <div class="col-12 card shadow container">
-            <div class="  h-100 p-4">
-
-                <div class="table-responsive">
-                    <table class="table usersTable table-responsive">
-                        <thead>
-                            <tr>
-                                <th scope="col">SL No</th>
-                                <th scope="col">Order Id</th>
-                                <th scope="col">Customer ID</th>
-                                <th scope="col">Ordered Date</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Payment method</th>
-                                <th scope="col">Payment status</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <form action="">
-                                <% orders.reverse().forEach((order,index)=>{ %>
-
-                                    <tr>
-                                        <th class="count">
-                                            <%= index+1 %>
-                                        </th>
-                                        <td>
-                                            <%=order._id %>
-                                        </td>
-                                        <td>
-                                            <%=order.userId %>
-                                        </td>
-                                        <td>
-                                            <%=order.orderedDate %>
-                                        </td>
-
-                                        <td class="text-success">
-                                        <%if(order.status !== 'Returned'){ %>
-                                            <%if(order.status !== 'Delivered'){ %>
-                                                <select class="select-status" id="statusSelect-<%=order._id %> " data-order-id="<%= order._id %>">
-                                                
-                                                    <option  <%=order.status === "Order Placed" ? "selected" : "" %>>Order Placed</option>
-                                                    <option  <%=order.status === "Delivered" ? "selected" : "" %>>Delivered</option>
-                                                    <option  <%=order.status === "Shipped" ? "selected" : "" %>>Shipped</option>
-                                                    <option  <%=order.status === "Rejected" ? "selected" : "" %>>Rejected</option>
-                                                    
-                                                </select>
-                                            <% }else{ %>
-                                                Delivered
-                                            <% } %>
-                                        <% }else{ %>    
-                                            Return requested
-                                        <% } %>
-                                        </td>
-                                        <td>
-                                            <%=order.totalAmount %>
-                                        </td>
-                                        <td>
-                                            <%=order.paymentMethod %>
-                                        </td>
-                                        <td class="paymentStatus" id="paymentStatus-<%=order._id %>">
-                                            
-                                            <%=order.paymentStatus %>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <a class="btn btn-outline-dark m-1"
-                                                    href="/admin/orderDetails/<%=order._id%>">view</a>
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                    <% }) %>
-                            </form>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        </div>
-        <div class="pagination d-flex justify-content-center g-2 m-5">
-            <%if(currentPage>1){%>
-        <a href="/admin/orders?page=<%=currentPage - 1%>" class="btn btn-sm btn-outline-dark ">Prev</a>
-        <% } %>
-        
-            <a href="/admin/orders?page=<%=currentPage%>"  class="btn btn-sm btn-outline-dark "><%=currentPage%></a>
-        
-            <%if(currentPage< totalPages){%>
-        <a href="/admin/orders?page=<%=currentPage + 1%>" class="btn btn-sm btn-outline-dark ">Next</a>
-            <% } %>
-        </div>
-        </div>
-
-        <script>
-
-const selects = document.querySelectorAll('.select-status');
-selects.forEach(select => {
-    select.addEventListener('change', () => {
-        const orderId =  select.getAttribute('data-order-id'); // Use getAttribute to access the data attribute
-        const newStatus = select.value;
-        
-        updateOrderStatus(orderId, newStatus);
-    });
-})
-function updateOrderStatus(orderId, newStatus) {
-    console.log(orderId,'orderid');
-        console.log(newStatus,'newst');
-        $.ajax({
-        url: `/admin/updateOrderStatus?id=${orderId}&status=${newStatus}`,
-        type: "PUT", 
-        contentType: "application/json",            
-        
-        success: (data=>{
-         
-            if (data.success) {
-                console.log('hii');
-                console.log(newStatus);
-                console.log(orderId);
-                const statusElement = document.querySelectorAll(`.select-status#statusSelect-${orderId}`);
-                console.log(statusElement,'sts');
-                statusElement.textContent = newStatus.toString();
-                console.log('last');
-                if (data.paymentStatus) {
-                    console.log(data.paymentStatus);
-                    const paymentStatus = document.getElementById(`paymentStatus-${orderId}`);
-                    paymentStatus.innerText = data.paymentStatus;
-                }
-                window.location.reload();
-            } else {
-                console.log('status update failed');
-            }
-        })
-    
-    })
-}
-
-
-        </script>
-  <%-include ('../layouts/adminFooter') %>
+</ul>

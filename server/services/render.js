@@ -3,6 +3,7 @@ const Userdb = require('../model/model');
 const connectDB = require('../database/connection');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 const Categorydb =require('../model/categorymodel');
 const Productdb =require('../model/productmodel');

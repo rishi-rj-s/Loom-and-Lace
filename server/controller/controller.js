@@ -1,11 +1,13 @@
 const { query } = require('express');
 const Userdb =require('../model/model');
 const Addressdb =require('../model/addressmodel');
+const Categorydb =require('../model/categorymodel');
+const Productdb =require('../model/productmodel');
+const Cartdb =require('../model/cartmodel');
 const otpGenerator = require('otp-generator');
 const nodemailer = require('nodemailer');
 
 
-// Configure Nodemailer (replace with your SMTP settings)
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -259,5 +261,62 @@ exports.posteditaddress = async (req, res) => {
     } catch (error) {
         console.error('Error adding address:', error);
         res.status(500).render('error', { message: 'Error adding address' });
+    }
+};
+exports.shopfilter=async (req, res) => {
+    try {
+       
+        const products = await Productdb.find();
+        const categories = await Categorydb.find();
+        if (req.cookies.adminToken) {
+     
+            res.redirect('/admin/manage');
+        } else
+         if (req.cookies.userToken) {
+            try {
+                const email= req.session.email;
+                console.log(req.session.email);
+                const user = await Userdb.findOne({ email: email });
+ 
+                const userToken = req.cookies.userToken;
+                res.render('shopfilter', { userToken: userToken, products: products, categories: categories,user: user });
+            } catch (error) { 
+
+                console.error(error);
+                res.render('shopfilter', { title: "LOOM",userToken: undefined, products: products, categories: categories });
+            }
+        } else {
+            res.render('shopfilter', { userToken: undefined, products: products, categories: categories });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+exports.getSortedProducts = async (req, res) => {
+    const { sortBy } = req.params;
+
+    try {
+        let sortedProducts;
+
+        // Logic to fetch sorted products based on sortBy parameter
+        switch (sortBy) {
+            case 'popularity':
+                sortedProducts = await Productdb.find().sort({ product_name: -1 });
+                break;
+            case 'price-low-to-high':
+                sortedProducts = await Productdb.find().sort({ total_price: 1 });
+                break;
+            case 'price-high-to-low':
+                sortedProducts = await Productdb.find().sort({ total_price: -1 });
+                break;
+            default:
+                sortedProducts = await Productdb.find(); // Default sorting if no valid option is provided
+        }
+
+        res.json(sortedProducts);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
