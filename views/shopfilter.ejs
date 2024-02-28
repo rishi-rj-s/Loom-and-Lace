@@ -6,98 +6,142 @@
     <div class="col-2">
         <div class="container mt-5">
            <p><strong>Filter by Categories</strong></p>
-     
         </div>
     </div>
-
-
-<div class="col-10">
-<section class="product spad mt-5">
-    <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <p>
-                
-                <select class="form-select">
-                    <option value="" disabled selected>Sort By</option>
-                    <option value="popularity">Popularity</option>
-                    <option value="price-low-to-high">Price - Low to High</option>
-                    <option value="price-high-to-low">Price - High to Low</option>
-                    <option value="a-to-z">aA - zZ</option>
-                    <option value="z-to-a">zZ - aA</option>
-                    <option value="newest-first">Newest First</option>
-                </select>
-                <!-- <label for="sort" class="bold "> <strong>Sort by </strong> </label> -->
-                <!-- <a href="#" class="mx-3 link-underline-opacity-100-hover text-dark text-decoration-none">Popularity</a>
-                <a href="#" class="mx-3 link-underline-opacity-100-hover text-dark text-decoration-none">Price- Low to High</a>
-                <a href="#" class="mx-3 link-underline-opacity-100-hover text-dark text-decoration-none">Price- High to Low</a>
-                <a href="#" class="mx-3 link-underline-opacity-100-hover text-dark text-decoration-none">aA - zZ</a>
-                <a href="#" class="mx-3 link-underline-opacity-100-hover text-dark text-decoration-none">zZ - aA</a>
-                <a href="#" class="mx-3 link-underline-opacity-100-hover text-dark text-decoration-none">Newest First</a> -->
-            </p>
-        </div>
-    </div>
-    <div class="row product__filter">
-      <% products.forEach(product => { %>
-        
-        <% if (product.list =='listed' && product.catlist =='listed') { %>
-          
-        <div class=" col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mb-5 p-2">
-        <div class="pd_det bg-white  mix new-arrivals rounded shadow h-150 p-3">
-            <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
-            <input type="hidden" id="product_id" name="id" value="<%= product.id %>">
-            <div class="product__item bg-white h-75">
-                <div class="product__item__pic set-bg">
-                    <!-- <span class="label">New</span> -->
-                    <% if (product.images && product.images.length > 0) { %>
-                    <img src="<%= product.images[0] %>" alt="" class="pro_image w-100">
-                    <% }%>
-                    <ul class="product__hover">
-                        <li></li>
-                        <li><a href="#"><i class="fa-regular fa-heart"></i></a></li>
-                    </ul>
+    <div class="col-10">
+        <section class="product spad mt-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>
+                            <select class="form-select" id="sortBySelect">
+                                <option value="" disabled selected>Sort By</option>
+                                <option value="popularity">Popularity</option>
+                                <option value="price-low-to-high">Price - Low to High</option>
+                                <option value="price-high-to-low">Price - High to Low</option>
+                                <option value="a-to-z">aA - zZ</option>
+                                <option value="z-to-a">zZ - aA</option>
+                                <option value="newest-first">Newest First</option>
+                            </select>
+                        </p>
+                    </div>
                 </div>
-              </div>
-                <div class="product__item__text bg-white">
-                    <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark"><h5 class="text-dark bold"><%= product.brand %></h5></a>
-                    <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none"><h6 class="text-dark inline overflow-hidden" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                      <%= product.product_name %>
-                  </h6></a>
-                  <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark"><h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5></a>
-                </div></a>
-        </div>
-      </div>
-      <% }%>
-        <% })%>
-         </div>
-      </div>
-  </section>
+                <div class="row product__filter" id="productContainer">
+                    <% products.forEach(product => { %>
+                        <% if (product.list =='listed' && product.catlist =='listed') { %>
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mb-5 p-2">
+                                <div class="pd_det bg-white mix new-arrivals rounded shadow h-150 p-3">
+                                    <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
+                                        <input type="hidden" id="product_id" name="id" value="<%= product.id %>">
+                                        <div class="product__item bg-white h-75">
+                                            <div class="product__item__pic set-bg">
+                                                <% if (product.images && product.images.length > 0) { %>
+                                                    <img src="<%= product.images[0] %>" alt="" class="pro_image w-100">
+                                                <% } %>
+                                                <ul class="product__hover">
+                                                    <li>
+                                                        <a href="#" class="wishlist-btn" data-product-id="<%= product._id %>">
+                                                            <% if (user && user.wishlist.some(item => item.productId.toString() === product._id.toString())) { %>
+                                                                <i class="fa-solid fa-heart"></i>
+                                                            <% } else { %>
+                                                                <i class="fa-regular fa-heart"></i>
+                                                            <% } %>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="product__item__text bg-white">
+                                            <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark">
+                                                <h5 class="text-dark bold"><%= product.brand %></h5>
+                                            </a>
+                                            <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
+                                                <h6 class="text-dark inline overflow-hidden" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    <%= product.product_name %>
+                                                </h6>
+                                            </a>
+                                            <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark">
+                                                <h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5>
+                                            </a>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% }) %>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
-</div>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', () => {
-    const sortBySelect = document.querySelector('.form-select');
-
-    sortBySelect.addEventListener('change', async () => {
-        const sortByValue = sortBySelect.value;
-        try {
-            const response = await fetch(`/sortProducts/${sortByValue}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const sortedProducts = await response.json();
-            // Render the sorted products as needed
-            console.log(sortedProducts);
-            // Example: Update the DOM with sorted products
-        } catch (error) {
-            console.error('Error fetching sorted products:', error);
-        }
-    });
-});
-
-</script>
 <%- include('include/userFooter') -%>
 
 <%- include('include/footer') -%>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const sortBySelect = document.getElementById('sortBySelect');
+        
+        let user;
+        try {
+            const userResponse = await fetch('/getUserInfo');
+            if (!userResponse.ok) {
+                throw new Error('Failed to fetch user information');
+            }
+            user = await userResponse.json();
+        } catch (error) {
+            console.error('Error fetching user information:', error);
+        }
+
+        sortBySelect.addEventListener('change', async () => {
+            const sortByValue = sortBySelect.value;
+            try {
+                const response = await fetch(`/sortProducts/${sortByValue}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const sortedProducts = await response.json();
+                const productContainer = document.getElementById('productContainer');
+                productContainer.innerHTML = ''; // Clear existing products
+                sortedProducts.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.classList.add('col-lg-3', 'col-md-6', 'col-sm-6', 'col-md-6', 'col-sm-6', 'mb-5', 'p-2');
+                    productDiv.innerHTML = `
+                    <div class="pd_det bg-white mix new-arrivals rounded shadow h-150 p-3">
+                            <a href="/prodetail?id=${product._id}" class="text-decoration-none">
+                                <input type="hidden" id="product_id" name="id" value="${product.id}">
+                                <div class="product__item bg-white h-75">
+                                    <div class="product__item__pic set-bg">
+                                        ${product.images && product.images.length > 0 ? `<img src="${product.images[0]}" alt="" class="pro_image w-100">` : ''}
+                                        <ul class="product__hover">
+                                            <li>
+                                               <a href="#" class="wishlist-btn" data-product-id="${product._id}">
+                                                    ${user && user.wishlist.some(item => item.productId.toString() === product._id.toString()) ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>'}
+                                             </a>
+                                             </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product__item__text bg-white">
+                                    <a href="/prodetail?id=${product._id}" class="text-decoration-none text-dark">
+                                        <h5 class="text-dark bold">${product.brand}</h5>
+                                    </a>
+                                    <a href="/prodetail?id=${product._id}" class="text-decoration-none">
+                                        <h6 class="text-dark inline overflow-hidden" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${product.product_name}</h6>
+                                    </a>
+                                    <a href="/prodetail?id=${product._id}" class="text-decoration-none text-dark">
+                                        <h5>₹${product.total_price} <label class="text-secondary text-decoration-line-through">₹${product.price}</label><label class="text-secondary ms-1"> (${product.discount}%)</label></h5>
+                                    </a>
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                    productContainer.appendChild(productDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching sorted products:', error);
+            }
+        });
+    });
+</script>

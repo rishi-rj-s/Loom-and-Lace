@@ -1,8 +1,9 @@
 
 <% relatedProducts.forEach(product => { %>
   <% if (product.list =='listed' && product.catlist =='listed') { %>
-      <div class="pd_det col-lg-2 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals bg-white rounded shadow h-50 ms-4 me-10 my-3">
-          <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
+    <div class=" col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mb-5 p-2">
+      <div class="pd_det bg-white  mix new-arrivals rounded shadow h-150 p-3">
+             <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
           <input type="hidden" id="product_id" name="id" value="<%= product.id %>">
           <div class="product__item bg-white h-75">
               <div class="product__item__pic set-bg">
@@ -11,10 +12,16 @@
                   <img src="<%= product.images[0] %>" alt="" class="pro_image w-100">
                   <% }%>
                   <ul class="product__hover">
-                      <li></li>
-                      <li><a href="#"><i class="fa-regular fa-heart"></i></a></li>
-                      <li><a href="#"><i class="fa-solid fa-bag-shopping"></i></a></li>
-                  </ul>
+                    <li>
+                      <a href="#" class="wishlist-btn" data-product-id="<%= product._id %>">
+                          <% if (user && user.wishlist.some(item => item.productId.toString() === product._id.toString())) { %>
+                              <i class="fa-solid fa-heart"></i>
+                          <% } else { %>
+                              <i class="fa-regular fa-heart"></i>
+                          <% } %>
+                      </a>
+                  </li>
+                </ul>
               </div>
             </div>
               <div class="product__item__text bg-white">
@@ -25,6 +32,7 @@
                 <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark"><h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5></a>
               </div></a>
       </div>
+    </div>
       <% }%>
       <%}) %>
      

@@ -49,7 +49,7 @@
                                                 </span>
                                                 <%}else if(order.status=='Delivered' ){%>
                                                     <span class="text-success">Order Delivered </span>
-                                                    <a href="#" id="return-order-btn" data-toggle="modal" data-target="#return-order-modal" id="return-order" class=" btn btn-info return-order">Retun Order</a>
+                                                    <a href="#" id="return-order-btn" data-toggle="modal" data-target="#return-order-modal" id="return-order" class=" btn btn-info return-order">Return Order</a>
                                                     <%}else if(order.status=='Order Placed' ){ %>
                                                         <a href="/cancelOrder/<%= order._id %>"
                                                             id="cancel-order-btn"

@@ -58,6 +58,7 @@ route.get('/update-address',controller.updateaddress)
 route.post('/api/editaddress/:id',controller.posteditaddress);
 route.get('/shopfilter',controller.shopfilter); 
 route.get('/sortProducts/:sortBy', controller.getSortedProducts);
+route.post('/wishlist/:productId', shop.wishlist);
 
 
 //orders and cart
@@ -105,9 +106,10 @@ route.delete('/api/admin/products/:id',productcontroller.delete);
 route.post('/api/createcategory',categorycontroller.catcreate);
 route.get('/admin/categories',categorycontroller.getCategories);
 route.get('/update-category',categorycontroller.getupdateCategory);
-route.post('/api/admin/editcategory/:id',upload.array('images',4 ),categorycontroller.postupdateCategory);
+route.post('/api/admin/editcategory/:id',categorycontroller.postupdateCategory);
 route.delete('/api/admin/categories/:id',categorycontroller.delete);
 route.get('/list-cat',products.listcat);
+// Example route handling for placing an order
 
 
 module.exports =route

@@ -298,11 +298,12 @@ exports.getSortedProducts = async (req, res) => {
 
     try {
         let sortedProducts;
+        const categories = await Categorydb.find();
+        const user = await Userdb.findOne({ email: req.session.email });
 
-        // Logic to fetch sorted products based on sortBy parameter
         switch (sortBy) {
             case 'popularity':
-                sortedProducts = await Productdb.find().sort({ product_name: -1 });
+                sortedProducts = await Productdb.find().sort({_id:1});
                 break;
             case 'price-low-to-high':
                 sortedProducts = await Productdb.find().sort({ total_price: 1 });
@@ -310,8 +311,17 @@ exports.getSortedProducts = async (req, res) => {
             case 'price-high-to-low':
                 sortedProducts = await Productdb.find().sort({ total_price: -1 });
                 break;
+            case 'a-to-z':
+                sortedProducts = await Productdb.find().sort({ product_name: 1 });
+                break;
+            case 'z-to-a':
+                sortedProducts = await Productdb.find().sort({ product_name: -1 });
+                break;
+            case 'newest-first':
+                sortedProducts = await Productdb.find().sort({ _id: -1 });
+                break;
             default:
-                sortedProducts = await Productdb.find(); // Default sorting if no valid option is provided
+                sortedProducts = await Productdb.find();
         }
 
         res.json(sortedProducts);

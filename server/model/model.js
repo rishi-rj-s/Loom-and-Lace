@@ -28,6 +28,14 @@ var schema = new mongoose.Schema({
         type: Date,
         default: () => new Date().toISOString().split('T')[0]// Automatically set the creation timestamp
     },
+    walletAmount :{
+        type: Number
+    },
+    wishlist: [{
+        productId: {
+            type:mongoose.Schema.Types.ObjectId,
+            ref: "productdb"}
+      }],
     verified: Boolean
 })
 

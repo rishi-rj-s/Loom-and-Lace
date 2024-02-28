@@ -72,7 +72,7 @@ exports.getupdateCategory = async (req, res) => {
             const categories = await Categorydb.findById(categoryId); // Fetch product details from the database
 
             // Render the editproduct view and pass the product details and categories as data
-            res.render('editcategory', { categories });
+            res.render('editcategory', { categories ,message:''});
         } catch (error) {
             res.status(500).send({ message: error.message || "Some error occurred while fetching product details or categories." });
         }
@@ -82,8 +82,12 @@ exports.postupdateCategory = async (req, res) => {
     try {
         const categoryId = req.params.id;
         const updatedCategoryData = req.body;
+        const categories = await Categorydb.findById(categoryId);
         // Fetch the product by ID
-        const categories =  await Categorydb.findById(categoryId);
+        let category = await Categorydb.findOne({category: req.body.cat_name})
+        if(category){
+        return res.render('editcategory', { categories,message: 'Category already exists' });
+        }
 
         // Update product details
         categories.category = updatedCategoryData.cat_name;

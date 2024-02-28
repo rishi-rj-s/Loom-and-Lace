@@ -62,14 +62,14 @@
 
 <script>
     function enableEdit() {
-        document.querySelectorAll('#profileForm input').forEach(function(input) {
+        document.querySelectorAll('#profileForm input:not([name="email"])').forEach(function(input) {
             input.disabled = false;
         });
         document.getElementById('editButtons').style.display = 'block';
     }
 
     function cancelEdit() {
-        document.querySelectorAll('#profileForm input').forEach(function(input) {
+        document.querySelectorAll('#profileForm input:not([name="email"])').forEach(function(input) {
             input.disabled = true;
         });
         document.getElementById('editButtons').style.display = 'none';

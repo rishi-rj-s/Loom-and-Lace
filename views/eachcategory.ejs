@@ -4,14 +4,31 @@
     <%-include('include/navbr')-%>
 
 <!-- related items -->
+<section class="product spad mt-5">
+<div class="container">
+<!-- <div class="row">
+    <div class="col-lg-12">
+        <p>
+            <select class="form-select" id="sortBySelect">
+                <option value="" disabled selected>Sort By</option>
+                <option value="popularity">Popularity</option>
+                <option value="price-low-to-high">Price - Low to High</option>
+                <option value="price-high-to-low">Price - High to Low</option>
+                <option value="a-to-z">aA - zZ</option>
+                <option value="z-to-a">zZ - aA</option>
+                <option value="newest-first">Newest First</option>
+            </select>
+        </p>
+    </div>
+</div> -->
 
-<hr>
 <h2 class="ms-5"><%=catname%>'s Wear</h2>
-<div class="row product__filter">
+<div class="row product__filter" id="productContainer">
 <%-include('include/related')-%>
 
 </div>
-
+</div>
+</section>
 
 
 <!-- footer -->

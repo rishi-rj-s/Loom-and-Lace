@@ -105,13 +105,13 @@ exports.listcat=async (req, res) => {
 exports.orders = async (req, res) => {
     if (req.cookies.adminToken) {
         try {
-            const orders = await Orderdb.find().populate({
+            const orders = await Orderdb.find({}).populate({
                 path: 'userId',
                 model: Userdb
             }).populate({
                 path: 'items.productId',
                 model: Productdb
-            }).exec();
+            }).sort({ _id: -1 }).exec();
 
             res.render('adminorder', { orders: orders });
         } catch (error) {
@@ -119,7 +119,7 @@ exports.orders = async (req, res) => {
         }
     } else {
         res.redirect('/');
-    }
+    }   
 };
 exports.getAdminorderdetails=async (req, res) => {
     const orderId = req.params.orderId;

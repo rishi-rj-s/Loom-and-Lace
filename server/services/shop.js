@@ -125,9 +125,6 @@ exports.account=async (req,res)=>{
     }
     res.render("profile",{userToken: req.cookies.userToken, user: user});
 }
-else if (req.cookies.adminToken) {
-    res.redirect('/admin/manage');
-}
 else{
     res.redirect('/home');
 }
@@ -144,9 +141,6 @@ exports.useraddress=async (req,res)=>{
         return res.status(404).render('error', { message: 'User not found' });
     }
     res.render("address",{userToken: req.cookies.userToken, user: user,addresses:addresses});
-}
-else if (req.cookies.adminToken) {
-    res.redirect('/admin/manage');
 }
 else{
     res.redirect('/home');
@@ -188,3 +182,30 @@ else{
     res.redirect('/home');
 }
 };
+exports.wishlist=async (req, res) => {
+    const { productId } = req.params;
+
+    try {
+        let user = await Userdb.findOne({ email: req.session.email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if product is already in wishlist
+        const index = user.wishlist.findIndex(item => item.productId.toString() === productId);
+        if (index === -1) {
+            // Product not in wishlist, add it
+            user.wishlist.push({ productId });
+            await user.save();
+            return res.status(200).json({ message: 'Added to wishlist', isInWishlist: true });
+        } else {
+            // Product already in wishlist, remove it
+            user.wishlist.splice(index, 1);
+            await user.save();
+            return res.status(200).json({ message: 'Removed from wishlist', isInWishlist: false });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server Error' });
+    }
+}

@@ -74,7 +74,7 @@
                     <i class="fa-solid fa-x"></i>
                   </a>
                 </td>
-              </tr>
+              </tr> 
               <% }) %>
             </tbody>
           </table>
@@ -161,6 +161,19 @@ document.querySelectorAll('.btn-plus').forEach(button => {
           quantityInput.value = currentQuantity;
           const itemId = quantityInput.getAttribute('data-id');
           updateCart(itemId, currentQuantity);
+      } else {
+          // If the current quantity equals or exceeds the maximum allowed quantity
+          // Show a popover indicating that the maximum quantity is reached
+          $(button).popover({
+              title: "Maximum Quantity Reached",
+              content: "You have reached the maximum quantity allowed.",
+              trigger: "manual", // Manual trigger so that popover doesn't close automatically
+              placement: "top" // Position of the popover
+          }).popover('show'); // Show the popover
+          // Hide the popover after a certain time (e.g., 2 seconds)
+          setTimeout(function(){
+              $(button).popover('hide');
+          }, 2000);
       }
   });
 });
@@ -195,4 +208,5 @@ document.querySelectorAll('.quantity input').forEach(input => {
       });
   }
 </script>
+
 

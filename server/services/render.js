@@ -15,10 +15,6 @@ exports.home=async(req,res)=>{
         // Fetch products and categories from the database
         const products = await Productdb.find();
         const categories = await Categorydb.find();
-        if (req.cookies.adminToken) {
-            // If token exists, redirect to the manage page
-            res.redirect('/admin/manage');
-        } else
          if (req.cookies.userToken) {
             try {
                 const email= req.session.email;
@@ -26,7 +22,6 @@ exports.home=async(req,res)=>{
                 const user = await Userdb.findOne({ email: email });
                 // Define userToken with the token value
                 const userToken = req.cookies.userToken;
-
                 // Render the login page with user information
                 res.render('index', { userToken: userToken, products: products, categories: categories,user: user });
             } catch (error) {
@@ -40,16 +35,13 @@ exports.home=async(req,res)=>{
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Internal Server Error');
+        res.render('404', { userToken: undefined});
     }
 }
 exports.loginpage=(req,res)=>{
     if(req.cookies.userToken)
     {
         res.redirect("/");
-    }
-    else if(req.cookies.adminToken){
-        res.redirect("/admin/manage")
     }
     else{
     res.render('login')
@@ -64,9 +56,6 @@ exports.login = async (req, res) => {
         console.log("user",req.cookies.email)
         if(req.cookies.userToken){
             res.render('index',{ title: "LOOM", products: products, categories: categories });
-        }
-        else if(req.cookies.adminToken){
-            res.redirect('/admin/manage');
         }
         else if (user && user.status === "active") {
             bcrypt.compare(req.body.password, user.password, (err, result) => {
@@ -108,8 +97,6 @@ exports.login = async (req, res) => {
 exports.verify = (req, res) => {
     if (req.cookies.userToken) {
         res.redirect('/');
-    } else if (req.cookies.adminToken) {
-        res.redirect('/admin/manage');
     } else if (req.session.otp && req.body.otp == req.session.otp) {
         bcrypt.hash(req.session.upass, 10, (err, hashedPassword) => {
             if (err) {
@@ -144,7 +131,7 @@ exports.verify = (req, res) => {
 };
 
 exports.signup=(req,res)=>{
-    if(req.cookies.userToken)
+    if(req.cookies.userToken)  
     {
         res.redirect("/");
     }
@@ -203,10 +190,7 @@ exports.admin = (req, res) => {
 };
 
 exports.manage=(req,res)=>{
-    if(req.cookies.userToken){
-        res.redirect('/');
-    }
-    else if(req.cookies.adminToken){
+    if(req.cookies.adminToken){
     res.render('admindashboard')
     }
     else{

@@ -150,10 +150,9 @@ exports.checkout = async (req, res) => {
 exports.placeorder = async (req, res) => {
     try {
         const { addressId, paymentMethod, totalAmount } = req.body;
-
+        
         const user = await Userdb.findOne({ email: req.session.email });
         const userId = user._id;
-
         const address = await Addressdb.findById(addressId);
 
         const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
