@@ -23,8 +23,6 @@ exports.prodetail = async (req, res) => {
                 productInCart = cart.items.find(item => item.productId.toString() === productId);
             }
             res.render('productdetails', { userToken: req.cookies.userToken, product: product, categories: categories, products: products, relatedProducts: relatedProducts, user: user, productInCart: productInCart });
-        } else if (req.cookies.adminToken) {
-            res.redirect('/admin/manage');
         } else {
             res.render('productdetails', { userToken: undefined, product: product, categories: categories, products: products, relatedProducts: relatedProducts, user: undefined });
         }
@@ -49,9 +47,6 @@ exports.men=async(req, res) => {
             const user = await Userdb.findOne({ email: email });
             res.render('eachcategory', { relatedProducts: menProducts,userToken: req.cookies.userToken,catname:'Men' ,user: user}); 
         }
-        else if(req.cookies.adminToken){
-            res.redirect('/admin/manage');
-        }
         // Render product showing page and pass products data
         res.render('eachcategory', { relatedProducts: menProducts,userToken: undefined ,catname:'Men' });
     } catch (err) {
@@ -73,9 +68,7 @@ exports.women=async(req, res) => {
             const user = await Userdb.findOne({ email: email });
             res.render('eachcategory', { relatedProducts: WomenProducts,userToken: req.cookies.userToken,catname:'Women',user:user  }); 
         }
-        else if(req.cookies.adminToken){
-            res.redirect('/admin/manage');
-        }
+
         // Render product showing page and pass products data
         res.render('eachcategory', { relatedProducts: WomenProducts,userToken: undefined,catname:'Women'  });
     } catch (err) {
@@ -104,8 +97,6 @@ exports.kids = async (req, res) => {
             const email= req.session.email;
             const user = await Userdb.findOne({ email: email });
             res.render('eachcategory', { relatedProducts, userToken: req.cookies.userToken,catname:'Kid' ,user: user });
-        } else if (req.cookies.adminToken) {
-            res.redirect('/admin/manage');
         } else {
             res.render('eachcategory', { relatedProducts, userToken: undefined,catname:'Kid'  });
         }
@@ -157,9 +148,6 @@ exports.addaddress=async (req,res)=>{
     }
     res.render("addaddress",{userToken: req.cookies.userToken, user: user});
 }
-else if (req.cookies.adminToken) {
-    res.redirect('/admin/manage');
-}
 else{
     res.redirect('/home');
 }
@@ -174,9 +162,6 @@ exports.editaddress=async (req,res)=>{
         return res.status(404).render('error', { message: 'User not found' });
     }
     res.render("editaddress",{userToken: req.cookies.userToken, user: user});
-}
-else if (req.cookies.adminToken) {
-    res.redirect('/admin/manage');
 }
 else{
     res.redirect('/home');
@@ -207,5 +192,17 @@ exports.wishlist=async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Server Error' });
+    }
+}
+exports.wishlisted=async(req,res)=>{
+    try {
+        const user = await Userdb.findOne({ email: req.session.email });
+
+        const wishlist = await Userdb.findOne({_id: user._id}).populate('wishlist.productId');
+        console.log(user)
+        res.render('wishlist', { wishlist: wishlist,userToken:req.cookies.userToken,user: user });
+    } catch (error) {
+        console.error(error);
+        res.render('404',{userToken:req.cookies.userToken,user: user})
     }
 }

@@ -13,20 +13,22 @@ module.exports = {
     },
     isUser :async(req,res,next)=>{
         try {
-            if (req.session && req.session.email) {
+            if (req.session.email) {
                 const user = await userModel.findOne({ email: req.session.email })
                 if (user.status === 'blocked') {
-                    req.session.user = null;
-                    req.session.userId = null
+                    req.session.email = null;
+                    req.session= null;
+                    res.clearCookie('userToken');
                     next()
                 } else {
-                    next();
+                   next();
                 }
 
             } else {
-                req.session.email = false;
                 req.session.email = null
-                res.redirect('/home')
+                req.session= null;
+                res.clearCookie('userToken');
+                next();
             }
         } catch (error) {
             console.log(error);

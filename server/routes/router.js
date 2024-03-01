@@ -59,7 +59,7 @@ route.post('/api/editaddress/:id',controller.posteditaddress);
 route.get('/shopfilter',controller.shopfilter); 
 route.get('/sortProducts/:sortBy', controller.getSortedProducts);
 route.post('/wishlist/:productId', shop.wishlist);
-
+route.get('/wishlisted', shop.wishlisted);
 
 //orders and cart
 route.get('/cart',ordercontroller.cart);
@@ -109,7 +109,39 @@ route.get('/update-category',categorycontroller.getupdateCategory);
 route.post('/api/admin/editcategory/:id',categorycontroller.postupdateCategory);
 route.delete('/api/admin/categories/:id',categorycontroller.delete);
 route.get('/list-cat',products.listcat);
-// Example route handling for placing an order
 
+//razorpay
+route.get('/razorpay/checkout/:orderId' , ordercontroller.razor);
+route.post('/razorpay/pay/:orderId' , ordercontroller.razorsuccess);
+
+route.delete('/api/admin/deleteimage/:productId/:index', async (req, res) => {
+  try {
+      const productId = req.params.productId;
+      const index = req.params.index;
+
+      // Fetch the product by ID
+      let product = await Productdb.findById(productId);
+
+      if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Ensure the index is valid
+      if (index < 0 || index >= product.images.length) {
+          return res.status(400).json({ message: "Invalid image index" });
+      }
+
+      // Remove the image at the specified index
+      product.images.splice(index, 1);
+
+      // Save the updated product
+      await product.save();
+
+      res.status(200).json({ message: "Image deleted successfully" });
+  } catch (error) {
+      console.error("Error deleting image:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports =route

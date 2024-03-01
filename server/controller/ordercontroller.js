@@ -8,6 +8,14 @@ const multer = require('multer');
 const sharp = require('sharp');
 const path= require('path');
 const Userdb = require('../model/model');
+// Import Razorpay SDK
+const Razorpay = require('razorpay');
+const razorpayKeyId = 'rzp_test_l0JN45NspADoRo';
+// Initialize Razorpay with your API key and secret
+const razorpay = new Razorpay({
+    key_id: 'rzp_test_l0JN45NspADoRo',
+    key_secret: 'bRhaVuy5fdvjABsEcAPA71IX'
+});
 
 exports.addtocart = async (req, res) => {
     try {
@@ -147,6 +155,7 @@ exports.checkout = async (req, res) => {
         }
     }
 }   
+
 exports.placeorder = async (req, res) => {
     try {
         const { addressId, paymentMethod, totalAmount } = req.body;
@@ -155,46 +164,76 @@ exports.placeorder = async (req, res) => {
         const userId = user._id;
         const address = await Addressdb.findById(addressId);
 
-        const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
-        if(cart){
-        if (!cart || !cart.items || cart.items.length === 0) {
-            res.redirect('/cart');
-        }
+        // If payment method is Razorpay
+        if (paymentMethod === 'online') {
+            // Create a Razorpay order
+            const razorpayOrder = await razorpay.orders.create({
+                amount: totalAmount * 100, 
+                currency: 'INR',
+                payment_capture: 1 
+            });
 
-        const items = cart.items.map(item => ({
-            productId: item.productId._id, 
-            quantity: item.quantity
-        }));
+            const order = new Orderdb({
+                userId: userId,
+                items: [], 
+                orderedDate: new Date(),
+                status: '', 
+                shippingAddress: address,
+                paymentMethod: paymentMethod,
+                totalAmount: totalAmount,
+                razorpayOrderId: razorpayOrder.id 
+            });
 
-        const order = new Orderdb({
-            userId: userId,
-            items: items,
-            orderedDate: new Date(),
-            status: 'Order Placed',
-            shippingAddress: address,
-            paymentMethod: paymentMethod,
-            totalAmount: totalAmount
-        });
+            await order.save();
 
-        await order.save();
-
-        // Delete purchased items from the cart
-        await Cartdb.deleteOne({ user: userId });
-
-        // Update stock for each purchased item
-        for (const item of cart.items) {
-            console.log(item.productId);
-            await Productdb.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
-        }
-        res.render('ordersuccess',{userToken: req.cookies.userToken,user: user})
-    }
+            return res.redirect(`/razorpay/checkout/${order._id}`);
+        } else if (paymentMethod === 'cod') {               
+                const user = await Userdb.findOne({ email: req.session.email });
+                const userId = user._id;
+                
+                const address = await Addressdb.findById(addressId);
+                const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
+                if(cart){
+                if (!cart || !cart.items || cart.items.length === 0) {
+                    res.redirect('/cart');
+                }
+                const items = cart.items.map(item => ({
+                    productId: item.productId._id, 
+                    quantity: item.quantity
+                }));
         
+                const order = new Orderdb({
+                    userId: userId,
+                    items: items,
+                    orderedDate: new Date(),
+                    status: 'Order Placed',
+                    shippingAddress: address,
+                    paymentMethod: paymentMethod,
+                    totalAmount: totalAmount
+                });
+        
+                await order.save();
+
+                await Cartdb.deleteOne({ user: userId });
+
+                for (const item of cart.items) {
+                    console.log(item.productId);
+                    await Productdb.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
+                }
+                res.render('ordersuccess',{userToken: req.cookies.userToken,user: user})
+            
+        } else {
+
+            return res.redirect('/cart');
+        }
+        }
     } catch (error) {
         // Handle errors
         console.error(error);
-         res.redirect('/cart');
+        return res.redirect('/cart');
     }
 };
+
 exports.userorders=async (req, res) => {
     try {
       const user = await Userdb.findOne({ email: req.session.email });
@@ -240,5 +279,49 @@ exports.userorders=async (req, res) => {
     } catch (error) {
         console.error('Error cancelling order:', error);
         res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+exports.razor=async (req, res) => {
+    try {
+        const user = await Userdb.findOne({ email: req.session.email });
+        const orderId = req.params.orderId;
+        // Fetch the order details from the database based on the orderId
+        const order = await Orderdb.findById(orderId);
+        if (!order) {
+            return res.redirect('/cart'); // Handle invalid order ID
+        }
+        // Render the Razorpay checkout template with order details
+        res.render('razorpay_checkout', { order: order,razorpayKeyId: razorpayKeyId,user:user,userToken: req.cookies.userToken });
+    } catch (error) {
+        console.error(error);
+        res.redirect('/cart');
+    }
+  }
+
+exports.razorsuccess=async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const order = await Orderdb.findById(orderId);
+        console.log(order)
+        const user = await Userdb.findOne({ email: req.session.email });
+        const cart = await Cartdb.findOne({ user: user._id }).populate('items.productId');
+
+        if (!order) {
+            return res.redirect('/error');
+        }
+        order.status = 'Order Placed';
+        order.paymentStatus = 'Paid';
+        await order.save();
+        await Cartdb.deleteOne({ user: user._id });
+
+        for (const item of cart.items) {
+            console.log(item.productId);
+            await Productdb.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
+        }
+
+        res.render('ordersuccess', {userToken: req.cookies.userToken,user: user });
+    } catch (error) {
+        console.error(error);
+        return res.redirect('/error');
     }
 };

@@ -136,17 +136,19 @@ exports.getAdminorderdetails=async (req, res) => {
          res.redirect('/admin/orders');
     }
 };
-exports.updateorderstatus=async (req, res) => {
+exports.updateorderstatus = async (req, res) => {
     try {
-      const orderId = req.params.orderId;
-      const newStatus = req.body.status;
+        const orderId = req.params.orderId;
+        const newStatus = req.body.status;
+        const newPaymentStatus = req.body.paymentStatus;
 
-      const updatedOrder = await Orderdb.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
- 
-      res.json(updatedOrder);
+        const updatedOrder = await Orderdb.findByIdAndUpdate(orderId, { status: newStatus, paymentStatus: newPaymentStatus }, { new: true });
+
+        res.json(updatedOrder);
     } catch (error) {
-      console.error('Error updating order status:', error);
-      res.status(500).json({ error: 'Failed to update order status' });
+        console.error('Error updating order status:', error);
+        res.status(500).json({ error: 'Failed to update order status' });
     }
-  }
+}
+
   

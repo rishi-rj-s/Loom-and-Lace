@@ -105,7 +105,6 @@ exports.find = (req, res) => {
             })
     }
 }
-// productcontroller.js
 exports.update = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -129,25 +128,37 @@ exports.update = async (req, res) => {
         product.discount = updatedProductData.discount;
         product.stock = updatedProductData.stock;
         product.description = updatedProductData.stat;
-        if (images && images.length > 0) {
-        product.images = images.map(image => image.path);
+
+        if (updatedProductData.deletedImages && updatedProductData.deletedImages.length > 0) {
+            updatedProductData.deletedImages.split(',').forEach(image => {
+                const index = product.images.indexOf(image);
+                if (index !== -1) {
+                    product.images.splice(index, 1);
+                }
+            });
         }
+
+        if (images && images.length > 0) {
+            product.images = product.images.concat(images.map(image => image.path));
+        }
+
         // Recalculate total_price based on new price and discount
         product.total_price = calculateTotalPrice(updatedProductData.price, updatedProductData.discount);
 
         // Save the updated product
         await product.save();
         res.redirect('/products');
-        // res.status(200).json({ message: "Product updated successfully", product: product });
     } catch (error) {
         console.error("Error updating product:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
 
+
 function calculateTotalPrice(price, discount) {
     return Math.round(price - (price * discount / 100));
 }
+
 
 exports.delete= (req,res)=>{
     const id= req.params.id;

@@ -20,17 +20,15 @@ exports.home=async(req,res)=>{
                 const email= req.session.email;
                 console.log(req.session.email);
                 const user = await Userdb.findOne({ email: email });
-                // Define userToken with the token value
                 const userToken = req.cookies.userToken;
-                // Render the login page with user information
+         
                 res.render('index', { userToken: userToken, products: products, categories: categories,user: user });
             } catch (error) {
                 // If token verification fails, redirect to the index page
                 console.error(error);
                 res.render('index', { title: "LOOM", products: products, categories: categories });
             }
-        } else {
-            // If no token is present, render the index page
+        }else {
             res.render('index', { userToken: undefined, products: products, categories: categories });
         }
     } catch (error) {
@@ -144,9 +142,7 @@ exports.signup=(req,res)=>{
 }
 
 exports.adminlogin = (req, res) => {
-    if(req.cookies.userToken) {
-        res.redirect("/");
-    } else if(req.cookies.adminToken) {
+    if(req.cookies.adminToken) {
         res.redirect("/admin/manage");
     } else {
         try {
@@ -194,7 +190,7 @@ exports.manage=(req,res)=>{
     res.render('admindashboard')
     }
     else{
-        res.redirect('/');
+        res.redirect('/admin');
     }
 }
 

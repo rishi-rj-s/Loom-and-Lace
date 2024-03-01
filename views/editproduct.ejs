@@ -96,7 +96,7 @@
             <label for="category" class="form-label">Category:</label>
             <select class="form-control" id="category" name="category" required>
                 <option value="">Select Category</option>
-                <% categories.forEach(category => { %>
+                <% categories.forEach((category,index) => { %>
                   <option value="<%= category._id %>" <%= (category._id.toString() === product.category.toString()) ? 'selected' : '' %>><%= category.category %></option>
                 <% }); %>
               </select>
@@ -125,20 +125,18 @@
               <label for="stock" class="form-label">Stock:</label>
               <input type="number" class="form-control" id="stock" name="stock" min="0" value="<%= product.stock %>" required>
           </div>
-          <!-- <div class="mb-3">
-              <label for="image" class="form-label">Image:</label>
-              <input type="file" class="form-control"  id="image" name="image" required>
-          </div> -->
           <div class="mb-3">
             <label for="images" class="form-label">Images:</label><br>
-            <div id="imageContainer">
-                <% product.images.forEach(image => { %>
-                    <img src="<%= image %>" alt="image" class="w-15" id="imgView">
+            <div id="imageContainer" class="d-flex flex-row align-items-center"><!-- Changed flex-direction to row -->
+                <% product.images.forEach((image, index) => { %>
+                    <div class="image-preview me-2 position-relative"><!-- Added margin class and position relative -->
+                        <img src="<%= image %>" alt="image" class="w-75" id="imgView_<%= index %>">
+                        <button type="button" class="btn btn-danger btn-sm delete-image position-absolute" onclick="deleteImage('<%= product._id %>', <%= index %>)">x</button>
+                    </div>
                 <% }); %>
             </div>
             <input type="file" class="form-control" id="images" name="images" onchange="viewImage(event)" multiple>
         </div>
-              
         
           <div class="mb-3">
               <label for="stat" class="form-label">Description:</label>
@@ -154,12 +152,33 @@
   </div>
 </main>
 <script>
+function deleteImage(productId, index) {
+    // Send an AJAX request to delete the image
+    fetch(`/api/admin/deleteimage/${productId}/${index}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // If the image is deleted successfully, remove it from the DOM
+            const imageContainer = document.getElementById('imageContainer');
+            const imagePreview = document.getElementById(`imgView_${index}`);
+            imageContainer.removeChild(imagePreview.parentElement);
+            console.log('Image deleted successfully');
+        } else {
+            console.error('Error deleting image:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting image:', error);
+    });
+}
+
 function viewImage(event) {
     const files = event.target.files;
     const imageContainer = document.getElementById('imageContainer');
-
-    // Remove previously displayed images
-    imageContainer.innerHTML = '';
 
     if (files.length > 0) {
         for (let i = 0; i < files.length; i++) {
@@ -170,23 +189,33 @@ function viewImage(event) {
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.alt = 'image';
-                img.classList.add('w-15');
-                imageContainer.appendChild(img);
-            }
+                img.classList.add('w-75');
+
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'delete-image');
+                deleteButton.textContent = 'x';
+                deleteButton.onclick = function() {
+                    deleteImage(file, i); // Passing file and index as parameters
+                };
+
+                const container = document.createElement('div');
+                container.classList.add('image-preview');
+                container.appendChild(img);
+                container.appendChild(deleteButton);
+
+                imageContainer.appendChild(container);
+            };
 
             reader.readAsDataURL(file);
         }
     }
 }
 
-//-negative avoiding in input
   document.addEventListener('DOMContentLoaded', function() {
     const numberInputs = document.querySelectorAll('input[type="number"]');
-
-    // Add an event listener for input change for all number inputs
     numberInputs.forEach(function(input) {
         input.addEventListener('input', function() {
-            // Remove leading "-" if present
             if (this.value.startsWith('-')) {
                 this.value = this.value.slice(1);
             }

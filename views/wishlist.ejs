@@ -1,0 +1,67 @@
+<%- include('include/header') -%>
+
+<!-- navbar -->
+<%- include('include/navbr') -%>
+
+<div class="container-fluid ms-4 mt-4">
+    <div class="row">
+        <div class="col-md-3 account-nav rounded shadow">
+            <label for="name"><%= user.name %></label>
+            <hr>
+            <ul>
+                <li><a href="/useraccount">Profile</a></li>
+                <li><a href="/useraddress">Addresses</a></li>
+                <li><a href="/userorders">My Orders</a></li>
+                <div class="w-100 bg-secondary"><li><a href="/wishlisted"  class="text-white">My Wishlist</a></li></div>
+                <li><a href="/forgot-otp">Forgot Password</a></li>
+                <hr>
+                <li class="align-bottom"><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+        
+<!-- //orders -->
+<div class="col-md-9 checkout">
+  <div class="container">
+      <div class="d-flex justify-content-between">
+          <h4>Wishlist</h4>
+      </div>
+      <hr>
+      <div class="row justify-content-center">
+          <div class="table-responsive">
+              <table class="table w-75">
+
+                  <tbody>
+                      <% wishlist.wishlist.forEach(item => { %>
+                          <tr>
+                              <td class="align-center">
+                                <a href="/prodetail?id=<%= item.productId._id %>" class="text-decoration-none text-black">
+                                  <div class="d-flex align-items-center">
+                                      <img src="<%= item.productId.images[0] %>" class="img-fluid rounded-3" style="width: 70px;" alt="Product Image">
+                                      <div class="flex-column ms-4">
+                                          <%= item.productId.product_name %>
+                                          <p class="mb-0" style="font-weight: 500;"><%= item.productId.size %></p>
+                                  <p class="mb-0" style="font-weight: 500;">₹<%= item.productId.total_price %> 
+                                    <label class="text-secondary text-decoration-line-through">₹<%=item.productId.price %></label><label class="text-secondary ms-1"> (<%= item.productId.discount %>%)</label></p>
+                                      </div>
+                                  </div>
+                                </a>
+                              </td>                             
+                              <td class="align-middle">
+                                  <button class="btn btn-danger delete" data-id=<%= item._id %>>
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                              </td>
+                          </tr> 
+                      <% }) %>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+
+<%- include('include/userFooter') -%>
+
+<%- include('include/footer') -%>

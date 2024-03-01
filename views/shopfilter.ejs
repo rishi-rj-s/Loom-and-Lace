@@ -41,11 +41,13 @@
                                                 <ul class="product__hover">
                                                     <li>
                                                         <a href="#" class="wishlist-btn" data-product-id="<%= product._id %>">
+                                                            <% if (userToken){%>
                                                             <% if (user && user.wishlist.some(item => item.productId.toString() === product._id.toString())) { %>
                                                                 <i class="fa-solid fa-heart"></i>
                                                             <% } else { %>
                                                                 <i class="fa-regular fa-heart"></i>
-                                                            <% } %>
+                                                            <% }} %>
+
                                                         </a>
                                                     </li>
                                                 </ul>

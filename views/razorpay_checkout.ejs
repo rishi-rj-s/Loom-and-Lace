@@ -1,0 +1,55 @@
+<!-- razorpay_checkout.ejs -->
+<%- include('include/header') -%>
+<%- include('include/navbr') -%>
+<!-- Razorpay checkout form -->
+<div class="container mt-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/home" class="text-black text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a href="/cart" class="text-black text-decoration-none">Cart</a></li>
+            <li class="breadcrumb-item"><a href="/checkout" class="text-black text-decoration-none">Checkout</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Razorpay Checkout</li>
+        </ol>
+      </nav>
+      <hr>
+    <p>Complete your payment using Razorpay</p>
+    <!-- Display order details -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Order Details</h5>
+                    <p class="card-text">Order ID: <%= order._id %></p>
+                    <p class="card-text">Username : <%= user.name %></p>
+                    <p class="card-text">Total Amount: ₹<%= order.totalAmount %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Razorpay checkout form -->
+    <div class="row">
+        <div class="col-md-6">
+            <form id="razorpay-form" action="/razorpay/pay/<%=order._id %>" method="POST">
+                <input type="hidden" name="orderId" value="<%= order._id %>">
+                <script src="https://checkout.razorpay.com/v1/checkout.js"
+                        data-key="<%= razorpayKeyId %>"
+                        data-amount="<%= order.totalAmount * 100 %>"
+                        data-currency="INR"
+                        data-order_id="<%= order.razorpayOrderId %>"
+                        data-buttontext=""
+                        data-name="LOOM &"
+                        data-description="Payment for Order <%= order._id %>"
+                        data-image="/img/loomblack.png"
+                        data-prefill.name="<%= user.name %>"
+                        data-prefill.email="<%= user.email %>"
+                        data-theme.color="#C0C0CC">
+                </script>
+                <button id="rzp-button" class="btn btn-primary">Pay with Razorpay</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('include/userFooter') -%>
+<%- include('include/footer') -%>
