@@ -17,146 +17,8 @@ const razorpay = new Razorpay({
     key_secret: 'bRhaVuy5fdvjABsEcAPA71IX'
 });
 
-exports.addtocart = async (req, res) => {
-    try {
-        const { productId, userId } = req.body;
-       
-        const parsedQuantity = 1;
- 
-        let cart = await Cartdb.findOne({ user: userId });
- 
-        if (!cart) {
-            cart = new Cartdb({
-                user: userId,
-                items: []
-            });
-        }
-
-        const existingItemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-
-        if (existingItemIndex !== -1) {
-            cart.items[existingItemIndex].quantity += parsedQuantity;
-        } else {
-            cart.items.push({ productId, quantity: parsedQuantity });
-        }
-        await cart.save();
-
-        // Fetch the updated cart with product details
-        const cartItems = await Cartdb.findOne({ user: userId }).populate('items.productId');
-        
-        // Calculate total amount and total discount
-        let totalAmount = 0;
-        let totalDiscount = 0;
-        cartItems.items.forEach(item => {
-            const { productId, quantity } = item;
-            const totalPrice = productId.price * quantity;
-            const totalDiscountAmount = productId.total_price * quantity;
-
-            totalAmount += totalPrice;
-            totalDiscount += totalDiscountAmount;
-        });
-        
-        // Update the cart with total amount and total discount
-        cartItems.totalAmount = totalAmount;
-        cartItems.totalDiscount = totalDiscount;
-        await cartItems.save();
-        
-        // Render the cart page with the updated cartItems
-         res.redirect('/cart');
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-exports.deletecart = async (req, res) => {
-            const itemId = req.params.id;
-            const user = await Userdb.findOne({ email: req.session.email });
-            const userId= user._id;
-            const updatedCart = await Cartdb.findOneAndUpdate(
-                { user: userId },
-                { $pull: { items: { _id: itemId } } },
-                { new: true }
-            ).then(data =>{
-                if(!data){
-                    res.status(404).send({message:  `Cannot delete with id ${id}.Id may be wrong`})
-                }else{
-                    res.send({
-                        message: "Cart was was deleted successfully!!!"
-                    })
-                }
-            })
-            .catch(err=>{
-                res.status(500).send({ message: "Could not delete cart item with id "+id});
-            });    
-};
-exports.addquantitycart=async (req, res) => {
-        const itemId = req.params.id;
-        const newQuantity = parseInt(req.body.quantity);
-
-        const user = await Userdb.findOne({ email: req.session.email });
-        const userId= user._id;
-        const updatedCart = await Cartdb.findOneAndUpdate(
-            { user: userId, "items._id": itemId }, // Filter by user ID and item ID
-            { $set: { "items.$.quantity": newQuantity } }, // Update the quantity of the matched item
-            { new: true }
-        ).then(data =>{
-            if(!data){
-                res.status(404).send({message:  `Cannot delete with id ${id}.Id may be wrong`})
-            }else{
-                res.send({
-                    message: "Cart quantity added succesfully"
-                })
-            }
-        })
-        .catch(err=>{
-            res.status(500).send({ message: "Could not delete cart item with id "+id});
-        }); 
-}
-exports.cart = async (req, res) => {
-    if(req.cookies.userToken){
-    try {
-        const user = await Userdb.findOne({ email: req.session.email });
-
-        const cart = await Cartdb.findOne({ user: user._id }).populate('items.productId');
-        // Calculate total amount and total discount
-        let totalAmount = 0;
-        let totalDiscount = 0;
-        if(cart){
-        cart.items.forEach(item => {
-            const { productId, quantity } = item;
-            const totalPrice = productId.price * quantity;
-            const totalDiscountAmount = productId.total_price * quantity;
-
-            totalAmount += totalPrice;
-            totalDiscount += totalDiscountAmount;
-        });
-        cart.totalAmount = totalAmount;
-        cart.totalDiscount = totalDiscount;
-        await cart.save();
-    }
-        res.render('cart', { userToken: req.cookies.userToken, cart: cart, user: user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-}
-}
-exports.checkout = async (req, res) => {
-    if(req.cookies.userToken){
-        const user = await Userdb.findOne({ email: req.session.email });
-        const userId= user._id;
-        const cart = await Cartdb.findOne({ user: userId }).populate('items.productId')
-        const addresses= await Addressdb.find({user: userId});
-        if(cart){
-            res.render('checkout',{userToken: req.cookies.userToken,user: user ,addresses: addresses,cart: cart});
-        }
-        else{
-            res.redirect('/cart');
-        }
-    }
-}   
-
 exports.placeorder = async (req, res) => {
+    if(req.cookies.userToken){
     try {
         const { addressId, paymentMethod, totalAmount } = req.body;
         
@@ -166,16 +28,19 @@ exports.placeorder = async (req, res) => {
 
         // If payment method is Razorpay
         if (paymentMethod === 'online') {
-            // Create a Razorpay order
+            const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
             const razorpayOrder = await razorpay.orders.create({
                 amount: totalAmount * 100, 
                 currency: 'INR',
                 payment_capture: 1 
             });
-
+            const items = cart.items.map(item => ({
+                productId: item.productId._id, 
+                quantity: item.quantity
+            }));
             const order = new Orderdb({
                 userId: userId,
-                items: [], 
+                items: items, 
                 orderedDate: new Date(),
                 status: '', 
                 shippingAddress: address,
@@ -232,9 +97,11 @@ exports.placeorder = async (req, res) => {
         console.error(error);
         return res.redirect('/cart');
     }
+}
 };
 
 exports.userorders=async (req, res) => {
+    if(req.cookies.userToken){
     try {
       const user = await Userdb.findOne({ email: req.session.email });
       const userId= user._id;
@@ -247,8 +114,10 @@ exports.userorders=async (req, res) => {
         // Render an error page or redirect to another route
         res.status(500).send('Internal Server Error');
     }
-  };
-  exports.userorderdetails=async (req, res) => {
+}
+};
+exports.userorderdetails=async (req, res) => {
+    if(req.cookies.userToken){
     try {
         const orderId = req.params.orderId;
         const user = await Userdb.findOne({ email: req.session.email });
@@ -264,16 +133,58 @@ exports.userorders=async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
   }
+}
  exports.userordercancel= async (req, res) => {
+    if(req.cookies.userToken){
     try {
         const order = await Orderdb.findById(req.params.orderId);
+        const user = await Userdb.findOne({ email: req.session.email });
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+       }
+       if(order.paymentMethod=='online'){
+        user.walletAmount+= order.totalAmount;
+       }
+     order.status = 'Cancelled';
+        await order.save();
+        await user.save();
+
+        res.redirect('/userorders')
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+};
+exports.userorderreturn=async (req, res) => {
+    try {
+        const order = await Orderdb.findById(req.params.orderId);
+        const user = await Userdb.findOne({ email: req.session.email });
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
        }
-
-        order.status = 'Cancelled';
+        order.status = 'Return Requested';
         await order.save();
+        await user.save();
+
+        res.redirect('/userorders')
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+exports.cancelorderreturn=async (req, res) => {
+    try {
+        const order = await Orderdb.findById(req.params.orderId);
+        const user = await Userdb.findOne({ email: req.session.email });
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+       }
+        order.status = 'Delivered';
+        await order.save();
+        await user.save();
 
         res.redirect('/userorders')
     } catch (error) {

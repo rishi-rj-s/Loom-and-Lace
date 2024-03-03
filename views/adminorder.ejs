@@ -50,6 +50,14 @@
           <span class="nav-link-text ms-1">Users</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/admin/coupons">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">local_offer</i> <!-- Material icon for a coupon -->
+          </div>
+          <span class="nav-link-text ms-1">Coupons</span>
+        </a>
+      </li>  
       <li class="nav-item mt-3">
         <hr class="dark horizontal my-0">
       </li>
@@ -103,11 +111,20 @@
                         <% } %>
                         <td><%= new Date(order.orderedDate).toLocaleDateString() %></td>
                         <td class="text-success">
-                          <%if(order.status !== 'Cancelled'){ %>
+                          <%if(order.status == 'Return Accepted'){ %>
+                            <label class="text-succ ess">Returned</label>
+                          <%}else if(order.status == 'Return Rejected'){ %>
+                            <label class="text-success">Delivered</label>
+                          <%}else if(order.status !== 'Cancelled'){ %>
                             <% if (order.status !== 'Delivered') { %>
                                 <select class="select-status" id="statusSelect-<%= order._id %> " data-order-id="<%= order._id %>">
                                     <option <%= order.status === "Order Placed" ? "selected" : "" %>>Order Placed</option>
                                     <option <%= order.status === "Delivered" ? "selected" : "" %>>Delivered</option>
+                                    <%if(order.status == "Return Requested"){%>
+                                    <option <%= order.status === "Return Requested" ? "selected" : "" %>>Return Requested</option>
+                                    <option <%= order.status === "Return Rejected" ? "selected" : "" %>>Return Rejected</option>
+                                    <option <%= order.status === "Return Accepted" ? "selected" : "" %>>Return Accepted</option>
+                                    <%}%>
                                     <option <%= order.status === "Shipped" ? "selected" : "" %>>Shipped</option>
                                     <option <%= order.status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
                                 </select>

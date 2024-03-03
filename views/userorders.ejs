@@ -6,7 +6,11 @@
 <div class="container-fluid ms-4 mt-4">
     <div class="row">
         <div class="col-md-3 account-nav rounded shadow">
-            <label for="name"><%= user.name %></label>
+            <div class="row">
+                <div class="col"><label for="name"><%= user.name %></label></div>
+                <div class="col"><a class="nav-link" href="/cart">
+                    <i class="fa-solid fa-wallet me-1"></i>Wallet Amount : <%= user.walletAmount%></a></div>
+                </div>
             <hr>
             <ul>
                 <li><a href="/useraccount">Profile</a></li>
@@ -28,81 +32,282 @@
         </div>
 
         <hr>
-
         <div class="row">
-
-            <% orders.reverse().forEach((order, index)=> { %>
-                <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
-                    <div class="col-md-12 mb-3">
-                        <div class="card shadow">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title text-muted m-2">OrderID. <%= order._id %>
-                                </h5>
-
-                                <% if(order.status==='Cancelled' ){ %>
-                                    <span class="text-danger">Order Cancelled </span>
-                                    <%}else if( order.status=='Rejected' ){%>
-                                        <span class="text-danger">Order Rejected </span>
-                                        <%}else if( order.status=='Return requested' ){%>
-                                            <a href="#" id="cancel-return-btn" class=" btn btn-success return-order">cancel return</a>
-                                            <%}else if( order.status=='Return accepted' ){%>
-                                                <span class="text-danger">Order returned, Amount refunded
-                                                </span>
-                                                <%}else if(order.status=='Delivered' ){%>
-                                                    <span class="text-success">Order Delivered </span>
-                                                    <a href="#" id="return-order-btn" data-toggle="modal" data-target="#return-order-modal" id="return-order" class=" btn btn-info return-order">Return Order</a>
-                                                    <%}else if(order.status=='Order Placed' ){ %>
-                                                        <a href="/cancelOrder/<%= order._id %>"
-                                                            id="cancel-order-btn"
-                                                            class=" btn btn-danger cancel-order">Cancel
-                                                            Order</a>
-                                                        <%}else{%>
-                                                            <span class="text-danger">
-                                                                <%= order.status %>
-                                                            </span>
-                                                            <%}%>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="d-flex">
-                                 <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
-                                </div>
-                                <div class="d-flex">
-                                    <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %>
-                                    </span>
-                                </div>
-                                <div class="d-flex">
-                                    <span class="m-1 font-weight-bold">payment method : <%= order.paymentMethod
-                                            %></span>
-                                </div>
-                                <span class="m-1 font-weight-bold">Status :<%= order.status %></span>
-                            </div>
-                        </div>
+            <div class="col-lg-12">
+                <nav>
+                    <div class="nav nav-tabs mb-3">
+                        <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                            id="nav-placed-tab" data-bs-toggle="tab" data-bs-target="#nav-placed"
+                            aria-controls="nav-placed" aria-selected="true">Order Placed</button>
+                        <button class="nav-link  border-white border-bottom-0" type="button" role="tab"
+                            id="nav-delivered-tab" data-bs-toggle="tab" data-bs-target="#nav-delivered"
+                            aria-controls="nav-delivered" aria-selected="true">Delivered</button>
+                        <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                            id="nav-return-requested-tab" data-bs-toggle="tab" data-bs-target="#nav-return-requested"
+                            aria-controls="nav-return-requested" aria-selected="false">Return Requested</button>
+                        <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                            id="nav-cancelled-tab" data-bs-toggle="tab" data-bs-target="#nav-cancelled"
+                            aria-controls="nav-cancelled" aria-selected="false">Cancelled</button>
+                        <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                            id="nav-returned-tab" data-bs-toggle="tab" data-bs-target="#nav-returned"
+                            aria-controls="nav-returned" aria-selected="false">Returned</button>
                     </div>
-                </a>
-                <% }) %>
+                </nav>
+                <div class="tab-content mb-5">
+                    <div class="tab-pane active ms-4" id="nav-placed" role="tabpanel" aria-labelledby="nav-placed-tab">
+                        <% orders.filter(order => order.status === 'Order Placed').forEach(order => { %>
+                            <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                                <div class="col-md-12 mb-3">
+                                    <div class="card shadow">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title text-muted m-2">OrderID. <%= order._id %></h5>
+                                            <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
+                                            </div>
+                                            <!-- Add more order details here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }); %>
+                        
+                    </div>
+                    <div class="tab-pane" id="nav-delivered" role="tabpanel" aria-labelledby="nav-delivered-tab">
+                        <% orders.filter(order => order.status === 'Delivered').forEach(order => { %>
+                            <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                                <div class="col-md-12 mb-3">
+                                    <div class="card shadow">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title text-muted m-2">OrderID. <%= order._id %></h5>
+                                            <span class="text-success">Order Delivered</span>
+                                            <a href="#" id="return-order-btn" class="btn btn-success return-order-btn" data-order-id="<%= order._id %>">Return</a>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
+                                            </div>
+                                            <!-- Add more order details here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }); %>
+                    </div>
+                    
+                    <div class="tab-pane" id="nav-return-requested" role="tabpanel" aria-labelledby="nav-return-requested-tab">
+                        <% orders.filter(order => order.status === 'Return Requested').forEach(order => { %>
+                            <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                                <div class="col-md-12 mb-3">
+                                    <div class="card shadow">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title text-muted m-2">OrderID. <%= order._id %></h5>
+                                            <span class="text-success">Order Delivered</span>
+                                            <a href="#" id="cancel-return-btn" class="btn btn-success cancel-return-btn" data-order-id="<%= order._id %>">Cancel Return</a>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
+                                            </div>
+                                            <!-- Add more order details here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }); %>
+                    </div>
+                    <div class="tab-pane" id="nav-cancelled" role="tabpanel" aria-labelledby="nav-cancelled-tab">
+                        <% orders.filter(order => order.status === 'Cancelled').forEach(order => { %>
+                            <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                                <div class="col-md-12 mb-3">
+                                    <div class="card shadow">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title text-muted m-2">OrderID. <%= order._id %></h5>
+                                            <span class="text-danger">Order Cancelled</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }); %>
+                    </div>
+                    <div class="tab-pane" id="nav-returned" role="tabpanel" aria-labelledby="nav-returned-tab">
+                        <% orders.filter(order => order.status === 'Returned').forEach(order => { %>
+                            <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                                <div class="col-md-12 mb-3">
+                                    <div class="card shadow">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title text-muted m-2">OrderID. <%= order._id %></h5>
+                                            <span class="text-danger">Order Returned, Amount Refunded</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
+                                            </div>
+                                            <div class="d-flex">
+                                                <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
+                                            </div>
+                                            <!-- Add more order details here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
 </div>
 
-<script>
-$('.cancel-order-btn').click((e) => {
-        e.preventDefault();
 
-        const orderId = $(e.target).data('order-id');
-        $.ajax({
-            url: `/cancelOrder/${orderId}`,
-            type: 'GET',
-            success: (response) => {
-                console.log(response);
-            },
-            error: (xhr, status, error) => {
-                console.error(xhr.responseText);
-            }
-        });
-    });    
-  </script>
 <%- include('include/userFooter') -%>
 
 <%- include('include/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function() {
+        // Handler for cancel order button click
+        $('.cancel-order-btn').click(function(e) {
+            e.preventDefault();
+    
+            const orderId = $(this).data('order-id');
+    
+            swal.fire({
+                title: "Are you sure?",
+                text: "Once cancelled, you cannot undo this action!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, cancel it!",
+                cancelButtonText: "No, keep it"
+            }).then((willCancel) => {
+                if (willCancel.isConfirmed) {
+                    // Send AJAX request to cancel the order
+                    $.ajax({
+                        url: `/cancelOrder/${orderId}`,
+                        type: 'GET',
+                        success: function(response) {
+                            swal.fire("Success!", "Your order has been cancelled.", "success");
+                            console.log(response);
+                        },
+                        error: function(xhr, status, error) {
+                            swal.fire("Error!", "Failed to cancel the order.", "error");
+                            console.error(xhr.responseText);
+                        }
+                    });
+                } else {
+                    swal.fire("Cancelled", "Your order is safe :)", "error");
+                }
+            });
+        });
+    
+        // Handler for return order button click
+        $('.return-order-btn').click(function(e) {
+            e.preventDefault();
+    
+            const orderId = $(this).data('order-id');
+    
+            // Show SweetAlert confirmation dialog
+            swal.fire({
+                title: "Are you sure?",
+                text: "Once returned, you cannot undo this action!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, return it!",
+                cancelButtonText: "No, keep it"
+            }).then((willReturn) => {
+                if (willReturn.isConfirmed) {
+                    // Send AJAX request to return the order
+                    $.ajax({
+                        url: `/returnOrder/${orderId}`,
+                        type: 'GET',
+                        success: function(response) {
+                            swal.fire("Success!", "Your order return has been requested.", "success");
+                            console.log(response);
+                            // Handle success response if needed
+                        },
+                        error: function(xhr, status, error) {
+                            swal.fire("Error!", "Failed to return the order.", "error");
+                            console.error(xhr.responseText);
+                            // Handle error response if needed
+                        }
+                    });
+                } else {
+                    swal.fire("Cancelled", "Your order is safe :)", "error");
+                }
+            });
+        });
+    
+        // Handler for cancel return button click
+        $('.cancel-return-btn').click(function(e) {
+            e.preventDefault();
+    
+            const orderId = $(this).data('order-id');
+    
+            // Show SweetAlert confirmation dialog
+            swal.fire({
+                title: "Are you sure?",
+                text: "Once cancelled, you cannot undo this action!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, cancel it!",
+                cancelButtonText: "No, keep it"
+            }).then((willCancel) => {
+                if (willCancel.isConfirmed) {
+                    // Send AJAX request to cancel the return
+                    $.ajax({
+                        url: `/cancelReturn/${orderId}`,
+                        type: 'GET',
+                        success: function(response) {
+                            swal.fire("Success!", "Return request has been cancelled.", "success");
+                            console.log(response);
+                            // Handle success response if needed
+                        },
+                        error: function(xhr, status, error) {
+                            swal.fire("Error!", "Failed to cancel the return request.", "error");
+                            console.error(xhr.responseText);
+                            // Handle error response if needed
+                        }
+                    });
+                } else {
+                    swal.fire("Cancelled", "Your return request is safe :)", "error");
+                }
+
+            });
+        });
+    });
+</script>

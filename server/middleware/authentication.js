@@ -23,7 +23,6 @@ module.exports = {
                 } else {
                    next();
                 }
-
             } else {
                 req.session.email = null
                 req.session= null;

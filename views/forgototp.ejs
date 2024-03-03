@@ -6,7 +6,11 @@
 <div class="container-fluid ms-4 mt-4">
     <div class="row">
         <div class="col-md-3 account-nav rounded shadow">
-            <label for="name"><%= user.name %></label>
+            <div class="row">
+                <div class="col"><label for="name"><%= user.name %></label></div>
+                <div class="col"><a class="nav-link" href="/cart">
+                    <i class="fa-solid fa-wallet me-1"></i>Wallet Amount : <%= user.walletAmount%></a></div>
+                </div>
             <hr>
             <ul>
                 <li><a href="/useraccount" >Profile</a></li>

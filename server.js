@@ -44,7 +44,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(express.static('public'))
+
 app.use('/uploads',express.static('uploads'));
 //load assets
 app.use('/static',express.static(path.join(__dirname,'assets')))
@@ -60,7 +60,10 @@ app.get('/', async (req, res) => {
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), async(req, res) => {
-  const userToken = req.cookies.userToken; // Assuming userToken is attached to the user object by Passport
+    const userToken = req.user.userToken;
+    const decodedToken = jwt.verify(userToken, 'your_secret_key');
+    req.session.email = decodedToken.userId;
+
   res.cookie('userToken', userToken);
     res.redirect('/home');
 });

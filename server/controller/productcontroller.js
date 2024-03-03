@@ -177,3 +177,32 @@ exports.delete= (req,res)=>{
         res.status(500).send({ message: "Could not delete user with id "+id});
     });
 }
+exports.imagedelete= async (req, res) => {
+  try {
+      const productId = req.params.productId;
+      const index = req.params.index;
+
+      // Fetch the product by ID
+      let product = await Productdb.findById(productId);
+
+      if (!product) {
+          return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Ensure the index is valid
+      if (index < 0 || index >= product.images.length) {
+          return res.status(400).json({ message: "Invalid image index" });
+      }
+
+      // Remove the image at the specified index
+      product.images.splice(index, 1);
+
+      // Save the updated product
+      await product.save();
+
+      res.status(200).json({ message: "Image deleted successfully" });
+  } catch (error) {
+      console.error("Error deleting image:", error);
+      res.status(500).json({ message: "Internal server error" });
+  }
+}

@@ -12,6 +12,8 @@ const controller = require('../controller/controller');
 const productcontroller = require('../controller/productcontroller');
 const categorycontroller = require('../controller/categorycontroller');
 const ordercontroller = require('../controller/ordercontroller');
+const cartcontroller = require('../controller/cartcontroller');
+const coupons = require('../controller/couponcontroller');
 const auths= require('../middleware/authentication');
 const Orderdb = require('../model/ordermodel');
 const Productdb = require('../model/productmodel');
@@ -30,15 +32,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 //home config side
-route.get('/home',services.home);
+route.get('/home',auths.isUser,services.home);
 //user side
 route.get('/loginpage',services.loginpage);
 route.post('/login',services.login);
 route.post('/verify-otp',services.verify);
 route.get('/signup',services.signup);
-route.get('/forgot-otp',forgot.forgototp);
-route.post('/ver-otp',forgot.verotp);
-route.post('/setNewPassword',forgot.setNewPassword);
+route.get('/forgot-otp',auths.isUser,forgot.forgototp);
+route.post('/ver-otp',auths.isUser,forgot.verotp);
+route.post('/setNewPassword',auths.isUser,forgot.setNewPassword);
 
 
 // user home side
@@ -46,31 +48,34 @@ route.get('/prodetail',shop.prodetail);
 route.get('/menrelated',shop.men);
 route.get('/womenrelated',shop.women);
 route.get('/kidsrelated',shop.kids);
-route.get('/useraccount',shop.account);
-route.get('/useraddress',shop.useraddress);
-route.get('/addaddress',shop.addaddress);
+route.get('/useraccount',auths.isUser,shop.account);
+route.get('/useraddress',auths.isUser,shop.useraddress);
+route.get('/addaddress',auths.isUser,shop.addaddress);
 
 //home api
 route.post('/update-user/:id',controller.updateuser);
-route.post('/api/addaddress/:id',controller.postaddaddress);
-route.delete('/api/useraddress/:id',controller.deleteaddress);
-route.get('/update-address',controller.updateaddress)
-route.post('/api/editaddress/:id',controller.posteditaddress);
+route.post('/api/addaddress/:id',auths.isUser,controller.postaddaddress);
+route.delete('/api/useraddress/:id',auths.isUser,controller.deleteaddress);
+route.get('/update-address',auths.isUser,controller.updateaddress)
+route.post('/api/editaddress/:id',auths.isUser,controller.posteditaddress);
 route.get('/shopfilter',controller.shopfilter); 
-route.get('/sortProducts/:sortBy', controller.getSortedProducts);
-route.post('/wishlist/:productId', shop.wishlist);
-route.get('/wishlisted', shop.wishlisted);
+route.post('/sortAndFilterProducts/:sortBy', controller.getSortedProducts);
+route.post('/wishlist/:productId',auths.isUser, shop.wishlist);
+route.get('/wishlisted', auths.isUser,shop.wishlisted);
+route.delete('/wishlist/:itemId',auths.isUser, shop.deletewishlist)
 
 //orders and cart
-route.get('/cart',ordercontroller.cart);
-route.post('/addtocart/:id',ordercontroller.addtocart);
-route.delete('/api/cart/:id',ordercontroller.deletecart);
-route.put('/api/cart/:id',ordercontroller.addquantitycart);
-route.get('/checkout',ordercontroller.checkout);
-route.post('/placeorder',ordercontroller.placeorder);
-route.get('/userorders', ordercontroller.userorders);
-route.get('/orderDetails/:orderId', ordercontroller.userorderdetails);
-route.get('/cancelOrder/:orderId', ordercontroller.userordercancel);
+route.get('/cart',auths.isUser,cartcontroller.cart);
+route.post('/addtocart/:id',auths.isUser,cartcontroller.addtocart);
+route.delete('/api/cart/:id',auths.isUser,cartcontroller.deletecart);
+route.put('/api/cart/:id',auths.isUser,cartcontroller.addquantitycart);
+route.get('/checkout',auths.isUser,cartcontroller.checkout);
+route.post('/placeorder',auths.isUser,ordercontroller.placeorder);
+route.get('/userorders', auths.isUser,ordercontroller.userorders);
+route.get('/orderDetails/:orderId',auths.isUser, ordercontroller.userorderdetails);
+route.get('/cancelOrder/:orderId', auths.isUser,ordercontroller.userordercancel);
+route.get('/returnOrder/:orderId', auths.isUser,ordercontroller.userorderreturn);
+route.get('/cancelReturn/:orderId', auths.isUser,ordercontroller.cancelorderreturn);
 
 //admin side
 route.get('/admin',services.admin)
@@ -82,6 +87,8 @@ route.get('/block-user',services.block)
 route.get('/admin/orders',products.orders)
 route.get('/admin/orderDetails/:orderId',products.getAdminorderdetails)
 route.post('/admin/updateOrderStatus/:orderId',products.updateorderstatus)
+route.get('/admin/coupons',coupons.getadminCoupons)
+route.get('/admin/addcoupon',coupons.getaddcoupon)
 
 //products side
 route.get('/products',products.product)
@@ -101,6 +108,7 @@ route.get('/api/products',productcontroller.find);
 route.post('/api/createproduct',upload.array('images',4 ),productcontroller.createproduct);
 route.post('/api/admin/editproduct/:id',upload.array('images',4 ),productcontroller.update);
 route.delete('/api/admin/products/:id',productcontroller.delete);
+route.delete('/api/admin/deleteimage/:productId/:index',productcontroller.imagedelete);
 
 //category api
 route.post('/api/createcategory',categorycontroller.catcreate);
@@ -111,37 +119,8 @@ route.delete('/api/admin/categories/:id',categorycontroller.delete);
 route.get('/list-cat',products.listcat);
 
 //razorpay
-route.get('/razorpay/checkout/:orderId' , ordercontroller.razor);
-route.post('/razorpay/pay/:orderId' , ordercontroller.razorsuccess);
+route.get('/razorpay/checkout/:orderId' ,auths.isUser, ordercontroller.razor);
+route.post('/razorpay/pay/:orderId' ,auths.isUser, ordercontroller.razorsuccess);
 
-route.delete('/api/admin/deleteimage/:productId/:index', async (req, res) => {
-  try {
-      const productId = req.params.productId;
-      const index = req.params.index;
-
-      // Fetch the product by ID
-      let product = await Productdb.findById(productId);
-
-      if (!product) {
-          return res.status(404).json({ message: "Product not found" });
-      }
-
-      // Ensure the index is valid
-      if (index < 0 || index >= product.images.length) {
-          return res.status(400).json({ message: "Invalid image index" });
-      }
-
-      // Remove the image at the specified index
-      product.images.splice(index, 1);
-
-      // Save the updated product
-      await product.save();
-
-      res.status(200).json({ message: "Image deleted successfully" });
-  } catch (error) {
-      console.error("Error deleting image:", error);
-      res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 module.exports =route

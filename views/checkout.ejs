@@ -131,24 +131,34 @@
                                 Razorpay</label>
                         </div>
                         <hr>
-                        <!-- <div class="d-flex">
-                            <label class=" pe-3" for=""><input type="radio" name="paymentMethod" value="wallet">
+                        <div class="d-flex">
+                            <label class=" pe-3" for=""><input type="radio" id="walletPayment" name="paymentMethod" value="wallet" <% if (user.walletAmount < cart.totalDiscount) { %> disabled <% } %>>
                                 Wallet</label>
-                            <span class="ms-5">Wallet Balance : ₹ 99999</span>
-                        </div> -->
-
+                            <span class="ms-5">(Wallet Balance: ₹ <%=user.walletAmount%>)</span>
+                        </div>
+                        <hr>
                         <div>
                             <button type="submit" class="btn btn-block w-100 btn-primary text-dark me-auto "> PLACE  ORDER</button>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </form>
     </div>
 </div>
 </form>
 <%- include('include/userFooter') -%>
-
+<script>
+     document.addEventListener('DOMContentLoaded', function () {
+        var walletPayment = document.getElementById('walletPayment');
+        if (walletPayment.disabled) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Wallet Payment Disabled',
+                text: 'Your wallet balance is insufficient for this transaction.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+</script>
 <%- include('include/footer') -%>

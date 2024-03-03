@@ -6,7 +6,11 @@
 <div class="container-fluid ms-4 mt-4">
     <div class="row">
         <div class="col-md-3 account-nav rounded shadow">
-            <label for="name"><%= user.name %></label>
+            <div class="row">
+                <div class="col"><label for="name"><%= user.name %></label></div>
+                <div class="col"><a class="nav-link" href="/cart">
+                    <i class="fa-solid fa-wallet me-1"></i>Wallet Amount : <%= user.walletAmount%></a></div>
+                </div>
             <hr>
             <ul>
                 <li><a href="/useraccount">Profile</a></li>
@@ -65,3 +69,26 @@
 <%- include('include/userFooter') -%>
 
 <%- include('include/footer') -%>
+<script>
+    $(document).ready(function() {
+        $('.delete').click(function() {
+            const itemId = $(this).data('id');
+            deleteFromWishlist(itemId);
+        });
+
+        function deleteFromWishlist(itemId) {
+            $.ajax({
+                url: `/wishlist/${itemId}`,
+                type: 'DELETE',
+                success: function(response) {
+                    console.log(response.message);
+                    // Remove the deleted item from the DOM
+                    $(`[data-id="${itemId}"]`).closest('tr').remove();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    });
+</script>

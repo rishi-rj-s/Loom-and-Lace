@@ -10,33 +10,22 @@ const GOOGLE_CLIENT_SECRET = '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'
   clientID: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
   callbackURL: 'http://localhost:3000/auth/google/callback'
-}, async (req, accessToken, refreshToken, profile, done) => { // Add 'req' as the first parameter
+}, async (accessToken, refreshToken, profile, done) => {
   try {
-    if (!profile.emails || profile.emails.length === 0 || !profile.emails[0].value) {
-      console.error('No valid email found in the Google profile:', profile);
-      return done(new Error('No valid email found in the Google profile'), null);
-    }
-
-    const userEmail = profile.emails[0].value;
-    let user = await Userdb.findOne({ googleId: userEmail });
+    let user = await Userdb.findOne({ email: profile.emails[0].value });
     
     if (!user) {
       user = new Userdb({
         name: profile.displayName,
-        googleId: userEmail
+        email: profile.emails[0].value,
+        password: 'defaultPassword'
       });
       await user.save();
     }
-    const userToken = jwt.sign(
-      { email: user.googleId }, 
-      'your_secret_key', 
-      { expiresIn: '1h' } // Token expires in 1 hour
-    );
+    const userToken = jwt.sign({ userId: user.email }, 'your_secret_key', { expiresIn: '1h' });
 
-    console.log("haii", userToken);
     done(null, { user, userToken });
   } catch (error) {
-    console.error('Error during Google authentication:', error);
     done(error, null);
   }
 }));
@@ -44,10 +33,11 @@ const GOOGLE_CLIENT_SECRET = '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'
 
 passport.serializeUser((user, done) => {
   const sessionUser = {
+    id: user._id,
     name: user.name,
     email: user.email
   };
-  done(null, sessionUser);  
+  done(null, sessionUser);
 });
 
 passport.deserializeUser(async (sessionUser, done) => {
@@ -56,5 +46,5 @@ passport.deserializeUser(async (sessionUser, done) => {
     done(null, user);
   } catch (error) {
     done(error, null);
-  }
-});
+    }
+  });

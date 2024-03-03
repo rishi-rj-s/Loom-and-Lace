@@ -294,39 +294,43 @@ exports.shopfilter=async (req, res) => {
     }
 }
 exports.getSortedProducts = async (req, res) => {
-    const { sortBy } = req.params;
-
-    try {
-        let sortedProducts;
-        const categories = await Categorydb.find();
-        const user = await Userdb.findOne({ email: req.session.email });
-
-        switch (sortBy) {
-            case 'popularity':
-                sortedProducts = await Productdb.find().sort({_id:1});
-                break;
-            case 'price-low-to-high':
-                sortedProducts = await Productdb.find().sort({ total_price: 1 });
-                break;
-            case 'price-high-to-low':
-                sortedProducts = await Productdb.find().sort({ total_price: -1 });
-                break;
-            case 'a-to-z':
-                sortedProducts = await Productdb.find().sort({ product_name: 1 });
-                break;
-            case 'z-to-a':
-                sortedProducts = await Productdb.find().sort({ product_name: -1 });
-                break;
-            case 'newest-first':
-                sortedProducts = await Productdb.find().sort({ _id: -1 });
-                break;
-            default:
-                sortedProducts = await Productdb.find();
+        const { sortBy } = req.params;
+        const { categories } = req.body;
+    
+        try {
+            let sortedAndFilteredProducts;
+            const user = await Userdb.findOne({ email: req.session.email });
+    
+            // Convert category names to ObjectId values
+            const categoryIds = await Categorydb.find({ category: { $in: categories } }).distinct('_id');
+    
+            switch (sortBy) {
+                case 'popularity':
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }}).sort({_id:1});
+                    break;
+                case 'price-low-to-high':
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }}).sort({ total_price: 1 });
+                    break;
+                case 'price-high-to-low':
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }}).sort({ total_price: -1 });
+                    break;
+                case 'a-to-z':
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }}).sort({ product_name: 1 });
+                    break;
+                case 'z-to-a':
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }}).sort({ product_name: -1 });
+                    break;
+                case 'newest-first':
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }}).sort({ _id: -1 });
+                    break;
+                default:
+                    sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }});
+            }
+    
+            res.json(sortedAndFilteredProducts);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
         }
-
-        res.json(sortedProducts);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};
+    };
+    

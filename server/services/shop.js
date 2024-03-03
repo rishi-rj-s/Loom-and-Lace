@@ -199,10 +199,29 @@ exports.wishlisted=async(req,res)=>{
         const user = await Userdb.findOne({ email: req.session.email });
 
         const wishlist = await Userdb.findOne({_id: user._id}).populate('wishlist.productId');
-        console.log(user)
+        wishlist.wishlist.reverse();
+        
         res.render('wishlist', { wishlist: wishlist,userToken:req.cookies.userToken,user: user });
     } catch (error) {
         console.error(error);
         res.render('404',{userToken:req.cookies.userToken,user: user})
     }
 }
+exports.deletewishlist=async (req, res) => {
+    const itemId = req.params.itemId;
+  
+    try {
+        const user = await Userdb.findOne({ "wishlist._id": itemId });
+  
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        user.wishlist.pull({ _id: itemId });
+  
+        await user.save();
+  
+        res.json({ message: 'Item deleted from wishlist successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+  }

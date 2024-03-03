@@ -22,14 +22,16 @@ var schema = new mongoose.Schema({
     gender: String,
     status: {
         type: String,
-        default: 'active' // Set the default status to 'active'
+        default: 'active' 
     },
     createdAt: {
         type: Date,
-        default: () => new Date().toISOString().split('T')[0]// Automatically set the creation timestamp
+        default: () => new Date().toISOString().split('T')[0]
     },
     walletAmount :{
-        type: Number
+        type: Number,
+        default: 0,
+        required: true
     },
     wishlist: [{
         productId: {

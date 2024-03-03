@@ -3,10 +3,37 @@
 <!-- navbar -->
 <%- include('include/navbr') -%>
 <div class="row">
-    <div class="col-2">
+    <div class="col-2 bg-white" style="height: 500px;">
         <div class="container mt-5">
-           <p><strong>Filter by Categories</strong></p>
+            <p><strong>Filter by Categories</strong></p>
+            <form id="categoryFilterForm">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Men" id="menCheckbox" checked>
+                    <label class="form-check-label" for="menCheckbox">
+                        Men
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Women" id="womenCheckbox" checked>
+                    <label class="form-check-label" for="womenCheckbox">
+                        Women
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Boys" id="boysCheckbox" checked>
+                    <label class="form-check-label" for="boysCheckbox">
+                        Boys
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Girls" id="girlsCheckbox" checked>
+                    <label class="form-check-label" for="girlsCheckbox">
+                        Girls
+                    </label>
+                </div>
+            </form>
         </div>
+        
     </div>
     <div class="col-10">
         <section class="product spad mt-5">
@@ -80,10 +107,10 @@
 <%- include('include/userFooter') -%>
 
 <%- include('include/footer') -%>
-
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const sortBySelect = document.getElementById('sortBySelect');
+        const categoryCheckboxes = document.querySelectorAll('input[type="checkbox"]');
         
         let user;
         try {
@@ -96,17 +123,23 @@
             console.error('Error fetching user information:', error);
         }
 
-        sortBySelect.addEventListener('change', async () => {
-            const sortByValue = sortBySelect.value;
+        // Function to fetch sorted and filtered products
+        const fetchProducts = async (sortByValue, categoryFilters) => {
             try {
-                const response = await fetch(`/sortProducts/${sortByValue}`);
+                const response = await fetch(`/sortAndFilterProducts/${sortByValue}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ categories: categoryFilters })
+                });
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                const sortedProducts = await response.json();
+                const sortedAndFilteredProducts = await response.json();
                 const productContainer = document.getElementById('productContainer');
                 productContainer.innerHTML = ''; // Clear existing products
-                sortedProducts.forEach(product => {
+                sortedAndFilteredProducts.forEach(product => {
                     const productDiv = document.createElement('div');
                     productDiv.classList.add('col-lg-3', 'col-md-6', 'col-sm-6', 'col-md-6', 'col-sm-6', 'mb-5', 'p-2');
                     productDiv.innerHTML = `
@@ -142,8 +175,29 @@
                     productContainer.appendChild(productDiv);
                 });
             } catch (error) {
-                console.error('Error fetching sorted products:', error);
+                console.error('Error fetching sorted and filtered products:', error);
             }
-        });
+        };
+
+// Event listener for changes in checkbox state
+categoryCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', async () => {
+        const categoryFilters = Array.from(categoryCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+        const sortByValue = sortBySelect.value;
+        fetchProducts(sortByValue, categoryFilters);
+    });
+});
+
+// Event listener for changes in select option
+sortBySelect.addEventListener('change', async () => {
+    const sortByValue = sortBySelect.value;
+    const categoryFilters = Array.from(categoryCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+    fetchProducts(sortByValue, categoryFilters);
+});
+
     });
 </script>

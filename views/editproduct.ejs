@@ -50,6 +50,14 @@
           <span class="nav-link-text ms-1">Users</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/admin/coupons">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">local_offer</i> <!-- Material icon for a coupon -->
+          </div>
+          <span class="nav-link-text ms-1">Coupons</span>
+        </a>
+      </li>  
       <li class="nav-item mt-3">
         <hr class="dark horizontal my-0">
       </li>
@@ -131,7 +139,7 @@
                 <% product.images.forEach((image, index) => { %>
                     <div class="image-preview me-2 position-relative"><!-- Added margin class and position relative -->
                         <img src="<%= image %>" alt="image" class="w-75" id="imgView_<%= index %>">
-                        <button type="button" class="btn btn-danger btn-sm delete-image position-absolute" onclick="deleteImage('<%= product._id %>', <%= index %>)">x</button>
+                        <button type="button" class="btn btn-danger btn-sm delete-image position-absolute" onclick="deleteImage('<%= product._id %>', '<%= index %>')">x</button>
                     </div>
                 <% }); %>
             </div>
