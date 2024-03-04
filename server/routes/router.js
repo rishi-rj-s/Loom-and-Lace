@@ -63,7 +63,8 @@ route.post('/sortAndFilterProducts/:sortBy', controller.getSortedProducts);
 route.post('/wishlist/:productId',auths.isUser, shop.wishlist);
 route.get('/wishlisted', auths.isUser,shop.wishlisted);
 route.delete('/wishlist/:itemId',auths.isUser, shop.deletewishlist)
-
+route.get('/search-suggestions',shop.search);
+route.get('/searchproduct',shop.searched);
 //orders and cart
 route.get('/cart',auths.isUser,cartcontroller.cart);
 route.post('/addtocart/:id',auths.isUser,cartcontroller.addtocart);
@@ -89,13 +90,16 @@ route.get('/admin/orderDetails/:orderId',products.getAdminorderdetails)
 route.post('/admin/updateOrderStatus/:orderId',products.updateorderstatus)
 route.get('/admin/coupons',coupons.getadminCoupons)
 route.get('/admin/addcoupon',coupons.getaddcoupon)
+route.post('/api/createcoupon',coupons.createcoupon)
+route.delete('/api/admin/coupon/:id',coupons.delete);
+route.get('/update-coupon',coupons.getupdatecoupon)
+route.post('/api/updatecoupon/:id',coupons.postupdatecoupon)
 
 //products side
 route.get('/products',products.product)
 route.get('/admin/addproduct',products.addproduct)
 route.get('/update-product',products.update)
 route.get('/admin/addcategory',products.addcategory)
-route.get('/update-product',products.update)
 route.get('/list-product',products.list)
 
 //api realted to db

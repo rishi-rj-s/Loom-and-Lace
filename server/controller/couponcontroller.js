@@ -17,3 +17,81 @@ exports.getadminCoupons=async(req,res)=>{
 exports.getaddcoupon=async(req,res)=>{
     res.render('addcoupon')
 }
+exports.createcoupon=async(req,res)=>{
+    try {
+        const data = {
+            couponcode: req.body.code,
+            discount: req.body.discount,
+            expiredate: formatDate(req.body.edate),
+            purchaseamount: req.body.purchaseamount
+        }
+        await Coupondb.insertMany([data])
+            .then((result) => {
+                res.redirect('/admin/coupons')
+            })
+
+    } catch (error) {
+        console.log(error);
+    }
+    function formatDate(inputDate) {
+        const date = new Date(inputDate);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
+    }
+}
+exports.delete=async(req,res)=>{
+    const id= req.params.id;
+
+    Coupondb.findByIdAndDelete(id)
+    .then(data =>{
+        if(!data){
+            res.status(404).send({message:  `Cannot delete with id ${id}.Id may be wrong`})
+        }else{
+            res.send({
+                message: "Coupon was was deleted successfully!!!"
+            })
+        }
+    })
+    .catch(err=>{
+        res.status(500).send({ message: "Could not delete user with id "+id});
+    });
+}
+exports.getupdatecoupon=async(req,res)=>{
+    if (req.cookies.adminToken) {
+        try {
+            const couponId = req.query.id; 
+            const coupon = await Coupondb.findById(couponId); // Fetch coupon details from the database
+
+            if (!coupon) {
+                return res.status(404).send({ message: `coupon with ID ${couponId} not found` });
+            }
+
+
+            // Render the editcoupon view and pass the coupon details and categories as data
+            res.render('editcoupon', { coupon });
+        } catch (error) {
+            res.status(500).send({ message: error.message || "Some error occurred while fetching coupon details or categories." });
+        }
+    }
+}
+exports.postupdatecoupon=async(req,res)=>{
+    if (req.cookies.adminToken) {
+    try {
+        const couponId = req.params.id;
+        const updatedCoupondata = req.body;
+        const coupon = await Coupondb.findById(couponId);
+
+        coupon.couponcode = updatedCoupondata.code;
+        coupon.discount = updatedCoupondata.discount;
+        coupon.expiredate = updatedCoupondata.edate;
+        coupon.purchaseamount = updatedCoupondata.purchaseamount;
+
+        await coupon.save();
+        res.redirect('/admin/coupons');
+        // res.status(200).json({ message: "Product updated successfully", product: product });
+    } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+}

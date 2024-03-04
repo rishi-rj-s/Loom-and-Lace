@@ -18,7 +18,7 @@ exports.home=async(req,res)=>{
          if (req.cookies.userToken) {
             try {
                 const email= req.session.email;
-                console.log(req.session.email,req.user);
+
                 const user = await Userdb.findOne({ email: email });
                 const userToken = req.cookies.userToken;
          
@@ -26,7 +26,7 @@ exports.home=async(req,res)=>{
             } catch (error) {
                 // If token verification fails, redirect to the index page
                 console.error(error);
-                res.render('index', { title: "LOOM", products: products, categories: categories });
+                res.render('index', { title: "LOOM",userToken: undefined, products: products, categories: categories });
             }
         }else {
             res.render('index', { userToken: undefined, products: products, categories: categories });
@@ -51,9 +51,8 @@ exports.login = async (req, res) => {
         const user = await Userdb.findOne({ email: req.body.email });
         const products=await Productdb.find({});
         const categories=await Categorydb.find({});
-        console.log("user",req.cookies.email)
         if(req.cookies.userToken){
-            res.render('index',{ title: "LOOM", products: products, categories: categories });
+             res.redirect('/')
         }
         else if (user && user.status === "active") {
             bcrypt.compare(req.body.password, user.password, (err, result) => {

@@ -1,0 +1,60 @@
+<%- include('include/header') -%>
+
+<!-- navbar -->
+<%- include('include/navbr') -%>
+
+<section class="product spad mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+             <h3>Searched Products</h3>
+            </div>
+        </div>
+        <div class="row product__filter">
+            <% products.forEach(product => { %>
+                <% if (product.list =='listed' && product.catlist =='listed') { %>
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mb-5 p-2">
+                        <div class="pd_det bg-white mix new-arrivals rounded shadow h-150 p-3">
+                            <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none">
+                                <input type="hidden" class="product-id" name="id" value="<%= product._id %>">
+                                <div class="product__item bg-white h-75">
+                                    <div class="product__item__pic set-bg">
+                                        <% if (product.images && product.images.length > 0) { %>
+                                            <img src="<%= product.images[0] %>" alt="" class="pro_image w-100">
+                                        <% } %>
+                                        <ul class="product__hover">
+                                          <% if (userToken) { %>
+                                          <li>
+                                              <a href="#" class="wishlist-btn" data-product-id="<%= product._id %>">
+                                                  <% if (user && user.wishlist.some(item => item.productId.toString() === product._id.toString())) { %>
+                                                      <i class="fa-solid fa-heart"></i>
+                                                  <% } else { %>
+                                                      <i class="fa-regular fa-heart"></i>
+                                                  <% } %>
+                                              </a>
+                                          </li>
+                                          <% }else{ %>
+                                              <li><a href="/loginpage"><i class="fa-regular fa-heart"></i></a></li>
+                                              <% } %>
+                                      </ul>
+                                    </div>
+                                </div>
+                                <div class="product__item__text bg-white">
+                                    <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark"><h5 class="text-dark bold"><%= product.brand %></h5></a>
+                                    <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none"><h6 class="text-dark inline overflow-hidden" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= product.product_name %></h6></a>
+                                    <a href="/prodetail?id=<%= product._id %>" class="text-decoration-none text-dark"><h5>₹<%= product.total_price %> <label class="text-secondary text-decoration-line-through">₹<%= product.price %></label><label class="text-secondary ms-1"> (<%= product.discount %>%)</label></h5></a>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                <% } %>
+            <% }) %>
+        </div>
+    </div>
+  </section>
+  
+
+
+<%- include('include/userFooter') -%>
+
+<%- include('include/footer') -%>

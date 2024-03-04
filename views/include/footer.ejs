@@ -20,7 +20,26 @@
           }
       })
   }
-  
+
+  $('#search').on('input', function() {
+        const searchTerm = $(this).val(); // Get the search term from the input field
+        if (searchTerm.trim() !== '') {
+            // Send AJAX request to the server
+            $.get('/search', { q: searchTerm }, function(results) {
+                // Clear previous results
+                $('#search-results-container').empty();
+                // Display search results
+                results.forEach(function(product) {
+                    // Append each product with an <a> tag linking to the product detail page
+                    $('#search-results-container').append(`<div class="my-2 border-bottom"><a href="/prodetail?id=${product._id}" class="text-decoration-none ms-2 my-2 text-black">${product.product_name}</a></div>`);
+                });
+            });
+        } else {
+            // If the search input is empty, clear results
+            $('#search-results-container').empty();
+        }
+    });
+    
   </script>
 <script src="/js/wishlist.js"></script>
 

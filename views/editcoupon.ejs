@@ -79,37 +79,34 @@
       <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#" class="text-black">Admin</a></li>
           <li class="breadcrumb-item"><a href="/admin/coupons" class="text-black">Coupons</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Add Coupon</li>
+          <li class="breadcrumb-item active" aria-current="page">Edit Coupon</li>
       </ol>
   </nav>
   <div class="container-fluid py-4">
     <div class="userside">
       <div class="row">
         <div class="col-8 me-5"><h2 class="me-3 text-decoration-underline">Add Coupons</h2></div>
-        <div class="col-3"> <a href="/admin/addcoupon" class="bg-dark btn border-shadow h-10 shadow update">
-          <span class="text-white">Add Coupon <b>+</b></span>
-      </a></div>
       </div>
       <div class="container-fluid py-4">
         <div class="productside">
           <div class="row">
             <div class="col-12 col-lg-6  card rounded bg-black">
-            <form action="/api/createcoupon" method="POST">
+            <form action="/api/updatecoupon/<%= coupon.id %>" method="POST">
               <div class="mb-3">
                   <label for="code" class="form-label">Coupon Code:</label>
-                  <input type="text" class="form-control" id="code" name="code" required>
+                  <input type="text" class="form-control" id="code" name="code" value='<%= coupon.couponcode %>'  required>
               </div>
               <div class="mb-3">
                   <label for="discount" class="form-label">Discount:</label>
-                  <input type="number" class="form-control" id="discount" name="discount"></input>
+                  <input type="number" class="form-control" id="discount" name="discount" value='<%= coupon.discount %>' ></input>
               </div>
               <div class="mb-3">
                 <label for="edate" class="form-label">Expire Date:</label>
-                <input type="text" class="form-control datepicker" id="edate" name="edate" required>
+                <input type="text" class="form-control datepicker" id="edate" name="edate" value='<%= coupon.expiredate %>' required>
             </div>
             <div class="mb-3">
                 <label for="purchaseamount" class="form-label">Purchase Amount:</label>
-                <input type="number" class="form-control" id="purchaseamount" name="purchaseamount"></input>
+                <input type="number" class="form-control" id="purchaseamount" name="purchaseamount" value='<%= coupon.purchaseamount %>'></input>
             </div>
               <button type="submit" class="btn btn-primary">Submit</button>
           </form>

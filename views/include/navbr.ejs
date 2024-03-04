@@ -19,9 +19,9 @@
             <a class="nav-text text-decoration-none" href="/kidsrelated">Kids</a>
           </li>
         </ul>
-        <form class="d-flex align-self-center me-5">
-          <input class="form-control me-2" type="search" size="50" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <form class="d-flex input-group w-auto me-4 " action="/searchproduct">
+          <input id="search" type="search" name="search" class="form-control rounded-start" size="50" placeholder="Search Products" aria-label="Search" autocomplete="off" />
+          <button id="search-button" type="submit" class="btn btn-outline-secondary me-5 border-2">Search</button>
         </form>
         <ul class="navbar-nav mx-5 mb-2 mb-lg-0 bg-transparent">
           <% if (!userToken) { %>
@@ -63,3 +63,4 @@
     </div>
   </nav>
   
+  <div id="search-results-container" class="bg-white w-100 search-results-container fixed-plugin-button position-fixed sticky-top " style="top: 80px;"></div>

@@ -176,7 +176,6 @@ exports.wishlist=async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Check if product is already in wishlist
         const index = user.wishlist.findIndex(item => item.productId.toString() === productId);
         if (index === -1) {
             // Product not in wishlist, add it
@@ -223,5 +222,29 @@ exports.deletewishlist=async (req, res) => {
         res.json({ message: 'Item deleted from wishlist successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+exports.search= async (req, res) => {
+    const searchTerm = req.query.q; 
+    try {
+        const results = await Productdb.find({ product_name: { $regex: searchTerm, $options: 'i' } }).limit(10); 
+        
+        const suggestions = results.map(product => product.product_name);
+        res.json(suggestions); 
+    } catch (error) {
+        console.error('Error searching for products:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+  exports.searched= async (req, res) => {
+    const searchTerm = req.query.search;
+    try {
+        const user= await Userdb.findOne({email: req.session.email});
+        const results = await Productdb.find({ product_name: { $regex: searchTerm, $options: 'i' } });
+        
+        res.render('searched', { products: results,userToken:req.cookies.userToken,user:user });
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
   }

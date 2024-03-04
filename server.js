@@ -63,8 +63,8 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     const userToken = req.user.userToken;
     const decodedToken = jwt.verify(userToken, 'your_secret_key');
     req.session.email = decodedToken.userId;
-
-  res.cookie('userToken', userToken);
+    res.cookie('userToken', userToken);
+    console.log(req.session.email,req.user,userToken,'ssssssssssssssssssssssssssssssssssssssssssss');
     res.redirect('/home');
 });
 

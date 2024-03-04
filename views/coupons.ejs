@@ -114,8 +114,8 @@
                           </div>
                         </td>
                         <td><%= coupons[i].discount %> </td>
-                        <td>₹<%= coupons[i].expiredate %></td>
-                        <td><%= coupons[i].purchaseamount %>%</td>
+                        <td><%= new Date(coupons[i].expiredate).toDateString() %></td>
+                        <td>₹ <%= coupons[i].purchaseamount %></td>
                         <td><a href="/update-coupon?id=<%= coupons[i]._id %>" class="btn border-shadow shadow update">
                           <span class="material-symbols-outlined">edit</span>
                       </a>
@@ -135,29 +135,50 @@
   </div>
 </main>
 <%-include('include/UIdark')-%> 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   new DataTable('#userTable');
-if(window.location.pathname=="/coupons"){
-    $ondelete= $(".table tbody td a.delete");
-    $ondelete.click(function(){
-        var id= $(this).attr("data-id")
+    $(document).ready(function() {
+        if (window.location.pathname == "/admin/coupons") {
+            var $ondelete = $(".table tbody td a.delete");
+            $ondelete.click(function() {
+                var id = $(this).attr("data-id");
 
-        var request={
-            "url": `http://localhost:3000/api/admin/coupon/${id}`,
-            "method": "DELETE"
-        }
-         
-        if(confirm("Do you really want to delete this record")){
-            $.ajax(request).done(function(response){
-                alert("Record deleted successfully")
-                location.reload();
-            })
-        }
+                var request = {
+                    "url": `http://localhost:3000/api/admin/coupon/${id}`,
+                    "method": "DELETE"
+                };
 
-    })
-}
+                // Use SweetAlert2 for confirmation dialog
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If user confirms deletion, send AJAX request
+                        $.ajax(request).done(function(response) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Record has been deleted successfully.',
+                                'success'
+                            );
+                            // Delay reloading the page after showing success message
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1500); // Adjust the delay as needed
+                        });
+                    }
+                });
+            });
+        }
+    });
 </script>
+
 <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
 
 <%-include('include/footer2')-%>
