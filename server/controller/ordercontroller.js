@@ -92,6 +92,49 @@ exports.placeorder = async (req, res) => {
             return res.redirect('/cart');
         }
         }
+        else if(paymentMethod === 'wallet'){
+            const user = await Userdb.findOne({ email: req.session.email });
+            const userId = user._id;
+            
+            const address = await Addressdb.findById(addressId);
+            const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
+            if (!cart || !cart.items || cart.items.length === 0) {
+                return res.redirect('/cart');
+            }
+        
+            const items = cart.items.map(item => ({
+                productId: item.productId._id, 
+                quantity: item.quantity
+            }));
+        
+            const order = new Orderdb({
+                userId: userId,
+                items: items,
+                orderedDate: new Date(),
+                status: 'Order Placed',
+                shippingAddress: address,
+                paymentMethod: paymentMethod,
+                totalAmount: totalAmount,
+                paymentStatus : 'Paid'
+            });
+        
+            await order.save();
+        
+            await Cartdb.deleteOne({ user: userId });
+        
+            // Subtract totalAmount from walletAmount
+            user.walletAmount -= totalAmount;
+            await user.save();
+        
+            for (const item of cart.items) {
+                console.log(item.productId);
+                await Productdb.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
+            }
+        
+            res.render('ordersuccess', { userToken: req.cookies.userToken, user: user });
+        } else {
+            return res.redirect('/cart');
+        }        
     } catch (error) {
         // Handle errors
         console.error(error);
@@ -105,7 +148,7 @@ exports.userorders=async (req, res) => {
     try {
       const user = await Userdb.findOne({ email: req.session.email });
       const userId= user._id;
-        const orders = await Orderdb.find({ userId: user._id}).populate('items.productId');
+        const orders = await Orderdb.find({ userId: user._id}).populate('items.productId').sort({_id:-1});
         const dates = orders.map(order => order.orderedDate.toDateString());
         // Render the userorders.ejs template with orders data
         res.render('userorders', { userToken: req.cookies.userToken,user: user, orders, dates });
@@ -142,7 +185,7 @@ exports.userorderdetails=async (req, res) => {
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
        }
-       if(order.paymentMethod=='online'){
+       if(order.paymentMethod=='online' || order.paymentMethod=='wallet'){
         user.walletAmount+= order.totalAmount;
        }
      order.status = 'Cancelled';

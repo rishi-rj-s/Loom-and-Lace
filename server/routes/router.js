@@ -69,6 +69,7 @@ route.get('/wishlisted', auths.isUser,shop.wishlisted);
 route.delete('/wishlist/:itemId',auths.isUser, shop.deletewishlist)
 route.get('/search-suggestions',shop.search);
 route.get('/searchproduct',shop.searched);
+
 //orders and cart
 route.get('/cart',auths.isUser,cartcontroller.cart);
 route.post('/addtocart/:id',auths.isUser,cartcontroller.addtocart);
@@ -103,6 +104,7 @@ route.get('/admin/manage',services.manage)
 route.get('/admin/monthly-sales-data', report.monthlysales);
 route.get('/admin/sales-data', report.weeklysales);
 route.get('/admin/salesreport', report.salesreport);
+route.get('/admin/sales-report', report.generatereport);
 
 //products side
 route.get('/products',products.product)

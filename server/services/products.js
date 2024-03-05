@@ -141,8 +141,20 @@ exports.updateorderstatus = async (req, res) => {
         const orderId = req.params.orderId;
         const newStatus = req.body.status;
         const newPaymentStatus = req.body.paymentStatus;
+        const user = await Userdb.findOne({ email: req.session.email });
 
         const updatedOrder = await Orderdb.findByIdAndUpdate(orderId, { status: newStatus, paymentStatus: newPaymentStatus }, { new: true });
+
+        const order = await Orderdb.findById(orderId);
+        console.log(order);
+        if (order.status === "Return Accepted") {
+            console.log("Refund Amount:", order.totalAmount); // Check the refund amount
+            user.walletAmount += order.totalAmount;
+            console.log("Updated Wallet Amount:", user.walletAmount); // Check the updated wallet amount
+            await user.save(); 
+        }
+
+       
 
         res.json(updatedOrder);
     } catch (error) {
@@ -150,5 +162,3 @@ exports.updateorderstatus = async (req, res) => {
         res.status(500).json({ error: 'Failed to update order status' });
     }
 }
-
-  

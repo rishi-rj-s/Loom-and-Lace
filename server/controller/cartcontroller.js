@@ -10,6 +10,7 @@ const path= require('path');
 const Userdb = require('../model/model');
 // Import Razorpay SDK
 const Razorpay = require('razorpay');
+const Coupondb = require('../model/couponmodel');
 const razorpayKeyId = 'rzp_test_l0JN45NspADoRo';
 // Initialize Razorpay with your API key and secret
 const razorpay = new Razorpay({
@@ -147,8 +148,9 @@ exports.checkout = async (req, res) => {
         const userId= user._id;
         const cart = await Cartdb.findOne({ user: userId }).populate('items.productId')
         const addresses= await Addressdb.find({user: userId});
+        const coupons= await Coupondb.find();
         if(cart){
-            res.render('checkout',{userToken: req.cookies.userToken,user: user ,addresses: addresses,cart: cart});
+            res.render('checkout',{userToken: req.cookies.userToken,user: user ,addresses: addresses,cart: cart, coupons: coupons});
         }
         else{
             res.redirect('/cart');
