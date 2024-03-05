@@ -82,6 +82,9 @@
         <li class="breadcrumb-item active" aria-current="page">Manage</li>
     </ol>
 </nav>
+<div class="row justify-content-end">
+  <div class="col-2"> <a href="/admin/salesreport" class="btn bg-primary rounded">Sales Report</a> </div>
+</div>
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
@@ -173,7 +176,6 @@
     const ctx = document.getElementById('chart-bars').getContext('2d');
     const ctx2 = document.getElementById('chart-line').getContext('2d');
 
-    // Fetch data and update charts
     try {
       const salesResponse = await fetch('/admin/sales-data');
       const salesData = await salesResponse.json();
@@ -181,24 +183,28 @@
       const monthlySalesResponse = await fetch('/admin/monthly-sales-data');
       const monthlySalesData = await monthlySalesResponse.json();
 
-      // Update first chart (Sales Per Day)
       const salesChart = new Chart(ctx, {
-        type: 'bar',
+      type: 'bar',
         data: {
-          labels: salesData.labels,
-          datasets: [{
-            label: 'Sales',
-            data: salesData.sales,
-            backgroundColor: 'rgba(255, 255, 255, .8)',
-            maxBarThickness: 6
-          }]
-        },
-        options: {
-          // Chart options
-        }
-      });
+         labels: salesData.labels,
+    datasets: [{
+      label: 'Sales',
+      data: salesData.sales,
+      backgroundColor: 'rgba(255, 255, 255, .8)',
+      maxBarThickness: 6
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        max: 20, 
+        beginAtZero: true 
+      }
+    }
+  }
+});
 
-      // Update second chart (Monthly Sales Amount)
+
       const monthlySalesChart = new Chart(ctx2, {
         type: 'line',
         data: {
