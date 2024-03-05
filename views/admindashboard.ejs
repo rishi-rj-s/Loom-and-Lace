@@ -92,7 +92,7 @@
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Total Sales</p>
-                <h4 class="mb-0">111</h4>
+                <h4 class="mb-0"><%= totalSales %></h4>
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Total Order Amount</p>
-                <h4 class="mb-0">2,300</h4>
+                <h4 class="mb-0"><%= totalOrderAmount %></h4>
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Total Discount</p>
-                <h4 class="mb-0">3,462</h4>
+                <h4 class="mb-0"><%= totalDiscount %></h4>
               </div>
             </div>
           </div>
@@ -150,8 +150,8 @@
               </div>
             </div>
             <div class="card-body">
-              <h6 class="mb-0 "> Users </h6>
-              <p class="text-sm ">No. of users per month </p>
+              <h6 class="mb-0 "> Sales Amount </h6>
+              <p class="text-sm ">Sales Amount of Sales per month </p>
             </div>
           </div>
         </div>
@@ -162,173 +162,64 @@
   <!-- DARK/LightmodE -->
   <%-include('include/UIdark')-%>
   <!--   Core JS Files   -->
-  <script src="/js/perfect-scrollbar.min.js"></script>
-<script src="/js/smooth-scrollbar.min.js"></script>
-  <script src="/js/chartjs.min.js"></script>
-  <script>
-    var ctx = document.getElementById("chart-bars").getContext("2d");
-
-    new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["M", "T", "W", "T", "F", "S", "S"],
-        datasets: [{
-          label: "Sales",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          data: [50, 20, 10, 22, 50, 10, 40],
-          maxBarThickness: 6
-        }, ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              suggestedMin: 0,
-              suggestedMax: 500,
-              beginAtZero: true,
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-              color: "#fff"
-            },
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-
-
-    var ctx2 = document.getElementById("chart-line").getContext("2d");
-
-    new Chart(ctx2, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Users",
-          tension: 0,
-          borderWidth: 0,
-          pointRadius: 5,
-          pointBackgroundColor: "rgba(255, 255, 255, .8)",
-          pointBorderColor: "transparent",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderColor: "rgba(255, 255, 255, .8)",
-          borderWidth: 4,
-          backgroundColor: "transparent",
-          fill: true,
-          data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5],
-              color: 'rgba(255, 255, 255, .2)'
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#f8f9fa',
-              padding: 10,
-              font: {
-                size: 14,
-                weight: 300,
-                family: "Roboto",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-  </script>
+ 
   
   <%-include('include/footer2')-%>
+  <script src="/js/perfect-scrollbar.min.js"></script>
+<script src="/js/smooth-scrollbar.min.js"></script>
+<script src="/js/chartjs.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async function () {
+    const ctx = document.getElementById('chart-bars').getContext('2d');
+    const ctx2 = document.getElementById('chart-line').getContext('2d');
+
+    // Fetch data and update charts
+    try {
+      const salesResponse = await fetch('/admin/sales-data');
+      const salesData = await salesResponse.json();
+
+      const monthlySalesResponse = await fetch('/admin/monthly-sales-data');
+      const monthlySalesData = await monthlySalesResponse.json();
+
+      // Update first chart (Sales Per Day)
+      const salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: salesData.labels,
+          datasets: [{
+            label: 'Sales',
+            data: salesData.sales,
+            backgroundColor: 'rgba(255, 255, 255, .8)',
+            maxBarThickness: 6
+          }]
+        },
+        options: {
+          // Chart options
+        }
+      });
+
+      // Update second chart (Monthly Sales Amount)
+      const monthlySalesChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: monthlySalesData.labels,
+          datasets: [{
+            label: 'Sales Amount',
+            data: monthlySalesData.salesAmount,
+            borderColor: 'rgba(255, 255, 255, .8)',
+            backgroundColor: 'transparent',
+            borderWidth: 4,
+            pointRadius: 5,
+            pointBackgroundColor: 'rgba(255, 255, 255, .8)',
+            fill: true
+          }]
+        },
+        options: {
+          // Chart options
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  });
+</script>

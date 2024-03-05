@@ -9,6 +9,7 @@ const Categorydb =require('../model/categorymodel');
 const Productdb =require('../model/productmodel');
 require('../middleware/auth');
 const passport = require('passport');
+const Orderdb = require('../model/ordermodel');
 
 exports.home=async(req,res)=>{
     try {
@@ -184,14 +185,49 @@ exports.admin = (req, res) => {
     }
 };
 
-exports.manage=(req,res)=>{
-    if(req.cookies.adminToken){
-    res.render('admindashboard')
-    }
-    else{
-        res.redirect('/admin');
+exports.manage = async (req, res) => {
+    try {
+        if (req.cookies.adminToken) {
+            const orders = await Orderdb.find({}).populate('items.productId');
+            
+            // Calculate total sales (total quantity of products sold)
+            const totalSales = orders.reduce((acc, order) => {
+                order.items.forEach(item => {
+                    acc += item.quantity;
+                });
+                return acc;
+            }, 0);
+
+            // Calculate total order amount (total of totalAmount in all orders)
+            const totalOrderAmount = orders.reduce((acc, order) => acc + order.totalAmount, 0);
+
+            // Calculate total discount
+            let totalDiscount = 0;
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    // Calculate product price after discount
+                    const productPrice = item.productId.price * item.quantity;
+                    const discountedPrice = productPrice * (1 - (item.productId.discount / 100));
+                    const discountAmount = productPrice - discountedPrice;
+                    totalDiscount += discountAmount;
+                });
+            });
+
+            res.render('admindashboard', { 
+                orders: orders,
+                totalSales: totalSales,
+                totalOrderAmount: totalOrderAmount,
+                totalDiscount: totalDiscount
+            });
+        } else {
+            res.redirect('/admin');
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
 
 exports.users = (req, res) => {
     if (req.cookies.adminToken) {

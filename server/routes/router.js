@@ -13,6 +13,7 @@ const productcontroller = require('../controller/productcontroller');
 const categorycontroller = require('../controller/categorycontroller');
 const ordercontroller = require('../controller/ordercontroller');
 const cartcontroller = require('../controller/cartcontroller');
+const invoice = require('../controller/invoice');
 const coupons = require('../controller/couponcontroller');
 const auths= require('../middleware/authentication');
 const Orderdb = require('../model/ordermodel');
@@ -33,6 +34,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 //home config side
 route.get('/home',auths.isUser,services.home);
+// Add a new route for downloading PDF
+route.get('/orders/:orderId/invoice',invoice.generateOrderInvoice);
 //user side
 route.get('/loginpage',services.loginpage);
 route.post('/login',services.login);
@@ -125,6 +128,51 @@ route.get('/list-cat',products.listcat);
 //razorpay
 route.get('/razorpay/checkout/:orderId' ,auths.isUser, ordercontroller.razor);
 route.post('/razorpay/pay/:orderId' ,auths.isUser, ordercontroller.razorsuccess);
+
+route.get('/admin/monthly-sales-data', async (req, res) => {
+  try {
+      // Query to get monthly sales data (grouping by the month of orderedDate)
+      const monthlySalesData = await Orderdb.aggregate([
+          {
+              $group: {
+                  _id: { $month: "$orderedDate" },
+                  totalAmount: { $sum: "$totalAmount" }
+              }
+          }
+      ]);
+      // Formatting data for chart
+      const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const salesAmount = Array(12).fill(0); // Initialize with 0 sales for each month
+      monthlySalesData.forEach(item => {
+          salesAmount[item._id - 1] = item.totalAmount; // Update sales amount array with fetched data
+      });
+      res.json({ labels, salesAmount });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+// Route to fetch sales data for the first chart
+route.get('/admin/sales-data', async (req, res) => {
+  try {
+      // Query to get sales data per day (grouping by the day of week of orderedDate)
+      const salesData = await Orderdb.aggregate([
+          { $group: { _id: { $dayOfWeek: "$orderedDate" }, totalSales: { $sum: 1 } } }
+      ]);
+      // Formatting data for chart
+      const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const sales = [0, 0, 0, 0, 0, 0, 0]; // Initialize with 0 sales for each day
+      salesData.forEach(item => {
+          sales[item._id - 1] = item.totalSales; // Update sales array with fetched data
+      });
+      res.json({ labels, sales });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 
 
 module.exports =route
