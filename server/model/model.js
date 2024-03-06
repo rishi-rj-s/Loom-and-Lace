@@ -38,6 +38,10 @@ var schema = new mongoose.Schema({
             type:mongoose.Schema.Types.ObjectId,
             ref: "productdb"}
       }],
+    couponused: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "coupondb"
+    },
     verified: Boolean
 })
 

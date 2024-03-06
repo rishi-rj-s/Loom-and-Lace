@@ -150,7 +150,7 @@ exports.checkout = async (req, res) => {
         const addresses= await Addressdb.find({user: userId});
         const coupons= await Coupondb.find();
         if(cart){
-            res.render('checkout',{userToken: req.cookies.userToken,user: user ,addresses: addresses,cart: cart, coupons: coupons});
+            res.render('checkout',{couponApplied:true ,userToken: req.cookies.userToken,user: user ,addresses: addresses,cart: cart, coupons: coupons});
         }
         else{
             res.redirect('/cart');

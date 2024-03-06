@@ -22,6 +22,7 @@ const Productdb = require('../model/productmodel');
 const Categorydb = require('../model/categorymodel');
 const Userdb = require('../model/model');
 const Cartdb = require('../model/cartmodel');
+const Coupondb= require('../model/couponmodel');
 
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -67,8 +68,9 @@ route.post('/sortAndFilterProducts/:sortBy', controller.getSortedProducts);
 route.post('/wishlist/:productId',auths.isUser, shop.wishlist);
 route.get('/wishlisted', auths.isUser,shop.wishlisted);
 route.delete('/wishlist/:itemId',auths.isUser, shop.deletewishlist)
-route.get('/search-suggestions',shop.search);
+route.get('/search',shop.search);
 route.get('/searchproduct',shop.searched);
+
 
 //orders and cart
 route.get('/cart',auths.isUser,cartcontroller.cart);
@@ -82,6 +84,7 @@ route.get('/orderDetails/:orderId',auths.isUser, ordercontroller.userorderdetail
 route.get('/cancelOrder/:orderId', auths.isUser,ordercontroller.userordercancel);
 route.get('/returnOrder/:orderId', auths.isUser,ordercontroller.userorderreturn);
 route.get('/cancelReturn/:orderId', auths.isUser,ordercontroller.cancelorderreturn);
+route.post('/applyCoupon', auths.isUser,coupons.applyCoupon)
 
 //admin side
 route.get('/admin',services.admin)

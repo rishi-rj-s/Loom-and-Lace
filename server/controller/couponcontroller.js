@@ -95,3 +95,27 @@ exports.postupdatecoupon=async(req,res)=>{
     }
 }
 }
+exports.applyCoupon = async (req, res) => {
+    try {
+        const { couponCode } = req.body;
+        
+        const user = await Userdb.findOne({ email: req.session.email });
+        const cart = await Cartdb.findOne({ user: user._id });
+        
+        if (couponCode === "selectcoupon") {
+            return res.json({ message: 'Coupon applied successfully', newTotal: cart.totalDiscount });
+        }
+
+        const coupon = await Coupondb.findOne({ couponcode: couponCode });
+        if (!coupon) {
+            return res.status(404).json({ message: 'Coupon not found' });
+        }
+
+        const newTotal = cart.totalDiscount - coupon.discount;
+        // Return the new total and coupon amount to the client
+        res.json({ message: 'Coupon applied successfully', newTotal, couponAmount: coupon.discount });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

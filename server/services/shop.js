@@ -224,18 +224,17 @@ exports.deletewishlist=async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
   }
-exports.search= async (req, res) => {
+exports.search = async (req, res) => {
     const searchTerm = req.query.q; 
     try {
         const results = await Productdb.find({ product_name: { $regex: searchTerm, $options: 'i' } }).limit(10); 
         
-        const suggestions = results.map(product => product.product_name);
-        res.json(suggestions); 
+        res.json(results); 
     } catch (error) {
         console.error('Error searching for products:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-  }
+}
   exports.searched= async (req, res) => {
     const searchTerm = req.query.search;
     try {

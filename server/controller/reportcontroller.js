@@ -118,11 +118,12 @@ exports.monthlysales= async (req, res) => {
           doc.moveDown();
   
           // Add sales data
-          salesData.forEach(({ date, totalSales, totalOrderAmount, totalDiscount }) => {
+          salesData.forEach(({ date, totalSales, totalOrderAmount, totalDiscount,totalCouponDiscount }) => {
               doc.fontSize(14).text('Date: ' + date);
               doc.fontSize(12).text('Total Sales: ' + totalSales);
               doc.fontSize(12).text('Total Order Amount: Rs.' + totalOrderAmount);
               doc.fontSize(12).text('Total Discount: Rs.' + totalDiscount);
+              doc.fontSize(12).text('Total Coupon Discount : Rs.' + totalCouponDiscount);
               doc.moveDown();
           });
   
@@ -174,29 +175,36 @@ async function getYearlySales() {
   
   async function getOrderData(startDate, endDate) {
     const orders = await Orderdb.find({
-        orderedDate: { $gte: startDate, $lt: endDate }
-    }).populate('items.productId');
+        orderedDate: { $gte: startDate, $lt: endDate },
+        couponused: { $exists: true } 
+    }).populate('items.productId').populate('couponused'); // Populate the couponused field
 
     let totalSales = 0;
     let totalOrderAmount = 0;
     let totalDiscount = 0;
+    let totalCouponDiscount = 0;
 
     orders.forEach(order => {
         totalSales += order.items.reduce((acc, item) => acc + item.quantity, 0);
         totalOrderAmount += order.totalAmount;
         order.items.forEach(item => {
-            // Calculate product price after discount
             const productPrice = item.productId.price * item.quantity;
             const discountedPrice = productPrice * (1 - (item.productId.discount / 100));
             const discountAmount = productPrice - discountedPrice;
             totalDiscount += discountAmount;
         });
+
+        if (order.couponused) {
+           
+            totalCouponDiscount += order.couponused.discount;
+        }
     });
 
     return [{
-        date: startDate, // Assuming startDate represents the date of the report
+        date: startDate,
         totalSales,
         totalOrderAmount,
-        totalDiscount
+        totalDiscount,
+        totalCouponDiscount
     }];
 }

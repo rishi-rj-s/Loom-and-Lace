@@ -8,6 +8,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const path= require('path');
 const Userdb = require('../model/model');
+const Coupondb = require('../model/couponmodel');
 // Import Razorpay SDK
 const Razorpay = require('razorpay');
 const razorpayKeyId = 'rzp_test_l0JN45NspADoRo';
@@ -20,12 +21,25 @@ const razorpay = new Razorpay({
 exports.placeorder = async (req, res) => {
     if(req.cookies.userToken){
     try {
-        const { addressId, paymentMethod, totalAmount } = req.body;
+        const { addressId, paymentMethod, totalAmount,couponCode } = req.body;
         
         const user = await Userdb.findOne({ email: req.session.email });
         const userId = user._id;
         const address = await Addressdb.findById(addressId);
 
+        let couponUsed;
+            let finalTotalAmount = totalAmount;
+
+            // Check if a valid coupon code is provided
+            if (couponCode && couponCode !== "selectcoupon") {
+                const coupon = await Coupondb.findOne({ couponcode: couponCode });
+                if (!coupon) {
+                    return res.status(404).json({ message: 'Coupon not found' });
+                }
+                couponUsed = coupon._id;
+                // Subtract coupon discount from the total amount
+                finalTotalAmount -= coupon.discount;
+            }
         // If payment method is Razorpay
         if (paymentMethod === 'online') {
             const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
@@ -45,8 +59,9 @@ exports.placeorder = async (req, res) => {
                 status: '', 
                 shippingAddress: address,
                 paymentMethod: paymentMethod,
-                totalAmount: totalAmount,
-                razorpayOrderId: razorpayOrder.id 
+                totalAmount: finalTotalAmount,
+                razorpayOrderId: razorpayOrder.id,
+                couponused: couponUsed
             });
 
             await order.save();
@@ -74,7 +89,8 @@ exports.placeorder = async (req, res) => {
                     status: 'Order Placed',
                     shippingAddress: address,
                     paymentMethod: paymentMethod,
-                    totalAmount: totalAmount
+                    totalAmount: finalTotalAmount,
+                    couponused: couponUsed
                 });
         
                 await order.save();
@@ -114,8 +130,9 @@ exports.placeorder = async (req, res) => {
                 status: 'Order Placed',
                 shippingAddress: address,
                 paymentMethod: paymentMethod,
-                totalAmount: totalAmount,
-                paymentStatus : 'Paid'
+                totalAmount: finalTotalAmount,
+                paymentStatus : 'Paid',
+                couponused: couponUsed
             });
         
             await order.save();
@@ -279,3 +296,4 @@ exports.razorsuccess=async (req, res) => {
         return res.redirect('/error');
     }
 };
+

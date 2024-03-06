@@ -96,18 +96,18 @@
                     </div>
                     <div class="couponpart row mt-3">
                         <div class="col-6">
-                            <select class="form-control" id="category" name="category" >
-                                <option value="">Select Coupon</option>
+                            <select class="form-control" id="couponCode" name="couponCode">
+                                <option value="selectcoupon">Select Coupon</option>
                                 <% coupons.forEach(coupon => { %>
-                                    <%if(coupon.purchaseamount >= cart.totalDiscount) { %>
-                                    <option value="<%= coupon.couponcode %>"><%= coupon.couponcode %></option>
-                                    
-                                <%} }); %>
+                                    <% if (coupon.purchaseamount <= cart.totalDiscount) { %>
+                                        <option value="<%= coupon.couponcode %>"><%= coupon.couponcode %></option>
+                                    <% } %>
+                                <% }); %>
                             </select>
                         </div>
-                       <div class="col-6">
-                        <button class="btn btn-outline-danger">Apply Code</button>
-                       </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-danger" id="applyCoupon">Apply Coupon</button>
+                        </div>
                     </div>
                 </div>
 
@@ -117,7 +117,9 @@
                             <p class="mb-2">Subtotal</p>
                             <p id="subtotal" class="mb-2">₹<%= cart.totalDiscount %> <label class="text-decoration-line-through">₹<%= cart.totalAmount %> </label></p>
                           </div>
-            
+                          <div id="shippingDiv" style="display: none;">
+                            <p>Coupon Applied: -₹<span id="couponAmount"></span></p>
+                        </div>
                           <div class="d-flex justify-content-between" style="font-weight: 500;">
                             <p class="mb-0">Shipping</p>
                             <p class="mb-0">Free</p>
@@ -164,7 +166,7 @@
 </form>
 <%- include('include/userFooter') -%>
 <script>
-     document.addEventListener('DOMContentLoaded', function () {
+   document.addEventListener('DOMContentLoaded', function () {
         var walletPayment = document.getElementById('walletPayment');
         if (walletPayment.disabled) {
             Swal.fire({
@@ -175,5 +177,45 @@
             });
         }
     });
+
+    document.getElementById('applyCoupon').addEventListener('click', function() {
+    var selectedCoupon = document.getElementById('couponCode').value;
+    if (!selectedCoupon || selectedCoupon === "selectcoupon") {
+        document.getElementById('total').innerText = '₹' + '<%= cart.totalDiscount %>';
+        document.getElementById('shippingDiv').style.display = 'none';
+        return;
+    }
+    fetch('/applycoupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ couponCode: selectedCoupon })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === 'Coupon applied successfully') {
+            // Update total amount
+            document.getElementById('total').innerText = '₹' + data.newTotal;
+            // Show shipping details if coupon applied
+            document.getElementById('shippingDiv').style.display = 'block';
+            // Update coupon amount
+            document.getElementById('couponAmount').innerText = '₹' + data.couponAmount;
+            // Update new total
+            document.getElementById('newTotal').innerText = '₹' + data.newTotal;
+            // Reset coupon selection
+            document.getElementById('couponCode').value = '';
+        } else {
+            // Handle error messages
+            console.error(data.message);
+            // Optionally, display error message to user
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+
 </script>
+
 <%- include('include/footer') -%>

@@ -41,7 +41,11 @@ const orderSchema = new mongoose.Schema({
     totalAmount:{
         type: Number,
         required: true
-    }
+    },
+    couponused: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "coupondb"
+    },
 
 })
 const Orderdb = mongoose.model('orderdb', orderSchema)

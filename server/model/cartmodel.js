@@ -18,6 +18,10 @@ const cartSchema = new Schema({
             type: Number
         }
     }],
+    couponApplied:{
+            type: Boolean,
+            default: false
+    },
     totalAmount : {
         type : Number
     },
