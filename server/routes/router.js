@@ -16,6 +16,7 @@ const cartcontroller = require('../controller/cartcontroller');
 const invoice = require('../controller/invoice');
 const report = require('../controller/reportcontroller');
 const coupons = require('../controller/couponcontroller');
+const offers = require('../controller/offercontroller');
 const auths= require('../middleware/authentication');
 const Orderdb = require('../model/ordermodel');
 const Productdb = require('../model/productmodel');
@@ -101,6 +102,7 @@ route.post('/api/createcoupon',coupons.createcoupon)
 route.delete('/api/admin/coupon/:id',coupons.delete);
 route.get('/update-coupon',coupons.getupdatecoupon)
 route.post('/api/updatecoupon/:id',coupons.postupdatecoupon)
+route.get('/admin/offers',offers.getOffer)
 
 //admin dash
 route.get('/admin/manage',services.manage)

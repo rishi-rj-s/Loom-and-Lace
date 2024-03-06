@@ -3,7 +3,7 @@
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3  mt-5 bg-gradient-dark" id="sidenav-main">
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-    <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/material-dashboard/pages/dashboard " target="_blank">
+    <a class="navbar-brand m-0" >
       <span class="ms-1 font-weight-bold text-white">Admin</span>
     </a>
   </div>
@@ -19,7 +19,7 @@
         </a>
       </li> 
       <li class="nav-item">
-        <a class="nav-link text-white active bg-gradient-primary" href="/admin/categories">
+        <a class="nav-link text-white " href="/admin/categories">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">assignment</i>
           </div>
@@ -27,7 +27,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white" href="/products">
+        <a class="nav-link text-white " href="/products">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">table_view</i>
           </div>
@@ -58,6 +58,14 @@
           <span class="nav-link-text ms-1">Coupons</span>
         </a>
       </li>  
+      <li class="nav-item">
+        <a class="nav-link text-white active bg-gradient-primary" href="/admin/offers">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">local_offer</i> <!-- Material icon for a coupon -->
+          </div>
+          <span class="nav-link-text ms-1">Offers</span>
+        </a>
+      </li>  
       <li class="nav-item mt-3">
         <hr class="dark horizontal my-0">
       </li>
@@ -78,47 +86,14 @@
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="#" class="text-black">Admin</a></li>
-          <li class="breadcrumb-item"><a href="/admin/categories" class="text-black">Category</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Add Category</li>
+          <li class="breadcrumb-item active" aria-current="page">Offers</li>
       </ol>
   </nav>
-  <label class="text-danger"><%=message%></label>
-  <div class="container-fluid py-4">
-    <div class="productside">
-      <div class="row">
-        <div class="col-6"><h2 class="me-3 text-decoration-underline">Edit Category</h2></div>
-        <!-- <div class="col-6"> <a href="/admin/addproduct" class="bg-dark btn border-shadow shadow update">
-          <span class="text-white">Add Products <b>+</b></span>
-      </a></div> -->
-      </div>
-      
-      <div class="row">
-        <div class="col-12 col-lg-6  card rounded bg-black">
-        <form action="/api/admin/editcategory/<%= categories.id %>" method="POST">
-            <input type="hidden" id="category_id" name="id" value="<%= categories.id %>">
-          <div class="mb-3">
-              <label for="p_name" class="form-label">Category Name:</label>
-              <input type="text" class="form-control" id="cat_name" name="cat_name" value="<%= categories.category %>" required>
-          </div>
 
-          <div class="mb-3">
-              <label for="stat" class="form-label">Description:</label>
-              <textarea class="form-control" id="cat_stat" name="cat_stat" ><%= categories.description %></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
-      </div>
-    
-     
-    </div>
-  </div>
+
 </main>
 <%-include('include/UIdark')-%>
-<script>
-  new DataTable('#userTable');
-
-</script>
+<!--   Core JS Files   -->
 
 
 <%-include('include/footer2')-%>
