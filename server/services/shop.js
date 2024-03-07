@@ -47,8 +47,9 @@ exports.men=async(req, res) => {
             const user = await Userdb.findOne({ email: email });
             res.render('eachcategory', { relatedProducts: menProducts,userToken: req.cookies.userToken,catname:'Men' ,user: user}); 
         }
-        // Render product showing page and pass products data
-        res.render('eachcategory', { relatedProducts: menProducts,userToken: undefined ,catname:'Men' });
+        else{
+            res.render('eachcategory', { user: undefined,relatedProducts: menProducts,userToken: undefined ,catname:'Men' });
+        }
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -70,7 +71,7 @@ exports.women=async(req, res) => {
         }
 
         // Render product showing page and pass products data
-        res.render('eachcategory', { relatedProducts: WomenProducts,userToken: undefined,catname:'Women'  });
+        res.render('eachcategory', { user: undefined,relatedProducts: WomenProducts,userToken: undefined,catname:'Women'  });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -98,7 +99,7 @@ exports.kids = async (req, res) => {
             const user = await Userdb.findOne({ email: email });
             res.render('eachcategory', { relatedProducts, userToken: req.cookies.userToken,catname:'Kid' ,user: user });
         } else {
-            res.render('eachcategory', { relatedProducts, userToken: undefined,catname:'Kid'  });
+            res.render('eachcategory', {user: undefined, relatedProducts, userToken: undefined,catname:'Kid'  });
         }
     } catch (err) {
         console.error(err);
@@ -200,7 +201,12 @@ exports.wishlisted=async(req,res)=>{
         const wishlist = await Userdb.findOne({_id: user._id}).populate('wishlist.productId');
         wishlist.wishlist.reverse();
         
-        res.render('wishlist', { wishlist: wishlist,userToken:req.cookies.userToken,user: user });
+        const cart = await Cartdb.findOne({ user: user._id });
+        let productInCart = null;
+        if (cart) {
+            productInCart = cart.items.find(item => item.productId.toString() === wishlist.productId);
+        }
+        res.render('wishlist', { wishlist: wishlist,userToken:req.cookies.userToken,user: user,productInCart: productInCart  });
     } catch (error) {
         console.error(error);
         res.render('404',{userToken:req.cookies.userToken,user: user})

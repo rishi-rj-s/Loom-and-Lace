@@ -49,7 +49,24 @@
                                       </div>
                                   </div>
                                 </a>
-                              </td>                             
+                              </td>    
+                              <td class="align-middle">
+                                    <% if (userToken && item.productId.stock > 0) { %>
+                                        <% if (productInCart && productInCart.quantity > 0) { %>
+                                            <a href="/cart" class="btn rounded px-4 py-2 mb-4 bg-outline-dark-blue">Go To Cart</a>
+                                        <% } else { %>
+                                            <form id="addToCartForm" method="POST" action="/addtocart/<%=item.productId._id %>">
+                                                <input type="hidden" name="productId" value="<%=item.productId._id %>">
+                                                <input type="hidden" name="userId" value="<%= user._id %>">
+                                                <button type="submit" id="addToCartBtn" class="btn rounded px-4 py-2 mb-4 btn-outline-dark">
+                                                    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    <% }else{ %>
+                                        <a class="btn rounded px-4 py-2 mb-4 bg-outline-dark-blue">Out of stock</a>
+                                    <% }%>
+                              </td>                         
                               <td class="align-middle">
                                   <button class="btn btn-danger delete" data-id=<%= item._id %>>
                                       <i class="fas fa-trash"></i>

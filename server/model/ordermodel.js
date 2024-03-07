@@ -1,6 +1,12 @@
 const mongoose =require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const orderSchema = new mongoose.Schema({
+    orderId: {
+        type: String,
+        default: uuidv4, // Remove the function invocation here
+        unique: true,
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref : 'userdb'
@@ -9,6 +15,9 @@ const orderSchema = new mongoose.Schema({
         productId :{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'productdb'
+        },
+        price: {
+            type: Number
         },
         quantity: {
             type: Number

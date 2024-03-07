@@ -42,7 +42,7 @@
             Stock : <%= product.stock %> <%}%></b> </p>
         <p class="mb-4"><%= product.description %></p>
         <div class="row">
-            <div class="col-4">
+        <div class="col-4">
         <% if (userToken && product.stock > 0) { %>
             <% if (productInCart && productInCart.quantity > 0) { %>
                 <a href="/cart" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">Go To Cart</a>

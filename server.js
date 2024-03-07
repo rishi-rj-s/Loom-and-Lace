@@ -53,6 +53,8 @@ app.use('/css',express.static(path.resolve(__dirname,"assets/css")))
 app.use('/img',express.static(path.resolve(__dirname,"assets/img")))
 app.use('/js',express.static(path.resolve(__dirname,"assets/js")))
 
+app.use('/',require("./server/routes/router"))
+
 app.get('/', async (req, res) => {
     res.redirect('/home');
 });
@@ -64,11 +66,10 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     const decodedToken = jwt.verify(userToken, 'your_secret_key');
     req.session.email = decodedToken.userId;
     res.cookie('userToken', userToken);
-    console.log(req.session.email,req.user,userToken,'ssssssssssssssssssssssssssssssssssssssssssss');
+    console.log(req.session.email,req.user,userToken,'');
     res.redirect('/home');
 });
 
-app.use('/',require("./server/routes/router"))
 
 
  app.listen(PORT,()=>{ console.log(`Server is running on http://localhost:${PORT}`)})

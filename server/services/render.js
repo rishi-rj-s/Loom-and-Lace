@@ -16,7 +16,7 @@ exports.home=async(req,res)=>{
         // Fetch products and categories from the database
         const products = await Productdb.find();
         const categories = await Categorydb.find();
-         if (req.cookies.userToken) {
+         if (req.cookies.userToken && req.session.email) {
             try {
                 const email= req.session.email;
 

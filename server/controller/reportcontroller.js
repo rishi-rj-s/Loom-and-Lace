@@ -174,10 +174,9 @@ async function getYearlySales() {
   }
   
   async function getOrderData(startDate, endDate) {
-    const orders = await Orderdb.find({
-        orderedDate: { $gte: startDate, $lt: endDate },
-        couponused: { $exists: true } 
+    const orders = await Orderdb.find({ orderedDate: { $gte: startDate, $lt: endDate },
     }).populate('items.productId').populate('couponused'); // Populate the couponused field
+    console.log(orders,)
 
     let totalSales = 0;
     let totalOrderAmount = 0;
