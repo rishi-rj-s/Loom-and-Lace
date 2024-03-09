@@ -16,10 +16,9 @@ exports.home=async(req,res)=>{
         // Fetch products and categories from the database
         const products = await Productdb.find();
         const categories = await Categorydb.find();
-         if (req.cookies.userToken && req.session.email) {
+         if (req.cookies.userToken) {
             try {
                 const email= req.session.email;
-
                 const user = await Userdb.findOne({ email: email });
                 const userToken = req.cookies.userToken;
          
@@ -161,8 +160,6 @@ exports.adminlogin = (req, res) => {
                 // Set the token in the response cookie or header, as per your requirement
                 res.cookie('adminToken', adminToken);
 
-                // Set the admin token in the session for further usage
-                req.session.admin = adminToken;
                 res.redirect("/admin/manage");
             } else {
                 res.redirect('/admin?pass=wrong');

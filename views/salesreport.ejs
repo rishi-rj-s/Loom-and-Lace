@@ -85,34 +85,36 @@
 </nav>
 <!-- design here -->
 <div class="container-fluid py-4">
-    <div class="row">
+  <div class="row">
       <div class="col-md-6 offset-md-3">
-        <form id="salesReportForm" action="/admin/sales-report" method="GET">
-          <div class="mb-3">
-            <label for="filterType" class="form-label">Select Filter Type:</label>
-            <select class="form-select" id="filterType" name="filterType">
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-          <div id="customDateInputs" style="display: none;">
-            <div class="mb-3">
-              <label for="startDate" class="form-label">Start Date:</label>
-              <input type="date" class="form-control" id="startDate" name="startDate">
-            </div>
-            <div class="mb-3">
-              <label for="endDate" class="form-label">End Date:</label>
-              <input type="date" class="form-control" id="endDate" name="endDate">
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary">Generate Report</button>
-        </form>
+          <form id="salesReportForm" action="/admin/sales-report" method="GET">
+              <div class="mb-3">
+                  <label for="filterType" class="form-label">Select Filter Type:</label>
+                  <select class="form-select" id="filterType" name="filterType">
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                      <option value="custom">Custom</option>
+                  </select>
+              </div>
+              <div id="customDateInputs" style="display: none;">
+                  <div class="mb-3">
+                      <label for="startDate" class="form-label">Start Date:</label>
+                      <input type="date" class="form-control" id="startDate" name="startDate">
+                  </div>
+                  <div class="mb-3">
+                      <label for="endDate" class="form-label">End Date:</label>
+                      <input type="date" class="form-control" id="endDate" name="endDate">
+                  </div>
+              </div>
+              <button type="submit" class="btn btn-primary" name="reportType" value="pdf">Generate PDF Report</button>
+              <button type="submit" class="btn btn-primary" name="reportType" value="excel">Generate Excel Report</button>
+          </form>
       </div>
-    </div>
   </div>
+</div>
+
 </main>
 
 <script>

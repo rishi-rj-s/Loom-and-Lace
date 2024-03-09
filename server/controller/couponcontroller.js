@@ -21,9 +21,9 @@ exports.createcoupon=async(req,res)=>{
     try {
         const data = {
             couponcode: req.body.code,
-            discount: req.body.discount,
+            maxdiscount: req.body.discount,
             expiredate: formatDate(req.body.edate),
-            purchaseamount: req.body.purchaseamount
+            minpurchaseamount: req.body.purchaseamount
         }
         await Coupondb.insertMany([data])
             .then((result) => {
@@ -82,9 +82,9 @@ exports.postupdatecoupon=async(req,res)=>{
         const coupon = await Coupondb.findById(couponId);
 
         coupon.couponcode = updatedCoupondata.code;
-        coupon.discount = updatedCoupondata.discount;
+        coupon.maxdiscount = updatedCoupondata.discount;
         coupon.expiredate = updatedCoupondata.edate;
-        coupon.purchaseamount = updatedCoupondata.purchaseamount;
+        coupon.minpurchaseamount = updatedCoupondata.purchaseamount;
 
         await coupon.save();
         res.redirect('/admin/coupons');
@@ -111,9 +111,9 @@ exports.applyCoupon = async (req, res) => {
             return res.status(404).json({ message: 'Coupon not found' });
         }
 
-        const newTotal = cart.totalDiscount - coupon.discount;
+        const newTotal = cart.totalDiscount - coupon.maxdiscount;
         // Return the new total and coupon amount to the client
-        res.json({ message: 'Coupon applied successfully', newTotal, couponAmount: coupon.discount });
+        res.json({ message: 'Coupon applied successfully', newTotal, couponAmount: coupon.maxdiscount });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });

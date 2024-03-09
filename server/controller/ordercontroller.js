@@ -45,7 +45,7 @@ exports.placeorder = async (req, res) => {
         if (paymentMethod === 'online') {
             const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');
             const razorpayOrder = await razorpay.orders.create({
-                amount: totalAmount * 100, 
+                amount: totalAmount * 100,
                 currency: 'INR',
                 payment_capture: 1 
             });
@@ -55,11 +55,12 @@ exports.placeorder = async (req, res) => {
             }));
             const order = new Orderdb({
                 userId: userId,
-                items: items, 
+                items: items,
                 orderedDate: new Date(),
-                status: '', 
+                status: 'Order Payment Failed', 
                 shippingAddress: address,
                 paymentMethod: paymentMethod,
+                paymentStatus : 'Failed',
                 totalAmount: finalTotalAmount,
                 razorpayOrderId: razorpayOrder.id,
                 couponused: couponUsed
@@ -260,9 +261,8 @@ exports.razor=async (req, res) => {
         // Fetch the order details from the database based on the orderId
         const order = await Orderdb.findById(orderId);
         if (!order) {
-            return res.redirect('/cart'); // Handle invalid order ID
+            return res.redirect('/cart'); 
         }
-        // Render the Razorpay checkout template with order details
         res.render('razorpay_checkout', { order: order,razorpayKeyId: razorpayKeyId,user:user,userToken: req.cookies.userToken });
     } catch (error) {
         console.error(error);

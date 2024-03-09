@@ -106,8 +106,12 @@ route.get('/admin/offers',offers.getOffer)
 
 //admin dash
 route.get('/admin/manage',services.manage)
-route.get('/admin/monthly-sales-data', report.monthlysales);
-route.get('/admin/sales-data', report.weeklysales);
+route.get('/admin/sales-data', report.salesdata);
+route.get('/admin/salesamount-data', report.salesamountdata);
+route.get('/admin/monthly-sales-data', report.monthlysalesdata);
+route.get('/admin/monthly-salesamount-data', report.monthlysalesamountdata);
+route.get('/admin/yearly-sales-data', report.yearlysalesdata);
+route.get('/admin/yearly-salesamount-data', report.yearlysalesamountdata);
 route.get('/admin/salesreport', report.salesreport);
 route.get('/admin/sales-report', report.generatereport);
 

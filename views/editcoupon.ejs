@@ -85,7 +85,7 @@
   <div class="container-fluid py-4">
     <div class="userside">
       <div class="row">
-        <div class="col-8 me-5"><h2 class="me-3 text-decoration-underline">Add Coupons</h2></div>
+        <div class="col-8 me-5"><h2 class="me-3 text-decoration-underline">Edit Coupon</h2></div>
       </div>
       <div class="container-fluid py-4">
         <div class="productside">
@@ -97,7 +97,7 @@
                   <input type="text" class="form-control" id="code" name="code" value='<%= coupon.couponcode %>'  required>
               </div>
               <div class="mb-3">
-                  <label for="discount" class="form-label">Discount:</label>
+                  <label for="discount" class="form-label">Max Discount:</label>
                   <input type="number" class="form-control" id="discount" name="discount" value='<%= coupon.discount %>' ></input>
               </div>
               <div class="mb-3">
@@ -105,7 +105,7 @@
                 <input type="text" class="form-control datepicker" id="edate" name="edate" value='<%= coupon.expiredate %>' required>
             </div>
             <div class="mb-3">
-                <label for="purchaseamount" class="form-label">Purchase Amount:</label>
+                <label for="purchaseamount" class="form-label">Min Purchase Amount:</label>
                 <input type="number" class="form-control" id="purchaseamount" name="purchaseamount" value='<%= coupon.purchaseamount %>'></input>
             </div>
               <button type="submit" class="btn btn-primary">Submit</button>

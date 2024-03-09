@@ -69,9 +69,9 @@ exports.women=async(req, res) => {
             const user = await Userdb.findOne({ email: email });
             res.render('eachcategory', { relatedProducts: WomenProducts,userToken: req.cookies.userToken,catname:'Women',user:user  }); 
         }
-
-        // Render product showing page and pass products data
+else{
         res.render('eachcategory', { user: undefined,relatedProducts: WomenProducts,userToken: undefined,catname:'Women'  });
+}
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

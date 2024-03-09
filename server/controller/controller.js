@@ -268,10 +268,6 @@ exports.shopfilter=async (req, res) => {
        
         const products = await Productdb.find();
         const categories = await Categorydb.find();
-        if (req.cookies.adminToken) {
-     
-            res.redirect('/admin/manage');
-        } else
          if (req.cookies.userToken) {
             try {
                 const email= req.session.email;

@@ -5,7 +5,7 @@ const userModel = require('../model/model')
 
 module.exports = {
     verifyAdmin: (req, res, next) => {
-        if (req.cookies && req.cookies.adminId) {
+        if (req.cookies && req.cookies.adminToken) {
             next()
         } else {
             res.redirect('/admin/login')

@@ -98,9 +98,9 @@
                 <tr class="bg-dark text-white">
                     <th>ID</th>
                     <th>Coupon Code</th>
-                    <th>Discount</th>
+                    <th>Max Discount</th>
                     <th>Expire Date</th>
-                    <th>Purchase Amount</th>
+                    <th>Min Purchase Amount</th>
                     <th>Action</th>
                 </tr>
               </thead>
@@ -113,9 +113,9 @@
                             <%= coupons[i].couponcode %>
                           </div>
                         </td>
-                        <td><%= coupons[i].discount %> </td>
+                        <td><%= coupons[i].maxdiscount %> </td>
                         <td><%= new Date(coupons[i].expiredate).toDateString() %></td>
-                        <td>₹ <%= coupons[i].purchaseamount %></td>
+                        <td>₹ <%= coupons[i].minpurchaseamount %></td>
                         <td><a href="/update-coupon?id=<%= coupons[i]._id %>" class="btn border-shadow shadow update">
                           <span class="material-symbols-outlined">edit</span>
                       </a>

@@ -135,6 +135,16 @@
           </div>
         </div>
       </div>
+      <div class="row justify-content-end">
+        <div class="col-2">
+          <!-- Dropdown for filtering sales data -->
+          <select id="intervalSelect" class="form-select">
+            <option value="weekly" selected>Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+      </div>
       <div class="row mt-4 mb-4">
         <div class="col-lg-6 col-md-6 mt-4 mb-4">
           <div class="card z-index-2 ">
@@ -180,46 +190,89 @@
 <script src="/js/smooth-scrollbar.min.js"></script>
 <script src="/js/chartjs.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', async function () {
+  document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('chart-bars').getContext('2d');
     const ctx2 = document.getElementById('chart-line').getContext('2d');
-
+  
+    const intervalSelect = document.getElementById('intervalSelect');
+  
     try {
-      const salesResponse = await fetch('/admin/sales-data');
-      const salesData = await salesResponse.json();
-
-      const monthlySalesResponse = await fetch('/admin/monthly-sales-data');
-      const monthlySalesData = await monthlySalesResponse.json();
-
-      const salesChart = new Chart(ctx, {
-      type: 'bar',
-        data: {
-         labels: salesData.labels,
-    datasets: [{
-      label: 'Sales',
-      data: salesData.sales,
-      backgroundColor: 'rgba(255, 255, 255, .8)',
-      maxBarThickness: 6
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        max: 20, 
-        beginAtZero: true 
+      let salesUrl = '/admin/sales-data';
+      let salesAmountUrl = '/admin/salesamount-data';
+  
+      // Set the initial selected option to "weekly" when the page loads
+      intervalSelect.value = 'weekly';
+  
+      intervalSelect.addEventListener('change', async function () {
+        const selectedInterval = intervalSelect.value;
+        switch (selectedInterval) {
+          case 'weekly':
+            salesUrl = '/admin/sales-data';
+            salesAmountUrl = '/admin/salesamount-data';
+            break;
+          case 'monthly':
+            salesAmountUrl = '/admin/monthly-salesamount-data';
+            salesUrl = '/admin/monthly-sales-data';
+            break;
+          case 'yearly':
+            salesUrl = '/admin/yearly-sales-data';
+            salesAmountUrl = '/admin/yearly-salesamount-data';
+            break;
+          default:
+            break;
+        }
+  
+        // Fetch data using updated URLs
+        await fetchDataAndRenderCharts();
+      });
+  
+      async function fetchDataAndRenderCharts() {
+        const salesResponse = await fetch(salesUrl);
+        const salesData = await salesResponse.json();
+  
+        const salesAmountResponse = await fetch(salesAmountUrl);
+        const salesAmountData = await salesAmountResponse.json();
+  
+        // Update chart data
+        salesChart.data.labels = salesData.labels;
+        salesChart.data.datasets[0].data = salesData.sales;
+        salesAmountChart.data.labels = salesAmountData.labels;
+        salesAmountChart.data.datasets[0].data = salesAmountData.salesAmount;
+  
+        // Re-render charts
+        salesChart.update();
+        salesAmountChart.update();
       }
-    }
-  }
-});
-
-
-      const monthlySalesChart = new Chart(ctx2, {
+  
+      // Initial chart configurations (weekly)
+      const salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Sales',
+            data: [],
+            backgroundColor: 'rgba(255, 255, 255, .8)',
+            maxBarThickness: 6
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              max: 20,
+              beginAtZero: true
+            }
+          }
+        }
+      });
+  
+      const salesAmountChart = new Chart(ctx2, {
         type: 'line',
         data: {
-          labels: monthlySalesData.labels,
+          labels: [],
           datasets: [{
             label: 'Sales Amount',
-            data: monthlySalesData.salesAmount,
+            data: [],
             borderColor: 'rgba(255, 255, 255, .8)',
             backgroundColor: 'transparent',
             borderWidth: 4,
@@ -232,6 +285,9 @@
           // Chart options
         }
       });
+
+      // Call fetchDataAndRenderCharts initially to render the charts based on the default selection
+      fetchDataAndRenderCharts();
     } catch (error) {
       console.error(error);
     }
