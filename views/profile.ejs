@@ -3,7 +3,7 @@
 <!-- navbar -->
 <%- include('include/navbr') -%>
 
-<div class="container-fluid ms-4 mt-4">
+<div class="container-fluid ms-md-4 mt-4">
     <div class="row">
         <div class="col-md-3 account-nav rounded shadow">
             <div class="row">
@@ -26,6 +26,9 @@
                     <a href="/wishlisted" class="text-decoration-none text-dark">My Wishlist</a>
                 </li>
                 <li>
+                    <a href="/wallethistory" class="text-decoration-none text-dark">Wallet History</a>
+                </li>
+                <li>
                     <a href="/forgot-otp" class="text-decoration-none text-dark">Forgot Password</a>
                 </li>
                 <hr>
@@ -34,10 +37,10 @@
                 </li>
             </ul>
         </div>
-        <div class="col-9 account-content  px-5">
-            <div id="profile" class="rounded bg-white p-5">
+        <div class="col-md-9 account-content">
+            <div id="profile" class="rounded bg-white p-md-5 p-2">
                 <h2>Profile</h2>
-                <form action="/update-user/<%= user.id %>" method="post" class="p-5 sm:p-10" id="profileForm">
+                <form action="/update-user/<%= user.id %>" method="post" class=" p-md-5 sm:p-10" id="profileForm">
                     <div class="row">
                         <label class="col-9"><b>Personal Information </b><a href="#" class="ms-5 edit-link" onclick="enableEdit()">Edit</a></label>
                     </div>
@@ -45,7 +48,7 @@
                         <div class="row justify-between items-center mb-3">
                             <input type="hidden" id="user_id" name="id" value="<%= user.id %>">
                             <label for="name" class="col-6 col-form-label me-5">Username:</label><br>
-                            <div class="col-6 me-5">
+                            <div class="col-md-6 col-sm-12 me-5">
                                 <input type="text" class="form-control mb-3" id="username" name="name" value="<%= user.name %>" required disabled />
                                 </div>
                             <label class="col-6 col-form-label me-5">Gender:</label><br>
@@ -60,7 +63,7 @@
                                 </div>
                             </div>
                             <label for="email" class="col-6 me-5 col-form-label">Email:</label><br>
-                            <div class="col-6 me-5">
+                            <div class="col-md-6  col-sm-12 me-5">
                                 <input type="email" class="form-control" id="email" name="email" value="<%= user.email || user.googleId%>" required disabled />
                             </div>
                         </div>

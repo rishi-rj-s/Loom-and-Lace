@@ -26,6 +26,9 @@
                     <a href="/wishlisted" class="text-decoration-none text-dark">My Wishlist</a>
                 </li>
                 <li>
+                    <a href="/wallethistory" class="text-decoration-none text-dark">Wallet History</a>
+                </li>
+                <li>
                     <a href="/forgot-otp" class="text-decoration-none text-dark">Forgot Password</a>
                 </li>
                 <hr>
@@ -69,40 +72,54 @@
                 </nav>
                 <div class="tab-content mb-5">
                     <div class="tab-pane active ms-4" id="nav-placed" role="tabpanel" aria-labelledby="nav-placed-tab">
-                        <% orders.filter(order => order.status === 'Order Placed').forEach(order => { %>
-                            
-                                <div class="col-md-12 mb-3">
-                                    <div class="card shadow">
-                                        <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
-                                        <div class="card-header d-flex justify-content-between align-items-center">
-                                            <h5 class="card-title text-muted m-2">OrderID. <%= order.orderId %></h5>
-                                            <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
-                                        </div></a>
-                                        <div class="card-body">
-                                            <div class="d-flex">
-                                                <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
-                                            </div>
-                                            <div class="d-flex">
-                                                <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
-                                            </div>
-                                            <div class="d-flex">
-                                                <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
-                                            </div>
-                                            <div class="d-flex">
-                                                <span class="m-1 font-weight-bold">Total Amount: <%= order.totalAmount %></span>
-                                            </div>
-                                            <form action="/orders/<%= order._id %>/invoice" method="GET">
-                                                         <button type="submit" class="btn btn-primary">Download Invoice</button>
-                                                   </form>
-                            
-                                            <!-- Add more order details here -->
-                                        </div>
+                        <% orders.filter(order => order.status === 'Order Placed' || order.status === 'Order Payment Failed').forEach(order => { %>
+                        <div class="col-md-12 mb-3">
+                            <div class="card shadow">
+                                <a href="/orderDetails/<%= order._id %>" style="text-decoration: none;">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="card-title text-muted m-2">OrderID. <%= order.orderId %></h5>
+                                        <% if (order.status === 'Order Placed') { %>
+                                        <button class="btn btn-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
+                                        <% } %>
                                     </div>
+                                </a>
+                                <div class="card-body">
+                                    <!-- Display payment status with Bootstrap classes -->
+                                    <div class="d-flex">
+                                        <!-- Apply Bootstrap's success or danger class based on payment status -->
+                                        <span class="m-1 font-weight-bold text-<%= order.paymentStatus === 'Paid' ? 'success' : 'danger' %>">Payment Status: <%= order.paymentStatus %></span>
+                                    </div>
+                                    <!-- Display order details -->
+                                    <div class="d-flex">
+                                        <span class="m-1 font-weight-bold">Order Date: <%= new Date(order.orderedDate).toDateString() %></span>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="m-1 font-weight-bold">Total Items: <%= order.items.length %></span>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="m-1 font-weight-bold">Payment Method: <%= order.paymentMethod %></span>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="m-1 font-weight-bold">Total Amount: <%= order.totalAmount %></span>
+                                    </div>
+                                    <!-- Add form for Razorpay payment -->
+                                    <% if (order.status === 'Order Payment Failed') { %>
+                                    <form id="razorpay-form" action="/razorpay/pay/<%= order._id %>" method="POST">
+                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                        <!-- Razorpay script and button -->
+                                        <!-- Ensure to replace the Razorpay data with appropriate values -->
+                                        <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_l0JN45NspADoRo" data-amount="<%= order.totalAmount * 100 %>" data-currency="INR" data-order_id="<%= order.razorpayOrderId %>" data-buttontext="" data-name="LOOM &" data-description="Payment for Order <%= order._id %>" data-image="/img/loomblack.png" data-prefill.name="<%= user.name %>" data-prefill.email="<%= user.email %>" data-theme.color="#4169E1">
+                                        </script>
+                                        <button id="rzp-button" class="btn btn-primary">Pay with Razorpay</button>
+                                    </form>
+                                    <% } %>
+                                    <!-- Add more order details here -->
                                 </div>
-                            
+                            </div>
+                        </div>
                         <% }); %>
-                        
                     </div>
+                    
                     <div class="tab-pane" id="nav-delivered" role="tabpanel" aria-labelledby="nav-delivered-tab">
                         <% orders.filter(order => order.status === 'Delivered').forEach(order => { %>
 

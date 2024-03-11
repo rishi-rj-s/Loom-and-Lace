@@ -7,15 +7,16 @@ const sharp = require('sharp');
 const path= require('path');
 const Userdb = require('../model/model');
 const Orderdb = require('../model/ordermodel');
-const { startOfWeek, endOfWeek } = require('date-fns');
 const ExcelJS = require('exceljs');  
 const PDFDocument = require('pdfkit');
+
+const { startOfWeek, endOfWeek, format, addDays } = require('date-fns');
 
 exports.salesdata = async (req, res) => {
     try {
         // Calculate start and end dates for the current week
-        const startDate = startOfWeek(new Date(), { weekStartsOn: 1 }); // Assuming Monday is the start of the week
-        const endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
+        const startDate = startOfWeek(new Date(), { weekStartsOn: 0 }); // Sunday is the start of the week
+        const endDate = endOfWeek(new Date(), { weekStartsOn: 0 });
 
         // Query to get sales data per day for the current week
         const salesData = await Orderdb.aggregate([
@@ -25,19 +26,29 @@ exports.salesdata = async (req, res) => {
                 }
             },
             {
+                $project: {
+                    orderedDate: 1,
+                    items: 1,
+                    dayOfWeek: { $dayOfWeek: "$orderedDate" } // Add dayOfWeek field
+                }
+            },
+            {
                 $unwind: "$items" // Unwind the items array to get separate documents for each item
             },
             {
                 $group: {
-                    _id: { $dayOfWeek: "$orderedDate" }, // Group by day of the week
-                    totalSales: { $sum: "$items.quantity" } // Sum up the quantity of each product sold per day
+                    _id: "$dayOfWeek", 
+                    totalSales: { $sum: "$items.quantity" } 
                 }
+            },
+            {
+                $sort: { _id: 1 } 
             }
         ]);
 
-        // Formatting data for chart
-        const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; // Sunday first
         const sales = [0, 0, 0, 0, 0, 0, 0]; // Initialize with 0 sales for each day
+
         salesData.forEach(item => {
             sales[item._id - 1] = item.totalSales; // Update sales array with fetched data
         });
@@ -45,30 +56,37 @@ exports.salesdata = async (req, res) => {
         res.json({ labels, sales });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 };
 
-  exports.salesamountdata = async (req, res) => {
+exports.salesamountdata = async (req, res) => {
     try {
-        const startDate = startOfWeek(new Date(), { weekStartsOn: 1 }); 
-        const endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
+        // Calculate start and end dates for the current week
+        const startDate = startOfWeek(new Date(), { weekStartsOn: 0 }); // Sunday is the start of the week
+        const endDate = endOfWeek(new Date(), { weekStartsOn: 0 });
+
+        // Query to get sales amount per day for the current week
         const weeklySalesAmountData = await Orderdb.aggregate([
             {
                 $match: {
-                    orderedDate: { $gte: startDate, $lte: endDate } 
+                    orderedDate: { $gte: startDate, $lte: endDate } // Filter orders for the current week
                 }
             },
             {
                 $group: {
                     _id: { $dayOfWeek: "$orderedDate" }, // Group by day of the week
-                    totalAmount: { $sum: "$totalAmount" }
+                    totalAmount: { $sum: "$totalAmount" } // Sum up the total amount of sales per day
                 }
+            },
+            {
+                $sort: { _id: 1 } // Sort by day of the week
             }
         ]);
 
-        const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; 
-        const salesAmount = Array(7).fill(0); 
+        // Formatting data for chart
+        const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; // Sunday first
+        const salesAmount = [0, 0, 0, 0, 0, 0, 0]; // Initialize with 0 sales for each day
 
         // Assign total sales amount for each day of the week
         weeklySalesAmountData.forEach(item => {
@@ -78,17 +96,21 @@ exports.salesdata = async (req, res) => {
         res.json({ labels, salesAmount });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 };
+
 exports.monthlysalesdata = async (req, res) => {
     try {
         // Query to get monthly sales data (grouping by the month of orderedDate)
         const monthlySalesData = await Orderdb.aggregate([
             {
+                $unwind: "$items" // Unwind the items array to get separate documents for each item
+            },
+            {
                 $group: {
                     _id: { $month: "$orderedDate" },
-                    totalSales: { $sum: 1 } // Counting the number of orders per month
+                    totalSales: { $sum: "$items.quantity" } // Summing up the quantity of items sold per month
                 }
             }
         ]);
@@ -101,7 +123,7 @@ exports.monthlysalesdata = async (req, res) => {
         res.json({ labels, sales });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 };
 
@@ -125,7 +147,7 @@ exports.monthlysalesamountdata = async (req, res) => {
         res.json({ labels, salesAmount });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 }
 exports.yearlysalesdata = async (req, res) => {
@@ -141,9 +163,12 @@ exports.yearlysalesdata = async (req, res) => {
                 }
             },
             {
+                $unwind: "$items" // Unwind the items array to get separate documents for each item
+            },
+            {
                 $group: {
                     _id: { $year: "$orderedDate" },
-                    totalSales: { $sum: 1 } // Counting the number of orders per year
+                    totalSales: { $sum: "$items.quantity" } // Counting the total quantity of items sold per year
                 }
             }
         ]);
@@ -162,7 +187,7 @@ exports.yearlysalesdata = async (req, res) => {
         res.json({ labels, sales });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.render('404');
     }
 };
 
@@ -200,7 +225,7 @@ exports.yearlysalesamountdata = async (req, res) => {
         res.json({ labels, salesAmount });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 };
 
@@ -246,7 +271,7 @@ exports.salesreport= async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 };
 

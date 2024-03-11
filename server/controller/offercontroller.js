@@ -10,6 +10,9 @@ const Coupondb = require('../model/couponmodel');
 
 exports.getOffer= async(req,res)=>{
     if(req.cookies.adminToken){
-    res.render('adminoffer')
+     
+      res.render('adminoffer')
+    }else{
+         res.redirect('/admin');
     }
 }

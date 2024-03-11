@@ -91,7 +91,6 @@ exports.postupdatecoupon=async(req,res)=>{
         // res.status(200).json({ message: "Product updated successfully", product: product });
     } catch (error) {
         console.error("Error updating product:", error);
-        res.status(500).json({ message: "Internal server error" });
     }
 }
 }
@@ -116,6 +115,6 @@ exports.applyCoupon = async (req, res) => {
         res.json({ message: 'Coupon applied successfully', newTotal, couponAmount: coupon.maxdiscount });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+       
     }
 };

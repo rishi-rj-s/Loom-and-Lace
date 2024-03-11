@@ -33,7 +33,7 @@ exports.home=async(req,res)=>{
         }
     } catch (error) {
         console.error(error);
-        res.render('404', { userToken: undefined});
+        res.render('404'); 
     }
 }
 exports.loginpage=(req,res)=>{
@@ -181,7 +181,6 @@ exports.admin = (req, res) => {
         res.render('adminlogin');
     }
 };
-
 exports.manage = async (req, res) => {
     try {
         if (req.cookies.adminToken) {
@@ -210,21 +209,91 @@ exports.manage = async (req, res) => {
                 });
             });
 
+            // Calculate top 10 products bought
+            const productFrequency = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    const productId = item.productId._id.toString();
+                    if (productFrequency[productId]) {
+                        productFrequency[productId]++;
+                    } else {
+                        productFrequency[productId] = 1;
+                    }
+                });
+            });
+            const topProductsIds = Object.keys(productFrequency)
+                .sort((a, b) => productFrequency[b] - productFrequency[a])
+                .slice(0, 10);
+
+            const topProducts = await Promise.all(topProductsIds.map(async productId => {
+                const product = await Productdb.findById(productId); 
+                return {
+                    id: productId,
+                    name: product.product_name,
+                    images: product.images,
+                    frequency: productFrequency[productId]
+                };
+            }));
+
+            // Calculate top 10 categories
+            const categoryFrequency = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    const categoryId = item.productId.category.toString();
+                    if (categoryFrequency[categoryId]) {
+                        categoryFrequency[categoryId]++;
+                    } else {
+                        categoryFrequency[categoryId] = 1;
+                    }
+                });
+            });
+            const topCategoriesIds = Object.keys(categoryFrequency)
+                .sort((a, b) => categoryFrequency[b] - categoryFrequency[a])
+                .slice(0, 10);
+
+            const topCategories = await Promise.all(topCategoriesIds.map(async categoryId => {
+                const category = await Categorydb.findById(categoryId); 
+                return {
+                    id: categoryId,
+                    name: category.category,
+                    frequency: categoryFrequency[categoryId]
+                };
+            }));
+
+            // Calculate top 10 brands
+            const brandFrequency = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    const brandName = item.productId.brand;
+                    if (brandFrequency[brandName]) {
+                        brandFrequency[brandName]++;
+                    } else {
+                        brandFrequency[brandName] = 1;
+                    }
+                });
+            });
+            const topBrands = Object.keys(brandFrequency)
+                .sort((a, b) => brandFrequency[b] - brandFrequency[a])
+                .slice(0, 10)
+                .map(brandName => ({ name: brandName, frequency: brandFrequency[brandName] }));
+
             res.render('admindashboard', { 
                 orders: orders,
                 totalSales: totalSales,
                 totalOrderAmount: totalOrderAmount,
-                totalDiscount: totalDiscount
+                totalDiscount: totalDiscount,
+                topProducts: topProducts,
+                topCategories: topCategories,
+                topBrands: topBrands
             });
         } else {
             res.redirect('/admin');
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
+        return  res.render('404');
     }
 }
-
 
 exports.users = (req, res) => {
     if (req.cookies.adminToken) {
@@ -258,8 +327,7 @@ exports.block=async (req, res) => {
         // Redirect back to the user list page
         res.redirect('/admin/users'); // Adjust the actual route as needed
     } catch (error) {
-        console.error('Error blocking/unblocking user:', error);
-        res.status(500).send('Error occurred while updating user status');
+        res.render('404');
     }
 }
 

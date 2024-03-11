@@ -228,7 +228,7 @@ exports.updateaddress=async (req,res)=>{
             // Render the editaddress view and pass the address details and categories as data
             res.render('editaddress', { address,userToken: req.cookies.userToken ,user: user});
         } catch (error) {
-            res.status(500).send({ message: error.message || "Some error occurred while fetching address details or categories." });
+            res.render('404');
         }
     }
 }
@@ -260,7 +260,7 @@ exports.posteditaddress = async (req, res) => {
         res.redirect('/useraddress');
     } catch (error) {
         console.error('Error adding address:', error);
-        res.status(500).render('error', { message: 'Error adding address' });
+        res.render('404');
     }
 };
 exports.shopfilter=async (req, res) => {
@@ -286,8 +286,7 @@ exports.shopfilter=async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).send('Internal Server Error');
-    }
+        res.render('404');    }
 }
 exports.getSortedProducts = async (req, res) => {
         const { sortBy } = req.params;
@@ -326,7 +325,7 @@ exports.getSortedProducts = async (req, res) => {
             res.json(sortedAndFilteredProducts);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.render('404');
         }
     };
     

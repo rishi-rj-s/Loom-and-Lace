@@ -45,7 +45,7 @@ exports.catcreate=async (req,res)=>{
         res.render('category', { categories });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Internal Server Error');
+        res.render('404');
     }
 };
 exports.delete= (req,res)=>{
@@ -98,6 +98,6 @@ exports.postupdateCategory = async (req, res) => {
         // res.status(200).json({ message: "Product updated successfully", product: product });
     } catch (error) {
         console.error("Error updating product:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.render('404');
     }
 };

@@ -112,16 +112,6 @@
         const sortBySelect = document.getElementById('sortBySelect');
         const categoryCheckboxes = document.querySelectorAll('input[type="checkbox"]');
         
-        let user;
-        try {
-            const userResponse = await fetch('/getUserInfo');
-            if (!userResponse.ok) {
-                throw new Error('Failed to fetch user information');
-            }
-            user = await userResponse.json();
-        } catch (error) {
-            console.error('Error fetching user information:', error);
-        }
 
         // Function to fetch sorted and filtered products
         const fetchProducts = async (sortByValue, categoryFilters) => {

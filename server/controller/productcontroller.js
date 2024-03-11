@@ -24,7 +24,7 @@ const Userdb = require('../model/model');
   exports.createproduct = async (req, res) => {
     // Check if request body and files exist
     if (!req.body) {
-        res.status(400).send({ message: "Invalid request. Missing body or files." });
+        res.render('404');
         return;
     }
     
@@ -34,7 +34,7 @@ const Userdb = require('../model/model');
     const discount = parseInt(req.body.discount) || 0; // Set default discount to 0 if not provided or invalid
 
     if (isNaN(price) || isNaN(discount)) {
-        res.status(400).send({ message: "Price and discount must be valid numbers" });
+        res.render('404');
         return;
     }
 
@@ -150,7 +150,7 @@ exports.update = async (req, res) => {
         res.redirect('/products');
     } catch (error) {
         console.error("Error updating product:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.render('404');
     }
 };
 
@@ -203,6 +203,6 @@ exports.imagedelete= async (req, res) => {
       res.status(200).json({ message: "Image deleted successfully" });
   } catch (error) {
       console.error("Error deleting image:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.render('404');
   }
 }

@@ -21,7 +21,7 @@ exports.product = async (req, res) => {
             // Render productmanage view and pass categories and products
             res.render('productmanage', { categories, products });
         } catch (error) {
-            res.status(500).send({ message: error.message || "Error occurred while fetching products or categories" });
+            res.render('404');
         }
     } else {
         res.redirect('/');
@@ -50,7 +50,7 @@ exports.addcategory=(req,res)=>{
             const product = await Productdb.findById(productId); // Fetch product details from the database
 
             if (!product) {
-                return res.status(404).send({ message: `Product with ID ${productId} not found` });
+                return  res.render('404');
             }
 
             // Fetch categories from the database
@@ -59,7 +59,7 @@ exports.addcategory=(req,res)=>{
             // Render the editproduct view and pass the product details and categories as data
             res.render('editproduct', { product, categories });
         } catch (error) {
-            res.status(500).send({ message: error.message || "Some error occurred while fetching product details or categories." });
+            res.render('404');
         }
     }
 };
@@ -79,7 +79,7 @@ exports.list=async (req, res) => {
         res.redirect('/products'); 
     } catch (error) {
         console.error('Error blocking/unblocking user:', error);
-        res.status(500).send('Error occurred while updating user status');
+        res.render('404');
     }
 }
 exports.listcat=async (req, res) => {
@@ -99,7 +99,7 @@ exports.listcat=async (req, res) => {
         res.redirect('/admin/categories'); 
     } catch (error) {
         console.error('Error blocking/unblocking user:', error);
-        res.status(500).send('Error occurred while updating user status');
+        res.render('404');
     }
 }
 exports.orders = async (req, res) => {
@@ -115,7 +115,7 @@ exports.orders = async (req, res) => {
 
             res.render('adminorder', { orders: orders });
         } catch (error) {
-            res.status(500).send({ message: error.message || "Error occurred while fetching products or categories" });
+            res.render('404');
         }
     } else {
         res.redirect('/');
@@ -150,15 +150,35 @@ exports.updateorderstatus = async (req, res) => {
         if (order.status === "Return Accepted") {
             console.log("Refund Amount:", order.totalAmount); // Check the refund amount
             user.walletAmount += order.totalAmount;
+            const creditTransaction = new Wallet({
+                userId: user._id,
+                transactionType: 'Credit',
+                amount: order.totalAmount,
+                order: order.orderId, 
+                state: "Returned",
+                timestamp: new Date()
+            });
+            await creditTransaction.save();
             console.log("Updated Wallet Amount:", user.walletAmount); // Check the updated wallet amount
             await user.save(); 
         }
-
-       
-
+        if (order.status === "Cancelled" && order.paymentStatus==="Paid") {
+            user.walletAmount += order.totalAmount;
+            const creditTransaction = new Wallet({
+                userId: user._id,
+                transactionType: 'Credit',
+                amount: order.totalAmount,
+                order: order.orderId, 
+                state: "Cancelled",
+                timestamp: new Date()
+            });
+            await creditTransaction.save();
+            console.log("Updated Wallet Amount:", user.walletAmount); // Check the updated wallet amount
+            await user.save(); 
+        }
         res.json(updatedOrder);
     } catch (error) {
         console.error('Error updating order status:', error);
-        res.status(500).json({ error: 'Failed to update order status' });
+        res.render('404');
     }
 }

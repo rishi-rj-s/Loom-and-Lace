@@ -98,7 +98,7 @@
               </div>
               <div class="mb-3">
                   <label for="discount" class="form-label">Max Discount:</label>
-                  <input type="number" class="form-control" id="discount" name="discount" value='<%= coupon.discount %>' ></input>
+                  <input type="number" class="form-control" id="discount" name="discount" value='<%= coupon.maxdiscount %>' ></input>
               </div>
               <div class="mb-3">
                 <label for="edate" class="form-label">Expire Date:</label>
@@ -106,7 +106,7 @@
             </div>
             <div class="mb-3">
                 <label for="purchaseamount" class="form-label">Min Purchase Amount:</label>
-                <input type="number" class="form-control" id="purchaseamount" name="purchaseamount" value='<%= coupon.purchaseamount %>'></input>
+                <input type="number" class="form-control" id="purchaseamount" name="purchaseamount" value='<%= coupon.minpurchaseamount %>'></input>
             </div>
               <button type="submit" class="btn btn-primary">Submit</button>
           </form>

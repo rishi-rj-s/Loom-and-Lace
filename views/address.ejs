@@ -3,7 +3,7 @@
 <!-- navbar -->
 <%- include('include/navbr') -%>
 
-<div class="container-fluid ms-4 mt-4">
+<div class="container-fluid ms-md-4 mt-4">
     <div class="row">
         <div class="col-md-3 col-sm-6 account-nav rounded shadow">
             <div class="row">
@@ -26,6 +26,9 @@
                     <a href="/wishlisted" class="text-decoration-none text-dark">My Wishlist</a>
                 </li>
                 <li>
+                    <a href="/wallethistory" class="text-decoration-none text-dark">Wallet History</a>
+                </li>
+                <li>
                     <a href="/forgot-otp" class="text-decoration-none text-dark">Forgot Password</a>
                 </li>
                 <hr>
@@ -35,8 +38,8 @@
             </ul>
             
         </div>
-        <div class="col-9 account-content  px-5">
-            <div id="ad" class="rounded bg-white p-5 h-100">
+        <div class="col-md-9 account-content">
+            <div id="ad" class="rounded bg-white p-5 h-auto">
                 <h2>Manage Addresses</h2>
                 <div class="row">
                     <div class="col-9"><a  href="/addaddress" class="btn btn-primary border rounded px-4 py-2 my-4 w-100">Add New Address</a></div>
@@ -44,7 +47,7 @@
                 <div class="container mt-4">
                     <ul class="list-group">
                         <% addresses.forEach(address => { %>
-                        <li class="list-group-item col-9">
+                        <li class="list-group-item col-md-9">
                             <div class="row"><div class="col-10">
                             <% if(address.addressType=='work'){%>
                                 <label for="work" class="bg-secondary text-white px-2 rounded">work </label>

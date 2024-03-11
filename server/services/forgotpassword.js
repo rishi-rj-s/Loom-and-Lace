@@ -100,6 +100,6 @@ exports.setNewPassword = async (req, res) => {
         return res.render('forgotpassword', { userToken: req.cookies.userToken, user: user, message: "Password successfully changed." });
     } catch (error) {
         console.error(error);
-        return res.status(500).send('Internal Server Error');
+        return  res.render('404');
     }
 }

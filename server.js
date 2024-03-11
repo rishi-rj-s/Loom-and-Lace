@@ -54,10 +54,13 @@ app.use('/img',express.static(path.resolve(__dirname,"assets/img")))
 app.use('/js',express.static(path.resolve(__dirname,"assets/js")))
 
 app.use('/',require("./server/routes/router"))
+app.use('/',require("./server/routes/admin"))
+app.use('/',require("./server/routes/adminproduct"))
 
 app.get('/', async (req, res) => {
     res.redirect('/home');
 });
+
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

@@ -28,7 +28,7 @@ exports.prodetail = async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+         res.render('404');
     }
 }
 
@@ -52,7 +52,7 @@ exports.men=async(req, res) => {
         }
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server Error');
+         res.render('404');
     }
 };
 exports.women=async(req, res) => {
@@ -74,7 +74,7 @@ else{
 }
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server Error');
+         res.render('404');
     }
 };
 exports.kids = async (req, res) => {
@@ -103,7 +103,7 @@ exports.kids = async (req, res) => {
         }
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server Error');
+         res.render('404');
     }
 };
 exports.account=async (req,res)=>{
@@ -191,7 +191,7 @@ exports.wishlist=async (req, res) => {
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Server Error' });
+        return  res.render('404');
     }
 }
 exports.wishlisted=async(req,res)=>{
@@ -227,7 +227,7 @@ exports.deletewishlist=async (req, res) => {
   
         res.json({ message: 'Item deleted from wishlist successfully' });
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
+         res.render('404');
     }
   }
 exports.search = async (req, res) => {
@@ -238,7 +238,7 @@ exports.search = async (req, res) => {
         res.json(results); 
     } catch (error) {
         console.error('Error searching for products:', error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
 }
   exports.searched= async (req, res) => {
@@ -250,6 +250,6 @@ exports.search = async (req, res) => {
         res.render('searched', { products: results,userToken:req.cookies.userToken,user:user });
     } catch (error) {
         console.error('Error fetching products:', error);
-        res.status(500).json({ message: 'Internal server error' });
+         res.render('404');
     }
   }

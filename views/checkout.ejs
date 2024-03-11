@@ -3,219 +3,196 @@
 <!-- navbar -->
 <%- include('include/navbr') -%>
 <form id="form-checkout" action="/placeorder" method="post">
-<div class="py-3 py-md-4 checkout">
-    <div class="container-fluid" >
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/home" class="text-black text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item"><a href="/cart" class="text-black text-decoration-none">Cart</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Checkout</li>
-            </ol>
-          </nav>
-        <hr>
-        <form id="form-checkout">
-            <div class="row">
-                <!-- <div class="col-md-12 mb-4">
-        <div class="shadow bg-white p-3">
-            <h4 class="text-primary">
-                Item Total Amount :
-                <span class="float-end">$5454</span>
-            </h4>
+    <div class="py-3 py-md-4 checkout">
+        <div class="container-fluid">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/home" class="text-black text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/cart" class="text-black text-decoration-none">Cart</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                </ol>
+            </nav>
             <hr>
-            <small>* Items will be delivered in 3 - 5 days.</small>
-            <br/>
-            <small>* Tax and other charges are included ?</small>
-        </div>
-    </div> -->
-                <div class="d-flex ">
-                    <h5 class="text-dark">
-                        Select Address
-                    </h5>
-                    <a href="/addaddress" class="ms-4 mb-2 btn btn btn-info">Add new address<i class="fa-sharp fa-solid fa-plus"></i></a>
+            <form id="form-checkout">
+                <div class="row">
+                    <div class="d-flex ">
+                        <h5 class="text-dark">
+                            Select Address
+                        </h5>
+                        <a href="/addaddress" class="ms-4 mb-2 btn btn btn-info">Add new address<i class="fa-sharp fa-solid fa-plus"></i></a>
+                    </div>
 
-                </div>
-
-                <div class="col-md-6 ">
-                    <div class="shadow bg-white p-3 rounded">
-                        <%if(addresses){%>
-                            <%addresses.forEach(address=>{ %>
-
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-md-1 rounded">
-                                            <input class="m-3" type="radio"  name="addressId"
-                                                value="<%=address._id%>"required>
-                                        </div>
-                                        <div class="col-md-10  g-2 shadow">
-                                            <div class="">
-                                                <!-- Card Header -->
-
-                                                <!-- Card content -->
-
+                    <div class="col-md-6 ">
+                        <div class="shadow bg-white p-3 rounded">
+                            <% if (addresses && addresses.length > 0) { %>
+                                <% addresses.forEach(address => { %>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-1 rounded">
+                                                <input class="m-3" type="radio" name="addressId" value="<%=address._id%>" required>
+                                            </div>
+                                            <div class="col-md-10 g-2 shadow">
                                                 <div class="card-body">
                                                     <div class="d-flex">
-                                                        <span class="m-1 font-weight-bold text-uppercase">
-                                                            <%=address.name %>
-                                                        </span>
+                                                        <span class="m-1 font-weight-bold text-uppercase"><%=address.name %></span>
                                                     </div>
-                                                    <span class="m-1 font-weight-bold text-uppercase">
-                                                        <%=address.mobileNumber %>
-                                                    </span>
+                                                    <span class="m-1 font-weight-bold text-uppercase"><%=address.mobileNumber %></span>
                                                     <div class="d-flex">
-                                                        <span class="m-1 font-weight-bold text-uppercase">
-                                                            <%=address.address %>
-                                                        </span>
-                                                        <span class="m-1 font-weight-bold text-uppercase">
-                                                            ,<%=address.locality %>
-                                                        </span>
-                                                        <span class="m-1 font-weight-bold text-uppercase">
-                                                            -<%=address.pincode %>
-                                                        </span>
+                                                        <span class="m-1 font-weight-bold text-uppercase"><%=address.address %></span>
+                                                        <span class="m-1 font-weight-bold text-uppercase"><%=address.locality %></span>
+                                                        <span class="m-1 font-weight-bold text-uppercase">-<%=address.pincode %></span>
                                                     </div>
                                                     <div class="d-flex">
-                                                        <span class="m-1 font-weight-bold text-uppercase">
-                                                            <%=address.district %>
-                                                        </span>
-                                                        <span class="m-1 font-weight-bold text-uppercase">
-                                                            ,<%=address.state %>
-                                                        </span>
+                                                        <span class="m-1 font-weight-bold text-uppercase"><%=address.district %></span>
+                                                        <span class="m-1 font-weight-bold text-uppercase"><%=address.state %></span>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-
-                                </div>
-                                <% }) %>
-
-                                    <% } %>
-
-
-                    </div>
-                    <div class="couponpart row mt-3">
-                        <div class="col-6">
-                            <select class="form-control" id="couponCode" name="couponCode">
-                                <option value="selectcoupon">Select Coupon</option>
-                                <% coupons.forEach(coupon => { %>
-                                    <% if (coupon.purchaseamount <= cart.totalDiscount) { %>
-                                        <option value="<%= coupon.couponcode %>"><%= coupon.couponcode %></option>
-                                    <% } %>
                                 <% }); %>
-                            </select>
+                            <% } else { %>
+                                <!-- If no addresses are available -->
+                                <p>No addresses found. Please add a new address.</p>
+                            <% } %>
                         </div>
-                        <div class="col-6">
-                            <button type="button" class="btn btn-outline-danger" id="applyCoupon">Apply Coupon</button>
+                        <div class="couponpart row mt-3">
+                            <div class="col-6">
+                                <select class="form-control" id="couponCode" name="couponCode">
+                                    <option value="selectcoupon">Select Coupon</option>
+                                    <% coupons.forEach(coupon => { %>
+                                        <% if (coupon.minpurchaseamount >= cart.totalDiscount) { %>
+                                            <option value="<%= coupon.couponcode %>"><%= coupon.couponcode %></option>
+                                        <% } %>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-danger" id="applyCoupon">Apply Coupon</button>
+                            </div>
+                        </div>
+                        <div class="container row mt-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Products</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (cart && cart.items.length > 0) { %>
+                                            <% cart.items.forEach(item => { %>
+                                                <tr>
+                                                    <td><img src="/<%= item.productId.images[0] %>" style="width: 70px;" alt=""><%= item.productId.product_name %></td>
+                                                    <td class="align-middle">₹<%= item.productId.total_price %></td>
+                                                    <td class="align-middle"><%= item.quantity %></td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="3">Your cart is empty.</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="shadow bg-white p-3">
+
+                            <div class="d-flex justify-content-between" style="font-weight: 500;">
+                                <p class="mb-2">Subtotal</p>
+                                <p id="subtotal" class="mb-2">₹<%= cart.totalDiscount %></p>
+                            </div>
+                            <div id="shippingDivd-flex" class="d-flex justify-content-between" style="display: none; font-weight: 500;">
+                                <p class="mb-2" id="applied"> </p>
+                                <p class="mb-2"> <span id="couponAmount"></span></p>
+                            </div>
+                            <div class="d-flex justify-content-between" style="font-weight: 500;">
+                                <p class="mb-0">Shipping</p>
+                                <p class="mb-0">Free</p>
+                            </div>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
+                                <p class="mb-2">Total (tax included) :</p>
+                                <input type="hidden" name="totalAmount" id="totalAmount" value="<%= cart.totalDiscount %>">
+                                <p id="total" class="mb-2">₹<%= cart.totalDiscount %></p>
+                            </div>
+                            <h4 class="text-dark">
+                                Select Payment Method
+                            </h4>
+                            <hr>
+                            <div class="">
+                                <label class="" for=""><input type="radio" name="paymentMethod" value="cod" <% if (cart.totalDiscount >1000) { %> disabled <% } %>> Cash On Delivery(COD) <% if (cart.totalDiscount >1000) { %> <strong> (Not avilable for orders above 1000)</strong> <% } %></label>
+                            </div>
+                            <hr>
+                            <div class="d-flex">
+                                <label class="" for=""><input type="radio" name="paymentMethod" value="online"> Razorpay</label>
+                            </div>
+                            <hr>
+                            <div class="d-flex">
+                                <label class=" pe-3" for=""><input type="radio" id="walletPayment" name="paymentMethod" value="wallet" <% if (user.walletAmount < cart.totalDiscount) { %> disabled <% } %>> Wallet</label>
+                                <span class="ms-5">(Wallet Balance: ₹ <%=user.walletAmount%>)</span>
+                            </div>
+                            <hr>
+                            <div>
+                                <button type="submit" class="btn btn-block w-100 btn-primary text-dark me-auto "> PLACE ORDER</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-6" >
-                    <div class="shadow bg-white p-3">
-                        <div class="d-flex justify-content-between" style="font-weight: 500;">
-                            <p class="mb-2">Subtotal</p>
-                            <p id="subtotal" class="mb-2">₹<%= cart.totalDiscount %> <label class="text-decoration-line-through">₹<%= cart.totalAmount %> </label></p>
-                          </div>
-                          <div id="shippingDiv" style="display: none;">
-                            <p>Coupon Applied: -₹<span id="couponAmount"></span></p>
-                        </div>
-                          <div class="d-flex justify-content-between" style="font-weight: 500;">
-                            <p class="mb-0">Shipping</p>
-                            <p class="mb-0">Free</p>
-                          </div>
-            
-                          <hr class="my-4">
-            
-                          <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                            <p class="mb-2">Total (tax included)   :</p>
-                            <input type="hidden" name="totalAmount" id="totalAmount" value="<%= cart.totalDiscount %>">
-                            <p id="total" class="mb-2">₹<%= cart.totalDiscount %></p>
-                          </div>
-                        <h4 class="text-dark">
-                            Select Payment Method
-                        </h4>
-                        <hr>
-
-
-                        <div class="">
-                            <label class="" for=""><input type="radio" name="paymentMethod" value="cod">
-                                Cash On Delivery(COD)</label>
-                        </div>
-                        <hr>
-                        <div class="d-flex">
-                            <label class="" for=""><input type="radio" name="paymentMethod" value="online">
-                                Razorpay</label>
-                        </div>
-                        <hr>
-                        <div class="d-flex">
-                            <label class=" pe-3" for=""><input type="radio" id="walletPayment" name="paymentMethod" value="wallet" <% if (user.walletAmount < cart.totalDiscount) { %> disabled <% } %>>
-                                Wallet</label>
-                            <span class="ms-5">(Wallet Balance: ₹ <%=user.walletAmount%>)</span>
-                        </div>
-                        <hr>
-                        <div>
-                            <button type="submit" class="btn btn-block w-100 btn-primary text-dark me-auto "> PLACE  ORDER</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 </form>
 <%- include('include/userFooter') -%>
+
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
-        var walletPayment = document.getElementById('walletPayment');
-        if (walletPayment.disabled) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Wallet Payment Disabled',
-                text: 'Your wallet balance is insufficient for this transaction.',
-                confirmButtonText: 'OK'
-            });
-        }
-    });
-
     document.getElementById('applyCoupon').addEventListener('click', function() {
-    var selectedCoupon = document.getElementById('couponCode').value;
-    if (!selectedCoupon || selectedCoupon === "selectcoupon") {
-        document.getElementById('total').innerText = '₹' + '<%= cart.totalDiscount %>';
-        document.getElementById('shippingDiv').style.display = 'none';
-        return;
-    }
-    fetch('/applycoupon', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ couponCode: selectedCoupon })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === 'Coupon applied successfully') {
-            // Update total amount
-            document.getElementById('total').innerText = '₹' + data.newTotal;
-            // Show shipping details if coupon applied
-            document.getElementById('shippingDiv').style.display = 'block';
-            // Update coupon amount
-            document.getElementById('couponAmount').innerText = '₹' + data.couponAmount;
-            // Update new total
-            document.getElementById('newTotal').innerText = '₹' + data.newTotal;
-            // Reset coupon selection
-            document.getElementById('couponCode').value = '';
-        } else {
-            // Handle error messages
-            console.error(data.message);
-            // Optionally, display error message to user
-            alert('Error: ' + data.message);
+        var selectedCoupon = document.getElementById('couponCode').value;
+        if (!selectedCoupon || selectedCoupon === "selectcoupon") {
+            document.getElementById('total').innerText = '₹' + '<%= cart.totalDiscount %>';
+            document.getElementById('shippingDivd-flex').style.display = 'none';
+            document.getElementById('applied').innerText = '';
+            document.getElementById('couponAmount').innerText = '';
+            return;
         }
-    })
-    .catch(error => console.error('Error:', error));
-});
-
-
+        fetch('/applycoupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    couponCode: selectedCoupon
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Coupon applied successfully') {
+                    // Update total amount
+                    document.getElementById('total').innerText = '₹' + data.newTotal;
+                    // Show shipping details if coupon applied
+                    document.getElementById('shippingDivd-flex').style.display = 'block';
+                    document.getElementById('applied').innerText = 'Coupon Applied :';
+                    document.getElementById('couponAmount').innerText = '-₹' + data.couponAmount;
+                    // Update new total
+                    document.getElementById('newTotal').innerText = '₹' + data.newTotal;
+                    // Reset coupon selection
+                    document.getElementById('couponCode').value = '';
+                } else {
+                    // Handle error messages
+                    console.error(data.message);
+                    // Optionally, display error message to user
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
 </script>
 
 <%- include('include/footer') -%>

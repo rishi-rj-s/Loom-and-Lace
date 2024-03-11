@@ -82,7 +82,7 @@
       </ul>
     </div>
   </aside>
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+  <main class="main-content position-relative max-height-vh-100 h-100 mb-5 border-radius-lg">
   <!-- overview -->
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -129,21 +129,25 @@
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Total Discount</p>
-                <h4 class="mb-0"><%= totalDiscount %></h4>
+                <h4 class="mb-0"><%= Math.round(totalDiscount) %></h4>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row justify-content-end">
-        <div class="col-2">
+      <div class="row justify-content-between mt-3">
+        <div class="col-4">
+          <h2>Charts</h2>
+        </div>
+        <div class="col-2 me-5">
           <!-- Dropdown for filtering sales data -->
-          <select id="intervalSelect" class="form-select">
+          <select id="intervalSelect" class="form-select bg-secondary text-light">
             <option value="weekly" selected>Weekly</option>
             <option value="monthly">Monthly</option>
             <option value="yearly">Yearly</option>
           </select>
         </div>
+        
       </div>
       <div class="row mt-4 mb-4">
         <div class="col-lg-6 col-md-6 mt-4 mb-4">
@@ -151,13 +155,13 @@
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
               <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
                 <div class="chart">
-                  <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
+                  <canvas id="chart-bars" class="chart-canvas" height="150"></canvas>
                 </div>
               </div>
             </div>
             <div class="card-body">
               <h6 class="mb-0 ">Sales</h6>
-              <p class="text-sm ">Sales in a Week</p>
+              <p class="text-sm ">Sales in a Week/month /year</p>
             </div>
           </div>
         </div>
@@ -166,18 +170,106 @@
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
               <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
                 <div class="chart">
-                  <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
+                  <canvas id="chart-line" class="chart-canvas" height="150"></canvas>
                 </div>
               </div>
             </div>
             <div class="card-body">
               <h6 class="mb-0 "> Sales Amount </h6>
-              <p class="text-sm ">Sales Amount of Sales per month </p>
+              <p class="text-sm ">Sales Amount of Sales per week/month/Year </p>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="container-fluid mb-5 row">
+      <div class="col-lg-4 mb-5">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Top 10 Products</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th class="text-center">Image</th>
+                    <th>Product Name</th>
+                    <th class="text-center">Sold</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% topProducts.forEach(product => { %>
+                  <tr>
+                    <td class="text-center"><img src="/<%= product.images[0] %>" class="w-50" alt="<%= product.name %>"></td>
+                    <td class="text-start text-truncate" style="max-width: 150px;"><%= product.name %></td>
+                    <td class="text-center"><%= product.frequency %></td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="col-lg-4 mb-5">
+        <div class="card shadow">
+          <div class="card-header bg-success text-white">
+            <h3 class="card-title">Top 10 Categories</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Category Name</th>
+                    <th class="text-center">Sold</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% topCategories.forEach(category => { %>
+                  <tr>
+                    <td class="text-start text-truncate" style="max-width: 150px;"><%= category.name %></td>
+                    <td class="text-center"><%= category.frequency %></td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="col-lg-4 mb-5">
+        <div class="card shadow">
+          <div class="card-header bg-info text-white">
+            <h3 class="card-title">Top 10 Brands</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Brand Name</th>
+                    <th class="text-center">Sold</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% topBrands.forEach(brand => { %>
+                  <tr>
+                    <td class="text-start text-truncate" style="max-width: 150px;"><%= brand.name %></td>
+                    <td class="text-center"><%= brand.frequency %></td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </main>
   
   <!-- DARK/LightmodE -->
@@ -200,7 +292,6 @@
       let salesUrl = '/admin/sales-data';
       let salesAmountUrl = '/admin/salesamount-data';
   
-      // Set the initial selected option to "weekly" when the page loads
       intervalSelect.value = 'weekly';
   
       intervalSelect.addEventListener('change', async function () {
@@ -244,49 +335,66 @@
         salesAmountChart.update();
       }
   
-      // Initial chart configurations (weekly)
       const salesChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Sales',
-            data: [],
-            backgroundColor: 'rgba(255, 255, 255, .8)',
-            maxBarThickness: 6
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              max: 20,
-              beginAtZero: true
-            }
-          }
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Sales',
+      data: [],
+      backgroundColor: 'rgba(255, 255, 255, .8)',
+      maxBarThickness: 6
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: 'rgba(0, 0, 0, 0.5)' // Set text color for y-axis
         }
-      });
-  
-      const salesAmountChart = new Chart(ctx2, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Sales Amount',
-            data: [],
-            borderColor: 'rgba(255, 255, 255, .8)',
-            backgroundColor: 'transparent',
-            borderWidth: 4,
-            pointRadius: 5,
-            pointBackgroundColor: 'rgba(255, 255, 255, .8)',
-            fill: true
-          }]
-        },
-        options: {
-          // Chart options
+      },
+      x: {
+        ticks: {
+          color: 'rgba(0, 0, 0, 0.8)' // Set text color for x-axis
         }
-      });
+      }
+    }
+  }
+});
 
-      // Call fetchDataAndRenderCharts initially to render the charts based on the default selection
+const salesAmountChart = new Chart(ctx2, {
+  type: 'line',
+  data: {
+    labels: [],
+    datasets: [{
+      label: 'Sales Amount',
+      data: [],
+      borderColor: 'rgba(255, 255, 255, .8)',
+      backgroundColor: 'transparent',
+      borderWidth: 4,
+      pointRadius: 5,
+      pointBackgroundColor: 'rgba(255, 255, 255, .8)',
+      fill: true
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        ticks: {
+          color: 'rgba(0, 0, 0, 0.5)' // Set text color for y-axis
+        }
+      },
+      x: {
+        ticks: {
+          color: 'rgba(0, 0, 0, 0.8)' // Set text color for x-axis
+        }
+      }
+    }
+  }
+});
+
+
       fetchDataAndRenderCharts();
     } catch (error) {
       console.error(error);

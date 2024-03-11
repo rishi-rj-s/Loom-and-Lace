@@ -9,6 +9,7 @@ const sharp = require('sharp');
 const path= require('path');
 const Userdb = require('../model/model');
 const Coupondb = require('../model/couponmodel');
+const Wallet =require('../model/wallethistory')
 // Import Razorpay SDK
 const Razorpay = require('razorpay');
 
@@ -51,7 +52,8 @@ exports.placeorder = async (req, res) => {
             });
             const items = cart.items.map(item => ({
                 productId: item.productId._id, 
-                quantity: item.quantity
+                quantity: item.quantity,
+                price: item.productId.total_price
             }));
             const order = new Orderdb({
                 userId: userId,
@@ -81,7 +83,8 @@ exports.placeorder = async (req, res) => {
                 }
                 const items = cart.items.map(item => ({
                     productId: item.productId._id, 
-                    quantity: item.quantity
+                    quantity: item.quantity,
+                    price: item.productId.total_price
                 }));
         
                 const order = new Orderdb({
@@ -122,7 +125,8 @@ exports.placeorder = async (req, res) => {
         
             const items = cart.items.map(item => ({
                 productId: item.productId._id, 
-                quantity: item.quantity
+                quantity: item.quantity,
+                price: item.productId.total_price
             }));
         
             const order = new Orderdb({
@@ -138,7 +142,15 @@ exports.placeorder = async (req, res) => {
             });
         
             await order.save();
-        
+            const debitTransaction = new Wallet({
+                userId: userId,
+                transactionType: 'Debit',
+                amount: finalTotalAmount,
+                order: order.orderId, 
+                state: "Buyed",
+                timestamp: new Date()
+            });
+            await debitTransaction.save();
             await Cartdb.deleteOne({ user: userId });
         
             // Subtract totalAmount from walletAmount
@@ -174,7 +186,7 @@ exports.userorders=async (req, res) => {
     } catch (error) {
         console.error('Error fetching user orders:', error);
         // Render an error page or redirect to another route
-        res.status(500).send('Internal Server Error');
+         res.render('404');
     }
 }
 };
@@ -192,7 +204,7 @@ exports.userorderdetails=async (req, res) => {
         res.render('userorderdetails', {userToken: req.cookies.userToken,user: user, order: order });
     } catch (error) {
         console.error('Error fetching order details:', error);
-        res.status(500).send('Internal Server Error');
+         res.render('404');
     }
   }
 }
@@ -206,6 +218,15 @@ exports.userorderdetails=async (req, res) => {
        }
        if(order.paymentMethod=='online' || order.paymentMethod=='wallet'){
         user.walletAmount+= order.totalAmount;
+        const creditTransaction = new Wallet({
+            userId: user._id,
+            transactionType: 'Credit',
+            amount: order.totalAmount,
+            order: order.orderId, 
+            state: "Cancelled",
+            timestamp: new Date()
+        });
+        await creditTransaction.save();
        }
      order.status = 'Cancelled';
         await order.save();
@@ -214,7 +235,7 @@ exports.userorderdetails=async (req, res) => {
         res.redirect('/userorders')
     } catch (error) {
         console.error('Error cancelling order:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.render('404');
     }
 }
 };
@@ -233,7 +254,7 @@ exports.userorderreturn=async (req, res) => {
         res.redirect('/userorders')
     } catch (error) {
         console.error('Error cancelling order:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.render('404');
     }
 };
 exports.cancelorderreturn=async (req, res) => {
@@ -251,7 +272,7 @@ exports.cancelorderreturn=async (req, res) => {
         res.redirect('/userorders')
     } catch (error) {
         console.error('Error cancelling order:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.render('404');
     }
 };
 exports.razor=async (req, res) => {
@@ -294,7 +315,32 @@ exports.razorsuccess=async (req, res) => {
         res.render('ordersuccess', {userToken: req.cookies.userToken,user: user });
     } catch (error) {
         console.error(error);
-        return res.redirect('/error');
+        return res.redirect('/cart');
+    }
+};
+
+exports.wallethistory = async (req, res) => {
+    try {
+        if (!req.cookies.userToken) {
+            return res.redirect('/login'); // Redirect if user is not logged in
+        }
+
+        const user = await Userdb.findOne({ email: req.session.email });
+        if (!user) {
+            return res.redirect('/login'); // Redirect if user not found
+        }
+
+        const userId = user._id;
+        const walletHistory = await Wallet.find({ userId }).sort({ timestamp: -1 });
+
+        res.render('wallethistory', { 
+            userToken: req.cookies.userToken,
+            user: user,
+            walletHistory: walletHistory
+        });
+    } catch (error) {
+        console.error('Error fetching wallet history:', error);
+        res.render('404');
     }
 };
 

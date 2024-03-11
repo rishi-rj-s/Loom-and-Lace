@@ -3,7 +3,7 @@
 <!-- navbar -->
 <%- include('include/navbr') -%>
 
-<div class="container-fluid ms-4 mt-4">
+<div class="container-fluid ms-md-4 mt-4">
     <div class="row">
         <div class="col-md-3 col-sm-6 account-nav rounded shadow">
             <div class="row">
@@ -26,6 +26,9 @@
                     <a href="/wishlisted" class="text-decoration-none text-dark">My Wishlist</a>
                 </li>
                 <li>
+                    <a href="/wallethistory" class="text-decoration-none text-dark">Wallet History</a>
+                </li>
+                <li>
                     <a href="/forgot-otp" class="text-decoration-none text-dark">Forgot Password</a>
                 </li>
                 <hr>
@@ -35,31 +38,31 @@
             </ul>
             
         </div>
-        <div class="col-9 account-content  px-5">
+        <div class="col-md-9 account-content">
             <div class="container rounded p-4" style="background-color: rgb(235, 249, 249);">
                 <h2 class="mb-4">ADD A NEW ADDRESS</h2>
                 <form action="/api/addaddress/<%= user.id %>" method="post">
                     <input type="hidden" id="user_id" name="id" value="<%= user.id %>">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="text" class="form-control border-0 border-bottom rounded-0" name="name" id="name" placeholder="Name" required>
                               <label for="name" class="form-label">Name</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="text" class="form-control border-0 border-bottom rounded-0" name="mob" id="mob" placeholder="Mobile Number" required>
                               <label for="number" class="form-label">10-digit mobile number</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="number" class="form-control border-0 border-bottom rounded-0" name="pin" id="pin" placeholder="Pincode" required>
                               <label for="pincode" class="form-label">Pincode</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="text" class="form-control border-0 border-bottom rounded-0" name="locality" id="locality" placeholder="Locality" required>
                               <label for="locality" class="form-label">Locality</label>
@@ -71,13 +74,13 @@
                                 <label for="address" class="form-label">Address (Area and Street):</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="text" class="form-control border-0 border-bottom rounded-0" name="district" id="district" placeholder="District" required>
                               <label for="district" class="form-label">City/District/Town</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                                 <select class="form-select border-0 border-bottom rounded-0" name="state" id="state" required>
                                     <option value="" disabled selected>Select State</option>
@@ -89,13 +92,13 @@
                                 <label for="state" class="form-label">State</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="text" class="form-control border-0 border-bottom rounded-0" name="landmark" id="landmark" placeholder="Landmark">
                               <label for="landmark" class="form-label">Landmark(Optional)</label>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-md-6">
                             <div class="form-floating mb-3">
                               <input type="text" class="form-control border-0 border-bottom rounded-0" name="phone" id="phone" placeholder="Alternate Phone">
                               <label for="phone" class="form-label">Alternate Phone (Optional)</label>
@@ -114,8 +117,8 @@
                              </div>
                             </div>
                           </div><br><br>
-                    <div class="col-3"><button type="submit" class="btn btn-primary w-75">SAVE</button></div>
-                    <div class="col-3"><a href="/useraddress" class="btn btn-secondary ms-2 w-75">CANCEL</a></div>
+                    <div class="col-md-3 col-sm-6"><button type="submit" class="btn btn-primary w-75 mt-2">SAVE</button></div>
+                    <div class="col-md-3 col-sm-6"><a href="/useraddress" class="btn btn-secondary ms-md-2 mt-2  w-75">CANCEL</a></div>
                     
                     
                     </div>

@@ -66,7 +66,7 @@ exports.addtocart = async (req, res) => {
          res.redirect('/cart');
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.render('404');
     }
 };
 exports.deletecart = async (req, res) => {
@@ -87,7 +87,7 @@ exports.deletecart = async (req, res) => {
                 }
             })
             .catch(err=>{
-                res.status(500).send({ message: "Could not delete cart item with id "+id});
+                res.render('404');
             });    
 };
 exports.addquantitycart=async (req, res) => {
@@ -110,7 +110,7 @@ exports.addquantitycart=async (req, res) => {
             }
         })
         .catch(err=>{
-            res.status(500).send({ message: "Could not delete cart item with id "+id});
+            res.render('404');
         }); 
 }
 exports.cart = async (req, res) => {
@@ -138,7 +138,7 @@ exports.cart = async (req, res) => {
         res.render('cart', { userToken: req.cookies.userToken, cart: cart, user: user });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.render('404');
     }
 }
 }
