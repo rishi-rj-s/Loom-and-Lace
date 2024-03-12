@@ -21,6 +21,11 @@ const auths= require('../middleware/authentication');
 
 //home config side
 route.get('/home',auths.isUser,services.home);
+route.get('/userlogout',services.userlogout);
+route.get('/forgotpassword',forgot.getforgotpage);
+route.post('/loginforgotpassword',forgot.loginforgotpassword);
+route.post('/ver-forgototp',forgot.verforgototp);
+route.post('/setNewLoginPassword',forgot.setNewLoginPassword);
 
 //user side
 route.get('/loginpage',services.loginpage);
@@ -48,6 +53,9 @@ route.post('/sortAndFilterProducts/:sortBy', controller.getSortedProducts);
 route.post('/wishlist/:productId',auths.isUser, shop.wishlist);
 route.get('/search',shop.search);
 route.get('/searchproduct',shop.searched);
+route.get('/paymentpolicies',invoice.policy);
+
+
 
 
 //orders and cart

@@ -332,13 +332,16 @@ exports.block=async (req, res) => {
 }
 
 exports.logout=(req,res)=>{
+           res.clearCookie('adminToken');
+           res.redirect('/admin')
+    }
+ exports.userlogout=(req,res)=>{
     req.session.destroy(function(err){
        if(err){
           console.log(err);
           res.send("Error")
        }else{
            res.clearCookie('userToken');
-           res.clearCookie('adminToken');
            res.redirect('/')
        }
     })

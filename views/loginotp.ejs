@@ -1,45 +1,17 @@
 <%- include('include/header') -%>
 
-<!-- navbar -->
-<%- include('include/navbr') -%>
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #4169E1;">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bolder" href="#">LOOM & LACE</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="admin"><a href="/admin" class="text-decoration-none" ><i class="fa-solid fa-user-tie text-dark"></a></i></div>
+    </div>
+  </nav>
 
 <div class="container-fluid ms-md-4 mt-4">
-    <div class="row">
-        <div class="col-md-3 col-sm-6 account-nav rounded shadow">
-            <div class="row">
-                <div class="col-4"><label for="name"><%= user.name %></label></div>
-                <div class="col-8"><a class="nav-link" href="/cart">
-                    <i class="fa-solid fa-wallet me-1"></i>Wallet Amount : <%= user.walletAmount%></a></div>
-                </div>
-            <hr>
-            <ul class="list-unstyled">
-                <li>
-                    <a href="/useraccount" class="text-decoration-none text-dark">Profile</a>
-                </li>
-                <li>
-                    <a href="/useraddress" class="text-decoration-none text-dark">Addresses</a>
-                </li>
-                <li>
-                    <a href="/userorders" class="text-decoration-none text-dark">My Orders</a>
-                </li>
-                <li>
-                    <a href="/wishlisted" class="text-decoration-none text-dark">My Wishlist</a>
-                </li>
-                <li>
-                    <a href="/wallethistory" class="text-decoration-none text-dark">Wallet History</a>
-                </li>
-                <li>
-                    <a href="/forgot-otp" class="text-decoration-none text-white bg-primary d-block py-2 rounded">Forgot Password</a>
-                </li>
-                <hr>
-                <li>
-                    <a href="/userlogout" class="text-decoration-none text-danger">Logout</a>
-                </li>
-            </ul>
-            
-            
-        </div>
-        
+<div class="row justify-content-center">
 <div class="col-9 account-content  px-5">
    <div class="container d-flex justify-content-center align-items-center">
     <div class="card text-center">
@@ -50,8 +22,8 @@
                 <small>code has been send to your mail</small>
             </div>
         </div>
-        <form action="/ver-otp" method="post">
-        <div id="otpForm" class="form-control border-0 input-container d-flex flex-row justify-content-center mt-2">
+        <form action="/ver-forgototp" method="post" class="bg-primary">
+        <div id="otpForm" class="form-control border-0 input-container d-flex flex-row justify-content-center mt-2 bg-primary">
             <input type="name"  class="text-center form-control rounded w-50" name="otp" id="otp">
         </div>
 
@@ -67,7 +39,7 @@
            <button class="btn btn-success px-4" type="submit">Verify</button>
         </div>
     </form>
-    <p><%= message %></p>
+    <p class="text-danger"><%= message %></p>
     </div>
 </div>
 </div>
@@ -124,6 +96,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });            
 </script>
-<%-include('include/Userfooter')-%>
 <%-include('include/footer')-%>
 

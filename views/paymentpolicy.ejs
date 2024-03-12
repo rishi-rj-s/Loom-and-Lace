@@ -1,31 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment Policies</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    /* Add custom styles here */
-    /* For example: */
-    body {
-      padding: 20px;
-    }
-  </style>
-</head>
-
-<body class="bg-secondary">
+<%- include('include/header') -%>
 <%- include('include/navbr') -%>
   <div class="container p-5 bg-white">
     <h1 class="my-4">Payment Policies</h1>
 
     <!-- Terms and Conditions -->
     <h2 class="mb-3">Terms and Conditions</h2>
-    <p>Last updated on Feb 27 2024</p> 
-      <p> For the purpose of these Terms and Conditions, The term "we", "us", "our" used anywhere on this page shall mean LOOM & LACE. "you", “your”, "user", “visitor” shall mean any natural or legal person who is visiting our website and/or agreed to purchase from us.</p>
-        <p>Your use of the website and/or purchase from us are governed by following Terms and Conditions:
-        </p>
     <ul>
       <li>The content of the pages of this website is subject to change without notice.</li>
       <li>Neither we nor any third parties provide any warranty or guarantee as to the accuracy, timeliness, performance, completeness or suitability of the information and materials found or offered on this website for any particular purpose. You acknowledge that such information and materials may contain inaccuracies or errors and we expressly exclude liability for any such inaccuracies or errors to the fullest extent permitted by law.</li>
@@ -41,9 +20,6 @@
 
     <!-- Cancellation and Refund -->
     <h2 class="mb-3">Cancellation and Refund</h2>
-    <p>Last updated on Feb 27 2024</p>
-        <p>LOOM & LACE believes in helping its customers as far as possible, and has therefore a liberal cancellation policy. Under this policy:
-        </p>
     <ul>
       <li>Cancellations will be considered only if the request is made within 7 days of placing the order. However, the cancellation request may not be entertained if the orders have been communicated to the vendors/merchants and they have initiated the process of shipping them.</li>
       <li>LOOM & LACE does not accept cancellation requests for perishable items like flowers, eatables etc. However, refund/replacement can be made if the customer establishes that the quality of product delivered is not good.</li>
@@ -55,12 +31,9 @@
 
     <!-- Footer -->
     <footer class="mt-5">
-      <p>© 2017-2024 · <a href="#">Terms of use</a> · <a href="#">Privacy policy</a> · <a href="#">Support</a></p>
+      <p>© 2023-2024· <a href="#">Terms of use</a> · <a href="#">Privacy policy</a> · <a href="#">Support</a></p>
     </footer>
   </div>
   <%- include('include/userFooter') -%>
 
-  <!-- Bootstrap Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  <%- include('include/footer') -%>

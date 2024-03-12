@@ -92,48 +92,45 @@
   <div class="container-fluid py-4">
     <div class="userside">
       <div class="row">
-        <div class="col-10"><h2 class="me-3 text-decoration-underline">All Offers</h2></div>
-        <div class="col-2"> <a href="/admin/addoffer" class="bg-dark btn border-shadow shadow update">
-          <span class="text-white">Add Offer <b>+</b></span>
+        <div class="col-8"><h2 class="me-3 text-decoration-underline">All Offers</h2></div>
+        <div class="col-2"> <a href="/admin/addproductoffer" class="bg-dark btn border-shadow shadow update">
+          <span class="text-white">Add Product Offer <b>+</b></span>
       </a></div>
+      <div class="col-2"> <a href="/admin/addcategoryoffer" class="bg-dark btn border-shadow shadow update">
+        <span class="text-white">Add Category Offer <b>+</b></span>
+    </a></div>
       </div>
-      
       <form action="/" method="POST">
         <table class="table" id="userTable">
             <thead class="thead-dark">
                 <tr class="bg-dark text-light">
-                    <th>ID</th>
-                    <th>Category name</th>
-                    <th>Category Description</th>
-                    <th>Listing</th>
+                    <th>Offer Type</th>
+                    <th>Category / Product name</th>
+                    <th>Expiry Date</th>
+                    <th>Extra Discount</th>
                     <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                <% for (var i = 0; i < categories.length; i++) { %>
-                    <tr class="mt-3">
-                       <td><%= i + 1 %></td>
-                       <td><%= categories[i].category %></td>
-                       <td><%= categories[i].description %></td>
-                       <td>
-                        <% if (categories[i].list === 'listed') { %>
-                          <span class="text-success"><%= categories[i].list %></span>
-                      <% } else if (categories[i].list === 'unlisted') { %>
-                          <span class="text-danger"><%= categories[i].list %></span>
-                      <% } %>
+                <% offers.forEach(offer => { %>
+                  <td><%= offer.type %></td>
+                  <td><% if(offer.type=='Category Offer'){%>
+                    <%= offer.categoryId.category%>
+                    <%}else { %>
+                      <%= offer.productId.product_name %>
+                      <%}%>
+                  </td>
+                  <td><%= new Date(offer.expiryDate).toLocaleDateString()  %></td>
+                  <td><%= offer.discountPercentage %></td>
+              
                     </td>
-                       <td><a href="/update-category?id=<%= categories[i]._id %>" class="btn border-shadow shadow update">
-                        <span class="material-symbols-outlined">edit</span>
-                    </a>
-                    <a class="btn border-shadow shadow delete" data-id=<%= categories[i]._id %>>
+                       <td>
+                        <a class="btn border-shadow shadow delete" data-id=<%= offer._id %>>
                       <span class="material-symbols-outlined">delete</span>
-                    </a>
-                    <a href="/list-cat?id=<%= categories[i]._id %>" class="btn border-shadow shadow visible">
-                      <span class="material-symbols-outlined">visibility</span>
                     </a>
                     </td>
                     </tr>
-                    <% }%>
+                    <% }) %>
             </tbody>
         </table>
     </form>
@@ -147,3 +144,44 @@
 
 
 <%-include('include/footer2')-%>
+<script>
+    new DataTable('#userTable');
+    if (window.location.pathname == "/admin/offers") {
+    $ondelete = $(".table tbody td a.delete");
+    $ondelete.click(function (event) {
+        event.preventDefault(); // Prevent the default link behavior
+
+        var id = $(this).attr("data-id");
+
+        // Use SweetAlert2 for confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this offer?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var request = {
+                    "url": `http://localhost:3000/api/admin/offer/${id}`,
+                    "method": "DELETE"
+                };
+
+                $.ajax(request).done(function (response) {
+                    // Show success message using SweetAlert2
+                    Swal.fire(
+                        'Deleted!',
+                        'Offer has been deleted successfully.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                });
+            }
+        });
+    });
+}
+
+</script>

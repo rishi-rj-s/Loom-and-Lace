@@ -102,7 +102,7 @@ exports.applyCoupon = async (req, res) => {
         const cart = await Cartdb.findOne({ user: user._id });
         
         if (couponCode === "selectcoupon") {
-            return res.json({ message: 'Coupon applied successfully', newTotal: cart.totalDiscount });
+            return res.json({ message: 'Please select a valid coupon.', newTotal: cart.totalDiscount });
         }
 
         const coupon = await Coupondb.findOne({ couponcode: couponCode });
@@ -115,6 +115,6 @@ exports.applyCoupon = async (req, res) => {
         res.json({ message: 'Coupon applied successfully', newTotal, couponAmount: coupon.maxdiscount });
     } catch (error) {
         console.error(error);
-       
+        res.status(500).json({ message: 'An error occurred. Please try again later.' });
     }
 };

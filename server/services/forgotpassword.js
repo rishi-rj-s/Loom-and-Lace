@@ -103,3 +103,83 @@ exports.setNewPassword = async (req, res) => {
         return  res.render('404');
     }
 }
+exports.getforgotpage= async (req,res)=>{
+    if(req.cookies.userToken){
+        res.redirect('/home');
+    }
+    else{
+        res.render('forgotloginpage');
+    }
+}
+exports.loginforgotpassword = async (req, res) => {
+    try {
+        if (req.cookies.userToken) {
+            return res.redirect('/home');
+        }
+        const user = await Userdb.findOne({ email: req.body.email });
+        req.session.veremail= req.body.email;
+        if (!user) {
+            return res.redirect('/loginpage');
+        }
+
+        const otp = generateOTP();
+
+        req.session.otp = otp;
+
+        transporter.sendMail({
+            from: 'asifsalim0000@gmail.com',
+            to: user.email,
+            subject: 'Your OTP for Verification',
+            text: `Your OTP is: ${otp}`,
+        }, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.status(500).send('Error sending OTP via email.');
+            } else {
+                console.log('OTP sent successfully:', info.response);
+                return res.render('loginotp', { userToken: req.cookies.userToken, user, email: user._id, message: '' });
+            }
+        });
+    } catch (error) {
+        console.error('Error in loginforgotpassword:', error);
+        res.status(404).res.render('404');
+    }
+};
+exports.verforgototp= async (req,res)=>{
+    if (req.cookies.userToken ) {
+        res.redirect('/home')
+    } else if(req.session.otp){
+        const otp= req.body.otp;
+        if(otp==req.session.otp){
+            res.render('loginforgot',{userToken: undefined,user: undefined,message:''})
+        }
+        else{
+            res.render('loginotp',{ userToken: undefined,user: undefined, message:'Otp is not matching' });
+        }
+    }
+}
+exports.setNewLoginPassword = async (req, res) => {
+    const { confirmPassword, newPassword } = req.body;
+
+    try {
+        const user = await Userdb.findOne({ email: req.session.veremail });
+
+        if (!user) {
+            return res.status(404).send('User not found'); 
+        }
+
+        if (newPassword !== confirmPassword) {
+           res.render('loginforgot', { userToken: undefined, user: undefined, message: "Passwords do not match." });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        user.password = hashedPassword;
+        await user.save();
+       
+        res.render('loginforgot', { userToken: undefined, user: undefined, message: "Password successfully changed." });
+    } catch (error) {
+        console.error(error);
+        return  res.render('404');
+    }
+}

@@ -23,7 +23,8 @@ const razorpay = new Razorpay({
 exports.placeorder = async (req, res) => {
     if(req.cookies.userToken){
     try {
-        const { addressId, paymentMethod, totalAmount,couponCode } = req.body;
+        const { addressId, paymentMethod, totalAmount,couponcode } = req.body;
+        console.log(couponcode)
         
         const user = await Userdb.findOne({ email: req.session.email });
         const userId = user._id;
@@ -33,15 +34,17 @@ exports.placeorder = async (req, res) => {
             let finalTotalAmount = totalAmount;
 
             // Check if a valid coupon code is provided
-            if (couponCode && couponCode !== "selectcoupon") {
-                const coupon = await Coupondb.findOne({ couponcode: couponCode });
+            if (couponcode) {
+                const coupon = await Coupondb.findOne({ couponcode: couponcode });
+                console.log(coupon)
                 if (!coupon) {
                     return res.status(404).json({ message: 'Coupon not found' });
                 }
                 couponUsed = coupon._id;
                 // Subtract coupon discount from the total amount
-                finalTotalAmount -= coupon.discount;
+                finalTotalAmount -= coupon.maxdiscount;
             }
+            console.log('asdfghjk',finalTotalAmount)
         // If payment method is Razorpay
         if (paymentMethod === 'online') {
             const cart = await Cartdb.findOne({ user: userId }).populate('items.productId');

@@ -58,19 +58,33 @@
                         </div>
                         <div class="couponpart row mt-3">
                             <div class="col-6">
-                                <select class="form-control" id="couponCode" name="couponCode">
-                                    <option value="selectcoupon">Select Coupon</option>
-                                    <% coupons.forEach(coupon => { %>
-                                        <% if (coupon.minpurchaseamount >= cart.totalDiscount) { %>
-                                            <option value="<%= coupon.couponcode %>"><%= coupon.couponcode %></option>
-                                        <% } %>
-                                    <% }); %>
-                                </select>
+                                <input type="text" class="form-control" id="couponCodeInput" name="couponcode" placeholder="Enter Coupon Code">
                             </div>
-                            <div class="col-6">
-                                <button type="button" class="btn btn-outline-danger" id="applyCoupon">Apply Coupon</button>
+                            <div class="col-3">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-info dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Available Coupons
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="availableCouponsDropdown">
+                                        <% if (coupons && coupons.length > 0) { %>
+                                            <% coupons.forEach(coupon => { %>
+                                                <% if (coupon.minpurchaseamount >= cart.totalDiscount) { %>
+                                                    <li><button class="dropdown-item coupon-btn" type="button" data-code="<%= coupon.couponcode %>"><%= coupon.couponcode %></button></li>
+                                                <% } %>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <!-- If no coupons are available -->
+                                            <li><span class="dropdown-item">No coupons available.</span></li>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <button type="button" class="btn btn-outline-danger" id="applyCouponBtn">Apply Coupon</button>
                             </div>
                         </div>
+                        
+                                   
                         <div class="container row mt-3">
                             <div class="table-responsive">
                                 <table class="table table-bordered">
@@ -153,46 +167,66 @@
 <%- include('include/userFooter') -%>
 
 <script>
-    document.getElementById('applyCoupon').addEventListener('click', function() {
-        var selectedCoupon = document.getElementById('couponCode').value;
-        if (!selectedCoupon || selectedCoupon === "selectcoupon") {
-            document.getElementById('total').innerText = '₹' + '<%= cart.totalDiscount %>';
-            document.getElementById('shippingDivd-flex').style.display = 'none';
-            document.getElementById('applied').innerText = '';
-            document.getElementById('couponAmount').innerText = '';
-            return;
+document.addEventListener('DOMContentLoaded', function() {
+    // Apply coupon when button clicked
+    document.getElementById('applyCouponBtn').addEventListener('click', function() {
+        const couponCodeInput = document.getElementById('couponCodeInput').value.trim();
+        if (couponCodeInput) {
+            applyCoupon(couponCodeInput);
+        } else {
+            // Display SweetAlert for empty coupon code input
+            swal("Please enter a coupon code.", "", "warning");
         }
-        fetch('/applycoupon', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    couponCode: selectedCoupon
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'Coupon applied successfully') {
-                    // Update total amount
-                    document.getElementById('total').innerText = '₹' + data.newTotal;
-                    // Show shipping details if coupon applied
-                    document.getElementById('shippingDivd-flex').style.display = 'block';
-                    document.getElementById('applied').innerText = 'Coupon Applied :';
-                    document.getElementById('couponAmount').innerText = '-₹' + data.couponAmount;
-                    // Update new total
-                    document.getElementById('newTotal').innerText = '₹' + data.newTotal;
-                    // Reset coupon selection
-                    document.getElementById('couponCode').value = '';
-                } else {
-                    // Handle error messages
-                    console.error(data.message);
-                    // Optionally, display error message to user
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
     });
+
+    // Apply coupon when available coupon clicked
+    const couponButtons = document.querySelectorAll('.coupon-btn');
+    couponButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const couponCode = this.dataset.code;
+            // Set the selected coupon code in the input field
+            document.getElementById('couponCodeInput').value = couponCode;
+            // Apply coupon
+            applyCoupon(couponCode);
+        });
+    });
+});
+
+function applyCoupon(couponCode) {
+    fetch('/applycoupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            couponCode: couponCode
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message === 'Coupon applied successfully') {
+            // Update total amount
+            document.getElementById('total').innerText = '₹' + data.newTotal;
+            // Show shipping details if coupon applied
+            document.getElementById('shippingDivd-flex').style.display = 'block';
+            document.getElementById('applied').innerText = 'Coupon Applied :';
+            document.getElementById('couponAmount').innerText = '-₹' + data.couponAmount;
+            // Update new total
+            document.getElementById('newTotal').innerText = '₹' + data.newTotal;
+            // Reset coupon input
+            document.getElementById('couponCodeInput').value = '';
+        } else {
+            // Display SweetAlert for error message
+            swal("Error", data.message, "error");
+        }
+    })
+    .catch(error => {
+        // Display SweetAlert for error
+        swal("Error", "An error occurred. Please try again later.", "error");
+        console.error('Error:', error);
+    });
+}
+
 </script>
 
 <%- include('include/footer') -%>

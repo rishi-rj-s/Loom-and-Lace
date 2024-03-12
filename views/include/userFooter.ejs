@@ -15,20 +15,20 @@
                 <div class="col-md-3">
                     <h4 class="footer-heading font-italic">Quick Links</h4>
                     <div class="footer-underline"></div>
-                    <div class="mb-2"><a href="" class="text-dark">Home</a></div>
+                    <div class="mb-2"><a href="/home" class="text-dark">Home</a></div>
                     <div class="mb-2"><a href="" class="text-dark">About Us</a></div>
                     <div class="mb-2"><a href="" class="text-dark">Contact Us</a></div>
                     <div class="mb-2"><a href="" class="text-dark">Blogs</a></div>
-                    <div class="mb-2"><a href="" class="text-dark">Sitemaps</a></div>
+                    <div class="mb-2"><a href="/paymentpolicies" class="text-dark">Payment Policy</a></div>
                 </div>
                 <div class="col-md-3">
                     <h4 class="footer-heading">Shop Now</h4>
                     <div class="footer-underline"></div>
-                    <div class="mb-2"><a href="" class="text-dark">Collections</a></div>
+                    <div class="mb-2"><a href="/shopfilter" class="text-dark">Collections</a></div>
                     <div class="mb-2"><a href="" class="text-dark">Trending Products</a></div>
                     <div class="mb-2"><a href="" class="text-dark">New Arrivals Products</a></div>
                     <div class="mb-2"><a href="" class="text-dark">Featured Products</a></div>
-                    <div class="mb-2"><a href="" class="text-dark">Cart</a></div>
+                    <% if (userToken) { %><div class="mb-2"><a href="/cart" class="text-dark">Cart</a></div><% } %>
                 </div>
                 <div class="col-md-3">
                     <h4 class="footer-heading">Reach Us</h4>

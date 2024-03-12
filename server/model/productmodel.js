@@ -27,8 +27,6 @@ var Productschema = new mongoose.Schema({
             type: String,
             default: 'listed' 
         }, 
-    // image: { 
-    //     type: String }, 
     images: { 
         type: [String] },
     total_price: { 

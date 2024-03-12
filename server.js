@@ -71,7 +71,8 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
     res.cookie('userToken', userToken);
     res.redirect('/home');
 });
-
-
+app.use((req, res) => {
+    res.status(404).render("404");
+  });
 
  app.listen(PORT,()=>{ console.log(`Server is running on http://localhost:${PORT}`)})

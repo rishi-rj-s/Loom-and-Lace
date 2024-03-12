@@ -3,6 +3,8 @@ const path = require('path');
 const os = require('os');
 const PDFDocument = require('pdfkit');
 const Orderdb = require('../model/ordermodel');
+const Addressdb= require('../model/addressmodel');
+const Userdb= require('../model/model');
 
 exports.generateOrderInvoice = async (req, res) => {
   try {
@@ -53,3 +55,20 @@ exports.generateOrderInvoice = async (req, res) => {
     return  res.render('404');
   }
 };
+exports.policy= async(req,res)=>{
+  if (req.cookies.userToken) {
+    const user = await Userdb.findOne({ email: req.session.email });
+    const userId= user._id;
+    const addresses= await Addressdb.find({user: userId});
+    if (!user) {
+        // Handle case where user is not found
+        console.error("User not found");
+        // Render an error page or redirect to a relevant route
+        return res.status(404).render('error', { message: 'User not found' });
+    }
+    res.render("paymentpolicy",{userToken: req.cookies.userToken, user: user});
+}
+else{
+  res.render("paymentpolicy",{ userToken: undefined, user:undefined});
+}
+}

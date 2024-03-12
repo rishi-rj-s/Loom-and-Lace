@@ -47,5 +47,10 @@ route.get('/admin/yearly-salesamount-data', report.yearlysalesamountdata);
 route.get('/admin/salesreport', report.salesreport);
 route.get('/admin/sales-report', report.generatereport);
 
+route.get('/admin/addproductoffer', offers.getaddproductoffer);
+route.post('/admin/postaddproductoffer',offers.postaddproductoffer);
+route.get('/admin/addcategoryoffer',offers.getaddcategoryoffer);
+route.post('/admin/postaddcategoryoffer',offers.postaddcategoryoffer);
+route.delete('/api/admin/offer/:id',offers.deleteoffer);
 
 module.exports =route

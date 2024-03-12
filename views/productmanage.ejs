@@ -58,6 +58,14 @@
           <span class="nav-link-text ms-1">Coupons</span>
         </a>
       </li>  
+      <li class="nav-item">
+        <a class="nav-link text-white" href="/admin/offers">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">local_offer</i> <!-- Material icon for a coupon -->
+          </div>
+          <span class="nav-link-text ms-1">Offers</span>
+        </a>
+      </li> 
       <li class="nav-item mt-3">
         <hr class="dark horizontal my-0">
       </li>
@@ -161,28 +169,47 @@
   </div>
 </main>
 <%-include('include/UIdark')-%> 
+<%-include('include/footer2')-%>
 <script>
   new DataTable('#userTable');
-if(window.location.pathname=="/products"){
-    $ondelete= $(".table tbody td a.delete");
-    $ondelete.click(function(){
-        var id= $(this).attr("data-id")
+  if (window.location.pathname == "/products") {
+    $ondelete = $(".table tbody td a.delete");
+    $ondelete.click(function (event) {
+        event.preventDefault(); // Prevent the default link behavior
 
-        var request={
-            "url": `http://localhost:3000/api/admin/products/${id}`,
-            "method": "DELETE"
-        }
-         
-        if(confirm("Do you really want to delete this record")){
-            $.ajax(request).done(function(response){
-                alert("Record deleted successfully")
-                location.reload();
-            })
-        }
+        var id = $(this).attr("data-id");
 
-    })
+        // Use SweetAlert2 for confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this record?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var request = {
+                    "url": `http://localhost:3000/api/admin/products/${id}`,
+                    "method": "DELETE"
+                };
+
+                $.ajax(request).done(function (response) {
+                    // Show success message using SweetAlert2
+                    Swal.fire(
+                        'Deleted!',
+                        'Record has been deleted successfully.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                });
+            }
+        });
+    });
 }
+
 </script>
 <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
 
-<%-include('include/footer2')-%>

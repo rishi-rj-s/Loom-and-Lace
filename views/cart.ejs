@@ -184,27 +184,45 @@ document.querySelectorAll('.quantity input').forEach(input => {
       updateCart(itemId, newQuantity);
   });
 });
-  // Delete
-  if (window.location.pathname === "/cart") {
-      const $ondelete = $(".table tbody td a.delete");
-      $ondelete.click(function() {
-          const itemId = $(this).attr("data-id");
+ // Delete
+if (window.location.pathname === "/cart") {
+    const $ondelete = $(".table tbody td a.delete");
+    $ondelete.click(function() {
+        const itemId = $(this).attr("data-id");
 
-          if (confirm("Do you really want to delete this from cart?")) {
-              $.ajax({
-                  url: `/api/cart/${itemId}`,
-                  method: "DELETE",
-                  success: function(response) {
-                      alert("Cart item deleted successfully");
-                      location.reload();
-                  },
-                  error: function(xhr, status, error) {
-                      console.error(xhr.responseText);
-                  }
-              });
-          }
-      });
-  }
+        // Use Swal.fire instead of alert
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you really want to delete this from cart?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If user confirms, send delete request
+                $.ajax({
+                    url: `/api/cart/${itemId}`,
+                    method: "DELETE",
+                    success: function(response) {
+                        // Show success message using Swal.fire
+                        Swal.fire("Deleted!", "Cart item deleted successfully.", "success").then(() => {
+                            // Reload the page
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        // Show error message using Swal.fire
+                        Swal.fire("Error!", "Something went wrong while deleting the item.", "error");
+                    }
+                });
+            }
+        });
+    });
+}
+
 </script>
 
 
