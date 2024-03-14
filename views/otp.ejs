@@ -36,7 +36,7 @@
             <small>
                 Didn't get the OTP
                 <span id="timer" class="text-decoration-none"></span>
-                <a href="#" id="resendLink" class="text-decoration-none" style="display: none;">Resend</a>
+                <a href="/resend-otp" id="resendLink" class="text-decoration-none" style="display: none;">Resend</a>
             </small>
         </div>
 
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const timerElement = document.getElementById('timer');
 
     const startTimer = () => {
-        let timeLeft = 60;
+        let timeLeft = 30;
 
         const timer = setInterval(() => {
             const minutes = Math.floor(timeLeft / 60);

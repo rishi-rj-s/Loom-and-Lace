@@ -84,6 +84,8 @@ route.get('/wallethistory',auths.isUser,ordercontroller.wallethistory)
 
 //api realted to db
 route.post('/api/signup',controller.signup);
+route.get('/resend-otp', controller.resendotp);
+
 route.post('/api/users',controller.create);
 route.get('/api/users',controller.find);
 

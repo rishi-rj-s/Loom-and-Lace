@@ -33,9 +33,6 @@ exports.signup= async (req,res)=>{
    if(req.cookies.userToken){
       res.redirect('/');
   }
-  else if(req.cookies.adminToken){
-      res.redirect('/admin/manage');
-  }
    else if(req.session.otp){
       delete req.session.otp;
       res.render('signup',{message:''});
@@ -71,6 +68,35 @@ exports.signup= async (req,res)=>{
             })
          }
  }
+ exports.resendotp=async (req, res) => {
+    try {
+        // Retrieve user's email from session or request body
+        const recipientEmail = req.session.uemail || req.body.email;
+
+        // Generate a new OTP
+        const otp = generateOTP();
+        req.session.otp = otp;
+
+        // Send the OTP via email
+        transporter.sendMail({
+            from: 'asifsalim0000@gmail.com',
+            to: recipientEmail,
+            subject: 'Your OTP for Verification',
+            text: `Your new OTP is: ${otp}`,
+        }, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                res.status(500).send('Error sending OTP via email.');
+            } else {
+                console.log('OTP resent successfully:', info.response);
+                res.render('otp', { email: recipientEmail, message: 'OTP resent successfully.' });
+            }
+        });
+    } catch (error) {
+        console.error('Error resending OTP:', error);
+        res.status(500).send('Error resending OTP.');
+    }
+}
 
 //retrieve and return users
 exports.find= (req,res)=>{

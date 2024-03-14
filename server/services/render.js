@@ -132,9 +132,6 @@ exports.signup=(req,res)=>{
     {
         res.redirect("/");
     }
-    else if(req.cookies.adminToken){
-        res.redirect("/admin/manage")
-    }
     else{
     res.render('signup', { message: '' })
     }

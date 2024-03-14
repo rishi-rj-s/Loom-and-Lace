@@ -186,8 +186,8 @@ exports.getupdateoffer = async (req, res) => {
                 res.status(400).json({ message: 'Invalid offer type' });
             }
         } else {
-            // Handle unauthorized access
-            res.status(401).json({ message: 'Unauthorized access' });
+ 
+            res.status(404).render('404');
         }
     } catch (error) {
         console.error(error);
@@ -211,8 +211,8 @@ exports.posteditoffer = async (req, res) => {
                 return res.status(404).json({ message: 'Product not found' });
             }
 
-            product.discount -= Number(offer.discountPercentage); // Convert to number
-            product.discount += Number(discount); // Convert to number
+            product.discount -= Number(offer.discountPercentage);  
+            product.discount += Number(discount);  
 
             const discountedPrice = product.price * (1 - product.discount / 100);
             product.total_price = Math.round(discountedPrice);
