@@ -184,11 +184,11 @@ exports.userorders=async (req, res) => {
       const userId= user._id;
         const orders = await Orderdb.find({ userId: user._id}).populate('items.productId').sort({_id:-1});
         const dates = orders.map(order => order.orderedDate.toDateString());
-        // Render the userorders.ejs template with orders data
+         
         res.render('userorders', { userToken: req.cookies.userToken,user: user, orders, dates });
     } catch (error) {
         console.error('Error fetching user orders:', error);
-        // Render an error page or redirect to another route
+         
          res.render('404');
     }
 }
@@ -232,6 +232,16 @@ exports.userorderdetails=async (req, res) => {
         await creditTransaction.save();
        }
      order.status = 'Cancelled';
+     for (const item of order.items) {
+        const product = await Productdb.findById(item.productId);
+    
+        if (product) {
+            product.stock += item.quantity;  
+            await product.save()
+        } else {
+            console.log(`Product with ID ${item.productId} not found`);
+        }
+    }
         await order.save();
         await user.save();
 

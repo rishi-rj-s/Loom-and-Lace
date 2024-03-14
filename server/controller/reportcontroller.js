@@ -7,8 +7,8 @@ const sharp = require('sharp');
 const path= require('path');
 const Userdb = require('../model/model');
 const Orderdb = require('../model/ordermodel');
-const ExcelJS = require('exceljs');  
-const PDFDocument = require('pdfkit');
+const ExcelJS = require('exceljs');
+const PDFDocument = require('pdfkit-table');
 
 const { startOfWeek, endOfWeek, format, addDays } = require('date-fns');
 
@@ -105,20 +105,20 @@ exports.monthlysalesdata = async (req, res) => {
         // Query to get monthly sales data (grouping by the month of orderedDate)
         const monthlySalesData = await Orderdb.aggregate([
             {
-                $unwind: "$items" // Unwind the items array to get separate documents for each item
+                $unwind: "$items" 
             },
             {
                 $group: {
                     _id: { $month: "$orderedDate" },
-                    totalSales: { $sum: "$items.quantity" } // Summing up the quantity of items sold per month
+                    totalSales: { $sum: "$items.quantity" } 
                 }
             }
         ]);
-        // Formatting data for chart
+        
         const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const sales = Array(12).fill(0); // Initialize with 0 sales for each month
+        const sales = Array(12).fill(0); 
         monthlySalesData.forEach(item => {
-            sales[item._id - 1] = item.totalSales; // Update sales array with fetched data
+            sales[item._id - 1] = item.totalSales; 
         });
         res.json({ labels, sales });
     } catch (error) {
@@ -274,30 +274,38 @@ exports.salesreport= async (req, res) => {
          res.render('404');
     }
 };
-
 async function generatePDFReport(res, reportTitle, salesData) {
     try {
         const doc = new PDFDocument();
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=sales_report.pdf');
         doc.pipe(res);
+        
         doc.fontSize(20).text(`LOOM & LACE`, { align: 'center' });
         doc.fontSize(18).text(`Sales Report (${reportTitle})`, { align: 'center' });
         doc.moveDown();
-        salesData.forEach(({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => {
-            doc.fontSize(14).text('Date: ' + date);
-            doc.fontSize(12).text('Total Sales: ' + totalSales);
-            doc.fontSize(12).text('Total Order Amount: Rs.' + totalOrderAmount);
-            doc.fontSize(12).text('Total Discount: Rs.' + totalDiscount);
-            doc.fontSize(12).text('Total Coupon Discount : Rs.' + totalCouponDiscount);
-            doc.moveDown();
+
+        // Table Headers
+        const tableHeaders = ['Date', 'Total Sales', 'Total Order Amount', 'Total Discount', 'Total Coupon Discount'];
+        const tableHeaderY = doc.y;
+        doc.table({
+            headers: tableHeaders,
+            rows: salesData.map(({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => 
+                [new Date(date).toLocaleDateString(), totalSales, 'Rs.' + totalOrderAmount, 'Rs.' + totalDiscount, 'Rs.' + totalCouponDiscount]
+            ),
+            widths: [150, 100, 120, 120, 160],
+            heights: 20,
+            headerRows: 1,
+            startY: tableHeaderY
         });
+        
         doc.end();
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error generating PDF report' });
     }
 }
+
 async function generateExcelReport(res, reportTitle, salesData) {
   try {
       const workbook = new ExcelJS.Workbook();
@@ -384,7 +392,7 @@ async function getYearlySales() {
 
         if (order.couponused) {
            
-            totalCouponDiscount += order.couponused.discount;
+            totalCouponDiscount += order.couponused.maxdiscount;
         }
     });
 

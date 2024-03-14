@@ -68,8 +68,9 @@
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="availableCouponsDropdown">
                                         <% if (coupons && coupons.length > 0) { %>
                                             <% coupons.forEach(coupon => { %>
-                                                <% if (coupon.minpurchaseamount >= cart.totalDiscount) { %>
-                                                    <li><button class="dropdown-item coupon-btn" type="button" data-code="<%= coupon.couponcode %>"><%= coupon.couponcode %></button></li>
+                                                <% if (coupon.minpurchaseamount <= cart.totalDiscount ) { %>
+                                                    <li><button class="dropdown-item coupon-btn" type="button" data-code="<%= coupon.couponcode %>"><%= coupon.couponcode %><p class="font-weight-lighter"><small>Discount:<%= coupon.maxdiscount %></small> </p> </button></li>
+                                                    <hr>
                                                 <% } %>
                                             <% }); %>
                                         <% } else { %>
@@ -135,7 +136,7 @@
                             <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
                                 <p class="mb-2">Total (tax included) :</p>
                                 <input type="hidden" name="totalAmount" id="totalAmount" value="<%= cart.totalDiscount %>">
-                                <p id="total" class="mb-2">₹<%= cart.totalDiscount %></p>
+                                <p id="total" class="mb-2" id="totalA">₹<%= cart.totalDiscount %></p>
                             </div>
                             <h4 class="text-dark">
                                 Select Payment Method
@@ -175,7 +176,15 @@ document.addEventListener('DOMContentLoaded', function() {
             applyCoupon(couponCodeInput);
         } else {
             // Display SweetAlert for empty coupon code input
-            swal("Please enter a coupon code.", "", "warning");
+            Swal.fire("Please enter a coupon code.", "", "warning");
+            // Hide coupon applied message and coupon amount
+            document.getElementById('shippingDivd-flex').style.display = 'none';
+            document.getElementById('applied').innerText = '';
+            document.getElementById('couponAmount').innerText = '';
+            // Update total (tax included) with the original total
+            document.getElementById('total').innerText = '₹<%= cart.totalDiscount %>';
+            // Update hidden input value for total amount
+            document.getElementById('totalAmount').value = '<%= cart.totalDiscount %>';
         }
     });
 
@@ -191,15 +200,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
 function applyCoupon(couponCode) {
+    // Get the original total amount
+    const originalTotalAmount = document.getElementById('totalAmount').value;
+
+    const couponCodeInput = couponCode.trim();
+
+    if (!couponCodeInput) {
+
+        Swal.fire("Please enter a coupon code.", "", "warning");
+        document.getElementById('shippingDivd-flex').style.display = 'none';
+        document.getElementById('applied').innerText = '';
+        document.getElementById('couponAmount').innerText = '';
+        // Update total (tax included) with the original total
+        document.getElementById('total').innerText = '₹' + originalTotalAmount;
+        // Update hidden input value for total amount
+        document.getElementById('totalAmount').value = originalTotalAmount;
+        return; // Exit the function early
+    }
+
     fetch('/applycoupon', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            couponCode: couponCode
+            couponCode: couponCodeInput
         })
     })
     .then(response => response.json())
@@ -211,19 +237,28 @@ function applyCoupon(couponCode) {
             document.getElementById('shippingDivd-flex').style.display = 'block';
             document.getElementById('applied').innerText = 'Coupon Applied :';
             document.getElementById('couponAmount').innerText = '-₹' + data.couponAmount;
-            // Update new total
-            document.getElementById('newTotal').innerText = '₹' + data.newTotal;
-            // Reset coupon input
-            document.getElementById('couponCodeInput').value = '';
+            // Update hidden input value for total amount
+            document.getElementById('totalAmount').value = data.newTotal;
         } else {
-            // Display SweetAlert for error message
-            swal("Error", data.message, "error");
+             
+            // Hide coupon applied message and coupon amount if there is no coupon applied
+            document.getElementById('shippingDivd-flex').style.display = 'none';
+            document.getElementById('applied').innerText = '';
+            document.getElementById('couponAmount').innerText = '';
+            // Update total (tax included) with the original total
+            document.getElementById('total').innerText = '₹' + originalTotalAmount;
+            // Update hidden input value for total amount
+            document.getElementById('totalAmount').value = originalTotalAmount;
         }
     })
     .catch(error => {
         // Display SweetAlert for error
-        swal("Error", "An error occurred. Please try again later.", "error");
+        Swal.fire("Error", "An error occurred. Please try again later.", "error");
         console.error('Error:', error);
+        // Update total (tax included) with the original total
+        document.getElementById('total').innerText = '₹' + originalTotalAmount;
+        // Update hidden input value for total amount
+        document.getElementById('totalAmount').value = originalTotalAmount;
     });
 }
 

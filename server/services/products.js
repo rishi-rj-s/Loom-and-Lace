@@ -6,6 +6,7 @@ const multer= require('multer');
 const Categorydb =require('../model/categorymodel');
 const Orderdb =require('../model/ordermodel');
 const Userdb =require('../model/model');
+const Wallet= require('../model/wallethistory')
 
 
 exports.product = async (req, res) => {
@@ -140,16 +141,28 @@ exports.updateorderstatus = async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const newStatus = req.body.status;
+        console.log(newStatus)
         const newPaymentStatus = req.body.paymentStatus;
-        const user = await Userdb.findOne({ email: req.session.email });
 
         const updatedOrder = await Orderdb.findByIdAndUpdate(orderId, { status: newStatus, paymentStatus: newPaymentStatus }, { new: true });
+        const user = await Userdb.findById(updatedOrder.userId);
 
         const order = await Orderdb.findById(orderId);
         console.log(order);
         if (order.status === "Return Accepted") {
-            console.log("Refund Amount:", order.totalAmount); // Check the refund amount
+            console.log("Refund Amount:", order.totalAmount); 
             user.walletAmount += order.totalAmount;
+            for (const item of order.items) {
+                const product = await Productdb.findById(item.productId);
+            
+                if (product) {
+                    product.stock += item.quantity;  
+                    await product.save()
+                } else {
+                    console.log(`Product with ID ${item.productId} not found`);
+                }
+            }
+            
             const creditTransaction = new Wallet({
                 userId: user._id,
                 transactionType: 'Credit',

@@ -163,3 +163,91 @@ exports.postaddcategoryoffer = async (req, res) => {
         res.render('404');
     }
 }
+exports.getupdateoffer = async (req, res) => {
+    try {
+        if (req.cookies.adminToken) {
+            const { offerId } = req.query; // Assuming offerId is passed in the query parameters
+
+            // Query the offer document based on its _id
+            const offer = await Offer.findById(offerId).populate('productId').populate('categoryId');
+            if (!offer) {
+                return res.status(404).json({ message: 'Offer not found' });
+            }
+
+            // Check the type of the offer
+            if (offer.type === 'Product Offer') {
+                const products = await Productdb.find();
+                res.render('editproductoffer', { offer,products }); // Pass the offer data to the template
+            } else if (offer.type === 'Category Offer') {
+                const categories = await Categorydb.find();
+                res.render('editcategoryoffer', { offer,categories}); // Pass the offer data to the template
+            } else {
+                // Handle other cases or invalid type
+                res.status(400).json({ message: 'Invalid offer type' });
+            }
+        } else {
+            // Handle unauthorized access
+            res.status(401).json({ message: 'Unauthorized access' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.render('404');
+    }
+}
+exports.posteditoffer = async (req, res) => {
+    try {
+        const { offerId } = req.params;
+        const { category, discount, edate } = req.body;
+        console.log(category)
+
+        const offer = await Offer.findById(offerId);
+
+        if (!offer) {
+            return res.status(404).json({ message: 'Offer not found' });
+        }
+        if (offer.type === 'Product Offer') {
+            offer.productId= category;
+            const product = await Productdb.findById(offer.productId);
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            product.discount -= Number(offer.discountPercentage); // Convert to number
+            product.discount += Number(discount); // Convert to number
+
+            const discountedPrice = product.price * (1 - product.discount / 100);
+            product.total_price = Math.round(discountedPrice);
+
+            await product.save();
+
+        } else if (offer.type === 'Category Offer') {
+            offer.categoryId= category;
+            const categoryProducts = await Productdb.find({ category: offer.categoryId });
+            if (categoryProducts.length === 0) {
+                return res.status(404).send('No products found in this category');
+            }
+
+            for (const product of categoryProducts) {
+                product.discount -= Number(offer.discountPercentage); // Convert to number
+                product.discount += Number(discount); // Convert to number
+
+                const discountedPrice = product.price * (1 - product.discount / 100);
+                product.total_price = Math.round(discountedPrice);
+
+                await product.save();
+            }
+        } else {
+            return res.status(400).json({ message: 'Invalid offer type' });
+        }
+
+        offer.discountPercentage = Number(discount); // Convert to number
+        offer.expiryDate = new Date(edate);
+
+        await offer.save();
+
+        res.redirect('/admin/offers');
+    } catch (error) {
+        console.error(error);
+        res.render('404');
+    }
+}

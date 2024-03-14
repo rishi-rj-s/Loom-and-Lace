@@ -34,7 +34,6 @@ route.post('/api/createcoupon',coupons.createcoupon)
 route.delete('/api/admin/coupon/:id',coupons.delete);
 route.get('/update-coupon',coupons.getupdatecoupon)
 route.post('/api/updatecoupon/:id',coupons.postupdatecoupon)
-route.get('/admin/offers',offers.getOffer)
 
 //admin dash
 route.get('/admin/manage',services.manage)
@@ -47,6 +46,9 @@ route.get('/admin/yearly-salesamount-data', report.yearlysalesamountdata);
 route.get('/admin/salesreport', report.salesreport);
 route.get('/admin/sales-report', report.generatereport);
 
+route.get('/admin/offers',offers.getOffer)
+route.get('/updateoffer',offers.getupdateoffer)
+route.post('/admin/posteditoffer/:offerId', offers.posteditoffer);
 route.get('/admin/addproductoffer', offers.getaddproductoffer);
 route.post('/admin/postaddproductoffer',offers.postaddproductoffer);
 route.get('/admin/addcategoryoffer',offers.getaddcategoryoffer);

@@ -53,7 +53,7 @@
       <li class="nav-item">
         <a class="nav-link text-white" href="/admin/coupons">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">redeem</i> <!-- Material icon for a coupon -->
+            <i class="material-icons opacity-10">redeem</i> 
           </div>
           <span class="nav-link-text ms-1">Coupons</span>
         </a>
@@ -61,7 +61,7 @@
       <li class="nav-item">
         <a class="nav-link text-white active bg-gradient-primary" href="/admin/offers">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">local_offer</i> <!-- Material icon for a coupon -->
+            <i class="material-icons opacity-10">local_offer</i> 
           </div>
           <span class="nav-link-text ms-1">Offers</span>
         </a>
@@ -85,56 +85,35 @@
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#" class="text-black">Admin</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Offers</li>
+          <li class="breadcrumb-item"><a href="/admin/manage" class="text-black">Admin</a></li>
+          <li class="breadcrumb-item"><a href="/admin/offers" class="text-black">Offers</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Add Category Offer</li>
       </ol>
   </nav>
   <div class="container-fluid py-4">
     <div class="userside">
       <div class="row">
-        <div class="col-8"><h2 class="me-3 text-decoration-underline">All Offers</h2></div>
-        <div class="col-2"> <a href="/admin/addproductoffer" class="bg-dark btn border-shadow shadow update">
-          <span class="text-white">Add Product Offer <b>+</b></span>
-      </a></div>
-      <div class="col-2"> <a href="/admin/addcategoryoffer" class="bg-dark btn border-shadow shadow update">
-        <span class="text-white">Add Category Offer <b>+</b></span>
-    </a></div>
+        <div class="col-8"><h2 class="me-3 text-decoration-underline">Add Category Offer</h2></div>
       </div>
-      <form action="/" method="POST">
-        <table class="table" id="userTable">
-            <thead class="thead-dark">
-                <tr class="bg-dark text-light">
-                    <th>Offer Type</th>
-                    <th>Category / Product name</th>
-                    <th>Expiry Date</th>
-                    <th>Extra Discount</th>
-                    <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% offers.forEach(offer => { %>
-                  <td><%= offer.type %></td>
-                  <td><% if(offer.type=='Category Offer'){%>
-                    <%= offer.categoryId.category%>
-                    <%}else { %>
-                      <%= offer.productId.product_name %>
-                      <%}%>
-                  </td>
-                  <td><%= new Date(offer.expiryDate).toLocaleDateString()  %></td>
-                  <td><%= offer.discountPercentage %></td>
-
-                       <td>
-                        <a href="/updateoffer?offerId=<%= offer._id %>" class="btn border-shadow shadow update">
-                          <span class="material-symbols-outlined">edit</span>
-                      </a>
-                        <a class="btn border-shadow shadow delete" data-id=<%= offer._id %>>
-                      <span class="material-symbols-outlined">delete</span>
-                    </a>
-                    </td>
-                    </tr>
-                    <% }) %>
-            </tbody>
-        </table>
+      <form action="/admin/posteditoffer/<%= offer._id%>" method="POST">
+        <div class="mb-3">
+        <label for="p_name" class="form-label">Category  :</label>
+        <select class="form-control" id="category" name="category" required>
+            <option value="">Select Category</option>
+            <% categories.forEach(category => { %>
+                <option value="<%= category._id %>" <%if(category.category==offer.categoryId.category){%>selected<%}%>><%= category.category %></option>
+            <% }); %>
+        </select>
+        </div>
+        <div class="mb-3">
+          <label for="category" class="form-label">Discount:</label>
+          <input type="number" class="form-control" id="discount" name="discount" value="<%= offer.discountPercentage%>" required>
+    </div>
+    <div class="mb-3">
+        <label for="edate" class="form-label">Expire Date:</label>
+        <input type="text" class="form-control datepicker" id="edate" name="edate" value="<%= offer.expiryDate.toDateString()%>" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
     </form>
      
     </div>
@@ -146,44 +125,22 @@
 
 
 <%-include('include/footer2')-%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
 <script>
-    new DataTable('#userTable');
-    if (window.location.pathname == "/admin/offers") {
-    $ondelete = $(".table tbody td a.delete");
-    $ondelete.click(function (event) {
-        event.preventDefault(); // Prevent the default link behavior
-
-        var id = $(this).attr("data-id");
-
-        // Use SweetAlert2 for confirmation
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you really want to delete this offer?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                var request = {
-                    "url": `http://localhost:3000/api/admin/offer/${id}`,
-                    "method": "DELETE"
-                };
-
-                $.ajax(request).done(function (response) {
-                    // Show success message using SweetAlert2
-                    Swal.fire(
-                        'Deleted!',
-                        'Offer has been deleted successfully.',
-                        'success'
-                    ).then(() => {
-                        location.reload();
-                    });
-                });
-            }
+    $(document).ready(function(){
+      $('.datepicker').datepicker({
+        format: 'yyyy-mm-dd', 
+        autoclose: true       
+      });
+    });
+    $(document).ready(function() {
+        // Add an event listener to the input field
+        $('#code').on('input', function() {
+            // Convert the entered text to uppercase
+            $(this).val($(this).val().toUpperCase());
         });
     });
-}
-
 </script>
+ 

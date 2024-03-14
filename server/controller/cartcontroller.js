@@ -144,11 +144,12 @@ exports.cart = async (req, res) => {
 }
 exports.checkout = async (req, res) => {
     if(req.cookies.userToken){
+        const today = new Date();
         const user = await Userdb.findOne({ email: req.session.email });
         const userId= user._id;
         const cart = await Cartdb.findOne({ user: userId }).populate('items.productId')
         const addresses= await Addressdb.find({user: userId});
-        const coupons= await Coupondb.find();
+        const coupons = await Coupondb.find({ expiredate: { $gte: today } });
         if(cart){
             res.render('checkout',{couponApplied:true ,userToken: req.cookies.userToken,user: user ,addresses: addresses,cart: cart, coupons: coupons});
         }
