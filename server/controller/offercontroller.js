@@ -206,7 +206,6 @@ exports.posteditoffer = async (req, res) => {
             return res.status(404).json({ message: 'Offer not found' });
         }
         if (offer.type === 'Product Offer') {
-            offer.productId= category;
             const product = await Productdb.findById(offer.productId);
             if (!product) {
                 return res.status(404).json({ message: 'Product not found' });
@@ -221,7 +220,6 @@ exports.posteditoffer = async (req, res) => {
             await product.save();
 
         } else if (offer.type === 'Category Offer') {
-            offer.categoryId= category;
             const categoryProducts = await Productdb.find({ category: offer.categoryId });
             if (categoryProducts.length === 0) {
                 return res.status(404).send('No products found in this category');
