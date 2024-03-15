@@ -168,15 +168,14 @@ exports.yearlysalesdata = async (req, res) => {
             {
                 $group: {
                     _id: { $year: "$orderedDate" },
-                    totalSales: { $sum: "$items.quantity" } // Counting the total quantity of items sold per year
+                    totalSales: { $sum: "$items.quantity" }  
                 }
             }
         ]);
 
-        const labels = Array.from({ length: 5 }, (_, i) => startYear + i); // Generate labels for the last 4 years and the current year
+        const labels = Array.from({ length: 5 }, (_, i) => startYear + i); 
         const sales = Array(5).fill(0); // Initialize with 0 sales for each year
 
-        // Update sales data for each year
         yearlySalesData.forEach(item => {
             const index = item._id - startYear;
             if (index >= 0 && index < 5) {
