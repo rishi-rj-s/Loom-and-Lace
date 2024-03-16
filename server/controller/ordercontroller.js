@@ -24,12 +24,18 @@ exports.placeorder = async (req, res) => {
     if(req.cookies.userToken){
     try {
         const { addressId, paymentMethod, totalAmount,couponcode } = req.body;
+
         console.log(couponcode)
-        
+        const today = new Date();
         const user = await Userdb.findOne({ email: req.session.email });
         const userId = user._id;
         const address = await Addressdb.findById(addressId);
-
+        const cart = await Cartdb.findOne({ user: userId }).populate('items.productId')
+        const addresses= await Addressdb.find({user: userId});
+        const coupons = await Coupondb.find({ expiredate: { $gte: today } });
+        if(!addressId){
+            return res.render('checkout', {couponApplied:true ,addresses: addresses,cart: cart, coupons: coupons, userToken: req.cookies.userToken,user: user, message: 'No address is selected. Please select an address to proceed.' });
+        }
         let couponUsed;
             let finalTotalAmount = totalAmount;
 
