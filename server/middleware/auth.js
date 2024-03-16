@@ -9,7 +9,7 @@ const GOOGLE_CLIENT_SECRET = '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'
  passport.use(new GoogleStrategy({
   clientID: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:3000/auth/google/callback'
+  callbackURL: 'https://www.loomnlace.shop/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     let user = await Userdb.findOne({ email: profile.emails[0].value });
