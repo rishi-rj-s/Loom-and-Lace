@@ -18,6 +18,7 @@ const report = require('../controller/reportcontroller');
 const coupons = require('../controller/couponcontroller');
 const offers = require('../controller/offercontroller');
 const auths= require('../middleware/authentication');
+const Userdb=require('../model/model')
 
 //home config side
 route.get('/home',auths.isUser,services.home);
@@ -54,7 +55,7 @@ route.post('/wishlist/:productId',auths.isUser, shop.wishlist);
 route.get('/search',shop.search);
 route.get('/searchproduct',shop.searched);
 route.get('/paymentpolicies',invoice.policy);
-
+route.get('/getUserInfo', shop.getUser);
 
 
 

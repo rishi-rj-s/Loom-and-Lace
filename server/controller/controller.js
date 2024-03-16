@@ -347,6 +347,7 @@ exports.getSortedProducts = async (req, res) => {
                 default:
                     sortedAndFilteredProducts = await Productdb.find({ category: { $in: categoryIds }});
             }
+            console.log(sortedAndFilteredProducts,"ssssssssss")
     
             res.json(sortedAndFilteredProducts);
         } catch (error) {
