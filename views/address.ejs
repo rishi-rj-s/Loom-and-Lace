@@ -87,3 +87,42 @@
 <%- include('include/userFooter') -%>
 
 <%- include('include/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  if(window.location.pathname=="/useraddress"){
+    $ondelete= $("a.delete");
+    $ondelete.click(function(){
+      var id= $(this).attr("data-id")
+
+      var request={
+        "url": `http://localhost:3000/api/useraddress/${id}`,
+        "method": "DELETE"
+      }
+
+      // Using SweetAlert2 for confirmation
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If user confirms, send AJAX request
+          $.ajax(request).done(function(response){
+            Swal.fire({
+              icon: 'success',
+              title: 'Record deleted successfully',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              location.reload();
+            });
+          });
+        }
+      });
+    });
+  }
+</script>

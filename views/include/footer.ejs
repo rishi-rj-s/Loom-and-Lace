@@ -2,24 +2,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
 <script>
-  if(window.location.pathname=="/useraddress"){
-      $ondelete= $(" a.delete");
-      $ondelete.click(function(){
-          var id= $(this).attr("data-id")
-  
-          var request={
-              "url": `http://localhost:3000/api/useraddress/${id}`,
-              "method": "DELETE"
-          }
-           
-          if(confirm("Do you really want to delete this record")){
-              $.ajax(request).done(function(response){
-                  alert("Record deleted successfully")
-                  location.reload();
-              })
-          }
-      })
-  }
 
   $('#search').on('input', function() {
         const searchTerm = $(this).val(); // Get the search term from the input field
