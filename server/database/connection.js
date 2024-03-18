@@ -2,7 +2,7 @@ const mongoose =require('mongoose');
 
 const connectDB =async()=>{
     try{
-        const con= await mongoose.connect("mongodb+srv://asifsalim0000:ljxSl8q2tBGWgCxQ@loom.pfkghlo.mongodb.net/loom?retryWrites=true&w=majority",{ 
+        const con= await mongoose.connect(process.env.MONGODB_URL,{ 
         })
         console.log(`MongoDB connected: ${con.connection.host}`);
     }catch(err){
@@ -12,5 +12,3 @@ const connectDB =async()=>{
 } 
 
 module.exports =connectDB
-
-// mongodb+srv://asifsalim0000:ljxSl8q2tBGWgCxQ@loom.pfkghlo.mongodb.net/?retryWrites=true&w=majority
