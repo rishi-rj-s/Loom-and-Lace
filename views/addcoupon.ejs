@@ -102,7 +102,7 @@
         <div class="productside">
           <div class="row">
             <div class="col-12 col-lg-6  card rounded bg-black">
-            <form action="/api/createcoupon" method="POST">
+            <form action="/api/createcoupon" method="POST"  onsubmit="return validateForm()">
               <div class="mb-3">
                   <label for="code" class="form-label">Coupon Code:</label>
                   <input type="text" class="form-control" id="code" name="code" required>

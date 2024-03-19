@@ -25,6 +25,29 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+  function validateForm() {
+        const inputs = document.querySelectorAll('input[type="text"], textarea');
+
+        for (let i = 0; i < inputs.length; i++) {
+            
+            if (inputs[i].value.trim() === '') {
+         
+              Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill out all fields.',
+                });
+                
+                inputs[i].focus();
+                 
+                return false;
+            }
+        }
+
+        return true;
+    }
+</script>
 
 </body>
 

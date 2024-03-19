@@ -239,7 +239,6 @@ exports.posteditoffer = async (req, res) => {
         }
 
         offer.discountPercentage = Number(discount); // Convert to number
-        offer.expiryDate = new Date(edate);
 
         await offer.save();
 

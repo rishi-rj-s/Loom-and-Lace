@@ -95,7 +95,7 @@
       <div class="row">
         <div class="col-8"><h2 class="me-3 text-decoration-underline">Add Category Offer</h2></div>
       </div>
-      <form action="/admin/postaddcategoryoffer" method="POST">
+      <form action="/admin/postaddcategoryoffer" method="POST" onsubmit="return validateForm()">
         <div class="mb-3">
         <label for="p_name" class="form-label">Category  :</label>
         <select class="form-control" id="category" name="category" required>
@@ -109,10 +109,6 @@
           <label for="category" class="form-label">Discount:</label>
           <input type="number" class="form-control" id="discount" name="discount" required>
       </div>
-      <div class="mb-3">
-        <label for="edate" class="form-label">Expire Date:</label>
-        <input type="text" class="form-control datepicker" id="edate" name="edate" required>
-    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
     </form>
      

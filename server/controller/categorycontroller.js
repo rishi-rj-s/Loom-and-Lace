@@ -1,5 +1,6 @@
 const { query } = require('express');
 const Categorydb =require('../model/categorymodel');
+const Productdb = require('../model/productmodel');
 
 exports.catcreate=async (req,res)=>{
     //validate request
@@ -48,23 +49,29 @@ exports.catcreate=async (req,res)=>{
         res.render('404');
     }
 };
-exports.delete= (req,res)=>{
-    const id= req.params.id;
 
-    Categorydb.findByIdAndDelete(id)
-    .then(data =>{
-        if(!data){
-            res.status(404).send({message:  `Cannot delete with id ${id}.Id may be wrong`})
-        }else{
-            res.send({
-                message: "Product was was deleted successfully!!!"
-            })
-        }
-    })
-    .catch(err=>{
-        res.status(500).send({ message: "Could not delete user with id "+id});
-    });
+exports.delete = (req, res) => {
+    const id = req.params.id;
+
+    Productdb.deleteMany({ category: id })
+        .then(() => {
+            Categorydb.findByIdAndDelete(id)
+                .then(data => {
+                    if (!data) {
+                        res.status(404).send({ message: `Cannot delete category with id ${id}. ID may be wrong.` });
+                    } else {
+                        res.send({ message: "Category and associated products were deleted successfully!" });
+                    }
+                })
+                .catch(err => {
+                    res.status(500).send({ message: "Could not delete category with id " + id });
+                });
+        })
+        .catch(err => {
+            res.status(500).send({ message: "Could not delete products associated with category id " + id });
+        });
 }
+
 exports.getupdateCategory = async (req, res) => {
     if (req.cookies.adminToken) {
         try {

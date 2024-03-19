@@ -41,7 +41,7 @@
         <div class="col-md-9 account-content">
             <div class="container rounded p-4" style="background-color: rgb(235, 249, 249);">
                 <h2 class="mb-4">EDIT ADDRESS</h2>
-                <form action="/api/editaddress/<%= address.id %>" method="post">
+                <form action="/api/editaddress/<%= address.id %>" method="post" onsubmit="return validateForm()">
                     <input type="hidden" id="user_id" name="id" value="<%= user.id %>">
                     <div class="row">
                         <div class="col-md-6">

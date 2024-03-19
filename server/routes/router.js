@@ -35,6 +35,7 @@ route.post('/verify-otp',services.verify);
 route.get('/signup',services.signup);
 route.get('/forgot-otp',auths.isUser,forgot.forgototp);
 route.post('/ver-otp',auths.isUser,forgot.verotp);
+route.get('/resendotppass', forgot.resendotppass);
 route.post('/setNewPassword',auths.isUser,forgot.setNewPassword);
 // Add a new route for downloading PDF
 route.get('/orders/:orderId/invoice',invoice.generateOrderInvoice);

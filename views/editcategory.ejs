@@ -102,7 +102,7 @@
       
       <div class="row">
         <div class="col-12 col-lg-6  card rounded bg-black">
-        <form action="/api/admin/editcategory/<%= categories.id %>" method="POST">
+        <form action="/api/admin/editcategory/<%= categories.id %>" method="POST" onsubmit="return validateForm()">
             <input type="hidden" id="category_id" name="id" value="<%= categories.id %>">
           <div class="mb-3">
               <label for="p_name" class="form-label">Category Name:</label>

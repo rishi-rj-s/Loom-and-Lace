@@ -8,7 +8,6 @@ const offerSchema = new mongoose.Schema({
     categoryId:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'categorydb',
-        unique: true
     },
     type: {
         type: String

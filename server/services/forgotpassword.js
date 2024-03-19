@@ -183,3 +183,35 @@ exports.setNewLoginPassword = async (req, res) => {
         return  res.render('404');
     }
 }
+
+exports.resendotppass=async (req, res) => {
+    try {
+        const user = await Userdb.findOne({ email: req.session.email });
+        const recipientEmail = req.session.email;
+
+        // Generate a new OTP
+        const otp = generateOTP();
+        req.session.otp = otp;
+
+        // Send the OTP via email
+        transporter.sendMail({
+            from: 'asifsalim0000@gmail.com',
+            to: recipientEmail,
+            subject: 'Your OTP for Verification',
+            text: `Your new OTP is: ${otp}`,
+        }, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                res.status(500).send('Error sending OTP via email.');
+            } else {
+                console.log('OTP resent successfully:', info.response);
+                res.render('forgototp', { email: recipientEmail, message: 'OTP resent successfully.',user,userToken: req.cookies.userToken });
+            }
+        });
+    } catch (error) {
+        console.error('Error resending OTP:', error);
+        res.status(500).send('Error resending OTP.');
+    }
+}
+exports.resendpassword=async (req, res) => {
+}

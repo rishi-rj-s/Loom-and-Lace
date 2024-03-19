@@ -106,7 +106,6 @@
                 <tr class="bg-dark text-light">
                     <th>Offer Type</th>
                     <th>Category / Product name</th>
-                    <th>Expiry Date</th>
                     <th>Extra Discount</th>
                     <th>Action</th>
                 </tr>
@@ -120,7 +119,6 @@
                       <%= offer.productId.product_name %>
                       <%}%>
                   </td>
-                  <td><%= new Date(offer.expiryDate).toLocaleDateString()  %></td>
                   <td><%= offer.discountPercentage %></td>
 
                        <td>

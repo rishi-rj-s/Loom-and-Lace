@@ -21,7 +21,27 @@
             $('#search-results-container').empty();
         }
     });
-    
+  function validateForm() {
+        const inputs = document.querySelectorAll('input[type="text"], textarea');
+
+        for (let i = 0; i < inputs.length; i++) {
+            
+            if (inputs[i].value.trim() === '') {
+         
+              Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill out all fields.',
+                });
+                
+                inputs[i].focus();
+                 
+                return false;
+            }
+        }
+
+        return true;
+    }
   </script>
 <script src="/js/wishlist.js"></script>
 

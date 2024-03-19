@@ -78,6 +78,7 @@ exports.placeorder = async (req, res) => {
             });
 
             await order.save();
+            await Cartdb.deleteOne({ user: user._id });
 
             return res.redirect(`/razorpay/checkout/${order._id}`);
         } else if (paymentMethod === 'cod') {               
@@ -324,7 +325,6 @@ exports.razorsuccess=async (req, res) => {
         order.status = 'Order Placed';
         order.paymentStatus = 'Paid';
         await order.save();
-        await Cartdb.deleteOne({ user: user._id });
 
         for (const item of cart.items) {
             console.log(item.productId);
