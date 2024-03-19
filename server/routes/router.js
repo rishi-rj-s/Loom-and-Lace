@@ -28,6 +28,7 @@ route.post('/loginforgotpassword',forgot.loginforgotpassword);
 route.post('/ver-forgototp',forgot.verforgototp);
 route.post('/setNewLoginPassword',forgot.setNewLoginPassword);
 
+
 //user side
 route.get('/loginpage',services.loginpage);
 route.post('/login',services.login);
@@ -37,6 +38,7 @@ route.get('/forgot-otp',auths.isUser,forgot.forgototp);
 route.post('/ver-otp',auths.isUser,forgot.verotp);
 route.get('/resendotppass', forgot.resendotppass);
 route.post('/setNewPassword',auths.isUser,forgot.setNewPassword);
+route.get('/resendpassword', forgot.resendpassword);
 // Add a new route for downloading PDF
 route.get('/orders/:orderId/invoice',invoice.generateOrderInvoice);
 
@@ -57,7 +59,6 @@ route.get('/search',shop.search);
 route.get('/searchproduct',shop.searched);
 route.get('/paymentpolicies',invoice.policy);
 route.get('/getUserInfo', shop.getUser);
-
 
 
 //orders and cart
