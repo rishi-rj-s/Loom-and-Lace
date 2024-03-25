@@ -172,6 +172,7 @@ exports.yearlysalesdata = async (req, res) => {
                 }
             }
         ]);
+        
 
         const labels = Array.from({ length: 5 }, (_, i) => startYear + i); 
         const sales = Array(5).fill(0); // Initialize with 0 sales for each year
@@ -233,38 +234,44 @@ exports.salesreport= async (req, res) => {
     res.render('salesreport')
 }
 
-  exports.generatereport = async (req, res) => {
+exports.generatereport = async (req, res) => {
     try {
         const { filterType, startDate, endDate, reportType } = req.query;
 
         let salesData;
+        let dailySalesData;
         let reportTitle;
 
         if (filterType === 'daily') {
             salesData = await getDailySales();
+            dailySalesData = salesData;
             reportTitle = 'Today';
         } else if (filterType === 'weekly') {
             salesData = await getWeeklySales();
+            dailySalesData = salesData;
             reportTitle = `This Week`;
         } else if (filterType === 'monthly') {
             salesData = await getMonthlySales();
+            dailySalesData = salesData;
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             reportTitle = monthNames[new Date().getMonth()]; // Use current month if no startDate provided
         } else if (filterType === 'yearly') {
             salesData = await getYearlySales();
+            dailySalesData = salesData;
             reportTitle = `Yearly Sales Report (${new Date().getFullYear()})`;
         } else if (filterType === 'custom') {
             if (!startDate || !endDate) {
                 throw new Error('Custom date range requires both start date and end date.');
             }
             salesData = await getCustomRangeSales(startDate, endDate);
+            dailySalesData = salesData;
             reportTitle = `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`;
         }
 
         if (reportType === 'pdf') {
-            generatePDFReport(res, reportTitle, salesData);
+            generatePDFReport(res, reportTitle, salesData, dailySalesData); // Pass dailySalesData here
         } else if (reportType === 'excel') {
-            generateExcelReport(res, reportTitle, salesData);
+            generateExcelReport(res, reportTitle, salesData, dailySalesData);
         } else {
             res.status(400).json({ message: 'Invalid report type' });
         }
@@ -273,31 +280,35 @@ exports.salesreport= async (req, res) => {
          res.render('404');
     }
 };
-async function generatePDFReport(res, reportTitle, salesData) {
+
+async function generatePDFReport(res, reportTitle, salesData, dailySalesData) {
     try {
         const doc = new PDFDocument();
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=sales_report.pdf');
-        doc.pipe(res);
-        
+        const buffers = [];
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfData = Buffer.concat(buffers);
+            res.writeHead(200, {
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `inline; filename=sales_report.pdf`, // inline for preview
+                'Content-Length': pdfData.length
+            });
+            res.end(pdfData);
+        });
+
         doc.fontSize(20).text(`LOOM & LACE`, { align: 'center' });
         doc.fontSize(18).text(`Sales Report (${reportTitle})`, { align: 'center' });
         doc.moveDown();
 
-        // Table Headers
-        const tableHeaders = ['Date', 'Total Sales', 'Total Order Amount', 'Total Discount', 'Total Coupon Discount'];
-        const tableHeaderY = doc.y;
-        doc.table({
-            headers: tableHeaders,
-            rows: salesData.map(({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => 
-                [new Date(date).toLocaleDateString(), totalSales, 'Rs.' + totalOrderAmount, 'Rs.' + totalDiscount, 'Rs.' + totalCouponDiscount]
-            ),
-            widths: [150, 100, 120, 120, 160],
-            heights: 20,
-            headerRows: 1,
-            startY: tableHeaderY
-        });
-        
+        // Overall Sales Report Table
+        doc.fontSize(16).text('Sales Report', { underline: true });
+        const overallTableHeaders = ['Date', 'Total Sales', 'Total Order Amount', 'Total Discount', 'Total Coupon Discount'];
+        const overallTableData = dailySalesData.map(({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => 
+            [new Date(date).toLocaleDateString(), totalSales, 'Rs.' + totalOrderAmount, 'Rs.' + totalDiscount, 'Rs.' + totalCouponDiscount]
+        );
+        const { totalSalesSum, totalOrderAmountSum, totalDiscountSum, totalCouponDiscountSum } = calculateTotalSums(dailySalesData);
+        generateTable(doc, overallTableHeaders, overallTableData, totalSalesSum, totalOrderAmountSum, totalDiscountSum, totalCouponDiscountSum);
+
         doc.end();
     } catch (error) {
         console.error(error);
@@ -305,33 +316,71 @@ async function generatePDFReport(res, reportTitle, salesData) {
     }
 }
 
-async function generateExcelReport(res, reportTitle, salesData) {
-  try {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Sales Report');
-      worksheet.columns = [
-          { header: 'Date', key: 'date', width: 15 },
-          { header: 'Total Sales', key: 'totalSales', width: 15 },
-          { header: 'Total Order Amount', key: 'totalOrderAmount', width: 20 },
-          { header: 'Total Discount', key: 'totalDiscount', width: 15 },
-          { header: 'Total Coupon Discount', key: 'totalCouponDiscount', width: 20 }
-      ];
-      worksheet.mergeCells('A1:E1');
-      worksheet.getCell('A1').value = `LOOM & LACE (${reportTitle})`;
-      worksheet.addRow(['Date', 'Total Sales', 'Total Order Amount', 'Total Discount', 'Total Coupon Discount']);
-      salesData.forEach(({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => {
-          worksheet.addRow({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount });
-      });
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=sales_report.xlsx');
-      await workbook.xlsx.write(res);
-      res.end();
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error generating Excel report' });
-  }
+function calculateTotalSums(dailySalesData) {
+    let totalSalesSum = 0;
+    let totalOrderAmountSum = 0;
+    let totalDiscountSum = 0;
+    let totalCouponDiscountSum = 0;
+
+    dailySalesData.forEach(({ totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => {
+        totalSalesSum += totalSales;
+        totalOrderAmountSum += totalOrderAmount;
+        totalDiscountSum += totalDiscount;
+        totalCouponDiscountSum += totalCouponDiscount;
+    });
+
+    return {
+        totalSalesSum,
+        totalOrderAmountSum,
+        totalDiscountSum,
+        totalCouponDiscountSum
+    };
 }
-  
+async function generateTable(doc, headers, data, totalSalesSum, totalOrderAmountSum, totalDiscountSum, totalCouponDiscountSum) {
+    const tableData = [...data, [ 'Total:', totalSalesSum, 'Rs.' + totalOrderAmountSum, 'Rs.' + totalDiscountSum, 'Rs.' + totalCouponDiscountSum]];
+
+    doc.table({
+        headers: headers,
+        rows: tableData,
+        widths: Array(headers.length).fill('*'), // Equal width for all columns
+        heights: 20,
+        headerRows: 1
+    });
+}
+async function generateExcelReport(res, reportTitle, salesData, dailySalesData) {
+    try {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sales Report');
+        worksheet.columns = [
+            { header: 'Date', key: 'date', width: 15 },
+            { header: 'Total Sales', key: 'totalSales', width: 15 },
+            { header: 'Total Order Amount', key: 'totalOrderAmount', width: 20 },
+            { header: 'Total Discount', key: 'totalDiscount', width: 15 },
+            { header: 'Total Coupon Discount', key: 'totalCouponDiscount', width: 20 }
+        ];
+        worksheet.mergeCells('A1:E1');
+        worksheet.getCell('A1').value = `LOOM & LACE - ${reportTitle}`;
+        worksheet.addRow(['Date', 'Total Sales', 'Total Order Amount', 'Total Discount', 'Total Coupon Discount']);
+
+        // Add data rows
+        dailySalesData.forEach(({ date, totalSales, totalOrderAmount, totalDiscount, totalCouponDiscount }) => {
+            worksheet.addRow({ date: new Date(date).toLocaleDateString(), totalSales, totalOrderAmount: 'Rs.' + totalOrderAmount, totalDiscount: 'Rs.' + totalDiscount, totalCouponDiscount: 'Rs.' + totalCouponDiscount });
+        });
+
+        // Add total sums row
+        const { totalSalesSum, totalOrderAmountSum, totalDiscountSum, totalCouponDiscountSum } = calculateTotalSums(dailySalesData);
+        worksheet.addRow(['Total:', totalSalesSum, 'Rs.' + totalOrderAmountSum, 'Rs.' + totalDiscountSum, 'Rs.' + totalCouponDiscountSum]);
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=sales_report.xlsx');
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error generating Excel report' });
+    }
+}
+
 // Add the following function for yearly sales data retrieval
 async function getYearlySales() {
     const today = new Date();
@@ -371,35 +420,40 @@ async function getYearlySales() {
   }
   
   async function getOrderData(startDate, endDate) {
-    const orders = await Orderdb.find({ orderedDate: { $gte: startDate, $lt: endDate }}).populate('items.productId').populate('couponused'); // Populate the couponused field
-    console.log(orders)
-
-    let totalSales = 0;
-    let totalOrderAmount = 0;
-    let totalDiscount = 0;
-    let totalCouponDiscount = 0;
+    const orders = await Orderdb.find({ orderedDate: { $gte: startDate, $lt: endDate }}).populate('items.productId').populate('couponused');
+    
+    let dailySalesData = [];
 
     orders.forEach(order => {
-        totalSales += order.items.reduce((acc, item) => acc + item.quantity, 0);
-        totalOrderAmount += order.totalAmount;
+        let totalSales = 0;
+        let totalOrderAmount = order.totalAmount;
+        let totalDiscount = 0;
+        let totalCouponDiscount = 0;
+
         order.items.forEach(item => {
+            totalSales += item.quantity;
             const productPrice = item.productId.price * item.quantity;
             const discountedPrice = productPrice * (1 - (item.productId.discount / 100));
             const discountAmount = productPrice - discountedPrice;
-            totalDiscount += discountAmount;
+            totalDiscount += Math.round(discountAmount);
         });
 
         if (order.couponused) {
-           
             totalCouponDiscount += order.couponused.maxdiscount;
         }
+
+        dailySalesData.push({
+            date: order.orderedDate,
+            totalSales,
+            totalOrderAmount,
+            totalDiscount,
+            totalCouponDiscount
+        });
     });
 
-    return [{
-        date: startDate,
-        totalSales,
-        totalOrderAmount,
-        totalDiscount,
-        totalCouponDiscount
-    }];
+    // Sort the daily sales data by order date in ascending order
+    dailySalesData.sort((a, b) => a.date - b.date);
+
+    return dailySalesData;
 }
+

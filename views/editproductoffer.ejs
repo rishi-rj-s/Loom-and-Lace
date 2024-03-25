@@ -87,13 +87,13 @@
       <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/manage" class="text-black">Admin</a></li>
           <li class="breadcrumb-item"><a href="/admin/offers" class="text-black">Offers</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Add Product Offer</li>
+          <li class="breadcrumb-item active" aria-current="page">Edit Product Offer</li>
       </ol>
   </nav>
   <div class="container-fluid py-4">
     <div class="userside">
       <div class="row">
-        <div class="col-8"><h2 class="me-3 text-decoration-underline">Add Product Offers</h2></div>
+        <div class="col-8"><h2 class="me-3 text-decoration-underline">Edit Product Offers</h2></div>
       </div>
       <form action="/admin/posteditoffer/<%= offer._id%>" method="POST" onsubmit="return validateForm()">
         <div class="mb-3">
@@ -109,10 +109,6 @@
           <label for="category" class="form-label">Discount:</label>
           <input type="number" class="form-control" id="discount" name="discount" value="<%= offer.discountPercentage%>" required>
       </div>
-      <div class="mb-3" style="display: none;">
-        <label for="edate" class="form-label">Expire Date:</label>
-        <input type="text" class="form-control datepicker" id="edate" name="edate" value="<%= offer.expiryDate%>" >
-    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
     </form>
      
@@ -128,13 +124,4 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-<script>
-    $(document).ready(function(){
-      $('.datepicker').datepicker({
-        format: 'yyyy-mm-dd', 
-        autoclose: true       
-      });
-    });
-
-</script>
  

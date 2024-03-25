@@ -2,85 +2,123 @@
 
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #4169E1;">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bolder" href="/home">LOOM & LACE</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="admin"><a href="/admin" class="text-decoration-none" ><i class="fa-solid fa-user-tie text-dark"></a></i></div>
+        <a class="navbar-brand fw-bolder" href="/home">LOOM & LACE</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="admin"><a href="/admin" class="text-decoration-none"><i class="fa-solid fa-user-tie text-dark"></i></a></div>
     </div>
-  </nav>
+</nav>
 
 <div class="container-fluid ms-md-4 mt-4">
     <div class="row">
-        
-<div class="col-md-9 account-content justify-content-center  px-md-5">
-    <div class="container card shadow justify-content-center">
-        <div class="password-form p-5">
-            <h2>Change Password</h2>
-            <form action="/setNewLoginPassword" method="post">  
-                <%if(message){ %>
-                    <div >
-                        <span class="text-danger"> <%=message%> </span>
-                    </div>
-                    <% }%>
-                <div class="form-group mt-5">
-                    <label for="newPassword">New Password</label>
-                    <div class="d-flex">
-
-                        <input type="password" name="newPassword" class="form-control" id="newPassword" placeholder="Enter your new password" required>
-                        <button type="button" class="btn btn-outline-secondary" id="newPasswordToggle" style="background-color: rgba(212, 214,216,0.889);"><i class="fa fa-eye"></i></button>
-                    </div>
+        <div class="col-md-9 account-content justify-content-center  px-md-5">
+            <div class="container card shadow justify-content-center">
+                <div class="password-form p-5">
+                    <h2>Change Password</h2>
+                    <form action="/setNewLoginPassword" method="post">
+                        <% if(message) { %>
+                        <div>
+                            <span class="text-danger"> <%= message %> </span>
+                        </div>
+                        <% } %>
+                        <div class="form-group mt-5">
+                            <label for="newPassword">New Password</label>
+                            <div class="d-flex">
+                                <input type="password" name="newPassword" class="form-control" id="newPassword" placeholder="Enter your new password" required>
+                                <button type="button" class="btn btn-outline-secondary" id="newPasswordToggle" style="background-color: rgba(212, 214, 216, 0.889);"><i class="fa fa-eye"></i></button>
+                            </div>
+                            <span id="password-strength"></span>
+                        </div>
+                        <div class="form-group mt-3 mb-2">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <div class="d-flex">
+                                <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm your new password" required>
+                                <button type="button" class="btn btn-outline-secondary" id="ConfirmPasswordToggle" style="background-color: rgba(212, 214, 216, 0.889);"><i class="fa fa-eye"></i></button>
+                            </div>
+                            <span id="confirm-password-match" style="color: red;"></span>
+                        </div>
+                        <button type="submit" class="btn btn-dark mt-1" id="changePasswordBtn" disabled>Change Password</button>
+                      
+                    </form>
+                    <a href="/loginpage" class="btn btn-dark mt-2">Go To Login</a>
                 </div>
-                <div class="form-group mt-3 mb-2">
-                    <label for="confirmPassword">Confirm New Password</label>
-                    <div class="d-flex">
-                        
-                    <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" placeholder="Confirm your new password" required>
-                    <button type="button" class="btn btn-outline-secondary" id="ConfirmPasswordToggle" style="background-color: rgba(212, 214,216,0.889);"><i class="fa fa-eye"></i></button>
-                     </div>
-                 </div>
-                <button type="submit" class="btn btn-dark  mt-1">Change Password</button>
-            </form>
-            <a href="/loginpage" class="btn btn-dark mt-2">Go To Login</a>
+            </div>
         </div>
     </div>
 </div>
-</div>
+
 <script>
-
-
-
-    document.addEventListener('DOMContentLoaded',()=>{
-
-        const newPasswordInput = document.getElementById('newPassword')
-        const confirmPasswordInput = document.getElementById('confirmPassword')
+    document.addEventListener('DOMContentLoaded', () => {
+        const newPasswordInput = document.getElementById('newPassword');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const changePasswordButton = document.getElementById('changePasswordBtn');
+        const strengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/;
 
         toggleButtons = {
-         
-          newPassword : document.getElementById('newPasswordToggle'),
-          confirmPassword : document.getElementById('ConfirmPasswordToggle')
+            newPassword: document.getElementById('newPasswordToggle'),
+            confirmPassword: document.getElementById('ConfirmPasswordToggle')
+        };
+
+        function togglePasswordVisibility(input, toggleButton) {
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+
+            const iconClass = type === "password" ? 'fa-eye' : 'fa-eye-slash';
+            toggleButton.innerHTML = `<i class="fa ${iconClass}" ></i>`;
         }
 
-        function togglePasswordVisibility (input,toggleButton){
-          const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-          input.setAttribute('type',type);
-          
-          const iconClass = type ==="password" ? 'fa-eye' : 'fa-eye-slash';
-          toggleButton.innerHTML = `<i class="fa ${iconClass}" ></i>`
-        }
-        for(const key in toggleButtons){
-          if(Object.hasOwnProperty.call(toggleButtons,key)){
-            const toggleButton = toggleButtons[key];
-            const inputField = document.getElementById(key);
+        for (const key in toggleButtons) {
+            if (Object.hasOwnProperty.call(toggleButtons, key)) {
+                const toggleButton = toggleButtons[key];
+                const inputField = document.getElementById(key);
 
-            toggleButton.addEventListener('click',()=>{
-              togglePasswordVisibility(inputField,toggleButton);
-          })
-          }
+                toggleButton.addEventListener('click', () => {
+                    togglePasswordVisibility(inputField, toggleButton);
+                });
+            }
         }
-      })
 
+        confirmPasswordInput.addEventListener('input', () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (newPassword !== confirmPassword) {
+                confirmPasswordInput.setCustomValidity("Passwords don't match");
+                changePasswordButton.disabled = true;
+                document.getElementById('confirm-password-match').textContent = "Passwords don't match";
+            } else {
+                confirmPasswordInput.setCustomValidity('');
+                document.getElementById('confirm-password-match').textContent = "";
+                if (checkPasswordStrength(newPassword)) {
+                    changePasswordButton.disabled = false;
+                }
+            }
+        });
+
+        function checkPasswordStrength(password) {
+            const strengthSpan = document.getElementById('password-strength');
+            if (strengthRegex.test(password)) {
+                strengthSpan.textContent = 'Strong Password';
+                strengthSpan.style.color = 'green';
+                return true;
+            } else {
+                strengthSpan.textContent = 'Weak Password';
+                strengthSpan.style.color = 'red';
+                return false;
+            }
+        }
+
+        newPasswordInput.addEventListener('input', () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (checkPasswordStrength(newPassword) && newPassword === confirmPassword) {
+                changePasswordButton.disabled = false;
+            } else {
+                changePasswordButton.disabled = true;
+            }
+        });
+    });
 </script>
-
-<%-include('include/footer')-%>
-
+<%- include('include/footer') -%>

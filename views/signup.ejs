@@ -2,86 +2,110 @@
 <!-- navbar -->
 <nav class="navbar navbar-expand-lg navbar-light sticky-top" style="background-color: #4169E1;">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bolder" href="/home">LOOM & LACE</a>
+        <a class="navbar-brand fw-bolder" href="/home">LOOM & LACE</a>
     </div>
-  </nav>
+</nav>
 
-  <!-- SIgnup page -->
-  <div class="row mt-2">
+<!-- SIgnup page -->
+<div class="row mt-2">
     <div class="col-12">
-      <div class="mb-5">
-        <h2 class="display-5 fw-bold text-center">Create Account</h2>
-        <p class="text-center mb-2">Already have an account? <a href="/loginpage">Sign in</a></p>
-      </div>
+        <div class="mb-5">
+            <h2 class="display-5 fw-bold text-center">Create Account</h2>
+            <p class="text-center mb-2">Already have an account? <a href="/loginpage">Sign in</a></p>
+        </div>
     </div>
-  </div>
-  <form action="/api/signup" method="POST" id="signup"  onsubmit="return validateForm()">
-      <div class="new_user">
-          <div class="form-group">
-              <div class="row justify-content-center">
-                  <div class="col-12 col-lg-10 col-xl-8">
+</div>
+<form action="/api/signup" method="POST" id="signup" onsubmit="return validateForm()">
+    <div class="new_user">
+        <div class="form-group">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-8">
                     <div class="row gy-5 justify-content-center">
-                      <div class="col-12 col-lg-5">
-                        <div class="col-12">
-                          <a href="/auth/google" class="rounded border-black btn btn-light w-100"><img src="/img/google.svg" alt="" width="20px" class="me-2">Signup With Google</a></div><hr>
-                          <div class="row gy-3 overflow-hidden">
+                        <div class="col-12 col-lg-5">
                             <div class="col-12">
-                              <div class="form-floating mb-2">
-                                <input type="text" class="form-control border border-bottom rounded-0" name="name" id="name" value="" placeholder="Username" required>
-                                <label for="name" class="form-label">Username</label>
-                              </div>
+                                <a href="/auth/google" class="rounded border-black btn btn-light w-100"><img src="/img/google.svg" alt="" width="20px" class="me-2">Signup With Google</a>
                             </div>
-                            <div class="col-12">
-                              <div class="form-floating mb-2">
-                                <input type="email" class="form-control border border-bottom rounded-0" name="email" id="email" value="" placeholder="Email" required>
-                                <label for="email" class="form-label">Email</label>
-                              </div>
-                            </div>
-                            <div class="col-12">
-                              <div class="form-floating mb-2">
-                                <input type="password" class="form-control border border-bottom rounded-0" name="password" id="password" value="" placeholder="Password" required>
-                                <label for="password" class="form-label">Password</label>
-                                <div class="form-check mt-2">
-                                    <input class="form-check-input" type="checkbox" id="showPassword">
-                                    <label class="form-check-label" for="showPassword">Show password</label>
+                            <hr>
+                            <div class="row gy-3 overflow-hidden">
+                                <div class="col-12">
+                                    <div class="form-floating mb-2">
+                                        <input type="text" class="form-control border border-bottom rounded-0" name="name" id="name" value="" placeholder="Username" required>
+                                        <label for="name" class="form-label">Username</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-2">
+                                        <input type="email" class="form-control border border-bottom rounded-0" name="email" id="email" value="" placeholder="Email" required>
+                                        <label for="email" class="form-label">Email</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating mb-2">
+                                        <input type="password" class="form-control border border-bottom rounded-0" name="password" id="password" value="" placeholder="Password" required>
+                                        <label for="password" class="form-label">Password</label>
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" id="showPassword">
+                                            <label class="form-check-label" for="showPassword">Show password</label>
+                                        </div>
+                                        <span id="passwordStrength"></span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group d-inline-flex">
+                                        <label for="gender" class="text-dark">Gender :</label>
+                                        <div class="radio ms-2">
+                                            <input type="radio" id="radio2" name="gender" value="Male">
+                                            <label for="gender" class="text-dark">Male</label>
+                                        </div>
+                                        <div class="radio ms-2">
+                                            <input type="radio" id="radio3" name="gender" value="Female">
+                                            <label for="gender" class="text-dark">Female</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary btn-lg mt-3" type="submit" id="submitButton" disabled>Submit</button>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <p class="text-center text-danger" id="errorMessage"><%=message%></p>
                                 </div>
                             </div>
-                            </div>
-                            <div class="col-12">
-                              <div class="form-group d-inline-flex">
-                               <label for="gender" class="text-dark">Gender :</label>
-                               <div class="radio ms-2">
-                                <input type="radio" id="radio2" name="gender" value="Male">
-                                <label for="gender" class="text-dark">Male</label>
-                               </div>
-                               <div class="radio ms-2">
-                                <input type="radio" id="radio3" name="gender" value="Female">
-                                <label for="gender" class="text-dark">Female</label>
-                               </div>
-                              </div>
-                            </div>
-                            <div class="col-12">
-                              <div class="d-grid">
-                                <button class="btn btn-primary btn-lg mt-3" type="submit">Submit</button>
-                              </div>
-                            </div>
-                            <div class="col-12"><p class="text-center text-danger"><%=message%></p></div>
-                          </div>
-                      </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-          </div>
-      </div>
-     
-  </form>
-  <script>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script>
     const passwordInput = document.getElementById('password');
     const showPasswordCheckbox = document.getElementById('showPassword');
+    const submitButton = document.getElementById('submitButton');
+    const errorMessage = document.getElementById('errorMessage');
+    const passwordStrength = document.getElementById('passwordStrength');
 
     showPasswordCheckbox.addEventListener('change', () => {
         passwordInput.type = showPasswordCheckbox.checked ? 'text' : 'password';
     });
-  </script>
+
+    passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const strengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/;
+
+        if (strengthRegex.test(password)) {
+            passwordStrength.textContent = "Strong password";
+            passwordStrength.style.color = "green";
+            submitButton.disabled = false;
+        } else {
+            passwordStrength.textContent = "Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one number, and one special character.";
+            passwordStrength.style.color = "red";
+            submitButton.disabled = true;
+        }
+    });
+
+</script>
 
 <%-include('include/footer')-%>

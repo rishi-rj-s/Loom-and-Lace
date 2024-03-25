@@ -16,4 +16,4 @@ var couponSchema = new mongoose.Schema({
 })
 const Coupondb = mongoose.model('coupondb',couponSchema);
 
-module.exports = Coupondb;
+module.exports = Coupondb;   
