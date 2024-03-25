@@ -189,13 +189,46 @@
         return response.json();
     })
     .then(data => {
-        // Status updated successfully, you can update UI if necessary
-        console.log('Status updated successfully:', data);
+        // Status updated successfully, show SweetAlert message based on the new status
+        let message = '';
+        switch (newStatus) {
+            case 'Order Placed':
+                message = 'Order status updated to Order Placed';
+                break;
+            case 'Delivered':
+                message = 'Order status updated to Delivered';
+                break;
+            case 'Return Requested':
+                message = 'Return request submitted';
+                break;
+            case 'Return Rejected':
+                message = 'Return request rejected';
+                break;
+            case 'Return Accepted':
+                message = 'Return request accepted';
+                break;
+            case 'Cancelled':
+                message = 'Order status updated to Cancelled';
+                break;
+            default:
+                message = 'Order status updated';
+        }
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: message,
+        });
     })
     .catch(error => {
         console.error('Error updating status:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to update order status',
+        });
     });
 }
+
 
 
   // Add event listeners to all select elements with class select-status

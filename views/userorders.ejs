@@ -294,6 +294,7 @@
                         success: function(response) {
                             swal.fire("Success!", "Your order has been cancelled.", "success");
                             console.log(response);
+                            location.reload()
                         },
                         error: function(xhr, status, error) {
                             swal.fire("Error!", "Failed to cancel the order.", "error");
@@ -329,6 +330,7 @@
                         success: function(response) {
                             swal.fire("Success!", "Your order return has been requested.", "success");
                             console.log(response);
+                            location.reload()
                             // Handle success response if needed
                         },
                         error: function(xhr, status, error) {
@@ -366,6 +368,7 @@
                         success: function(response) {
                             swal.fire("Success!", "Return request has been cancelled.", "success");
                             console.log(response);
+                            location.reload()
                             // Handle success response if needed
                         },
                         error: function(xhr, status, error) {

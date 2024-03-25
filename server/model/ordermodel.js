@@ -57,7 +57,7 @@ const orderSchema = new mongoose.Schema({
 
 // Function to generate a unique order ID
 async function generateUniqueOrderId() {
-    const characters = '0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let orderId = '';
     let exists = true;
     while (exists) {
