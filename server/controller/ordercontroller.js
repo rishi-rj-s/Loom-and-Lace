@@ -311,26 +311,28 @@ exports.razor=async (req, res) => {
     }
   }
 
-exports.razorsuccess=async (req, res) => {
+  exports.razorsuccess = async (req, res) => {
     try {
         const orderId = req.params.orderId;
-        const order = await Orderdb.findById(orderId);
-        console.log(order)
-        const user = await Userdb.findOne({ email: req.session.email });
+        const order = await Orderdb.findById(orderId).populate('items.productId');
+        console.log(order);
 
         if (!order) {
             return res.redirect('/error');
         }
-        order.status = 'Order Placed';
-        order.paymentStatus = 'Paid';
-        await order.save();
+
+        const user = await Userdb.findOne({ email: req.session.email });
 
         for (const item of order.items) {
             console.log(item.productId);
             await Productdb.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
         }
 
-        res.render('ordersuccess', {userToken: req.cookies.userToken,user: user });
+        order.status = 'Order Placed';
+        order.paymentStatus = 'Paid';
+        await order.save();
+
+        res.render('ordersuccess', { userToken: req.cookies.userToken, user: user });
     } catch (error) {
         console.error(error);
         return res.redirect('/cart');
