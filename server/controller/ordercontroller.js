@@ -317,7 +317,6 @@ exports.razorsuccess=async (req, res) => {
         const order = await Orderdb.findById(orderId);
         console.log(order)
         const user = await Userdb.findOne({ email: req.session.email });
-        const cart = await Cartdb.findOne({ user: user._id }).populate('items.productId');
 
         if (!order) {
             return res.redirect('/error');
@@ -326,7 +325,7 @@ exports.razorsuccess=async (req, res) => {
         order.paymentStatus = 'Paid';
         await order.save();
 
-        for (const item of cart.items) {
+        for (const item of order.items) {
             console.log(item.productId);
             await Productdb.findByIdAndUpdate(item.productId, { $inc: { stock: -item.quantity } });
         }
